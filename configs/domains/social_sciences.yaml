@@ -1,0 +1,221 @@
+name: Social Sciences Research Laboratory
+description: Computational platform for quantitative social research, survey analysis,
+  behavioral modeling, and social network analysis
+primary_domains:
+- Quantitative Social Research
+- Survey Data Analysis
+- Social Network Analysis
+- Behavioral Economics
+- Political Science
+target_users: Social scientists, political scientists, economists, survey researchers
+  (1-15 users)
+spack_packages:
+  statistical_analysis:
+  - r@4.3.1 %gcc@11.4.0 +X+external-lapack ^openblas@0.3.23
+  - r-tidyverse@2.0.0
+  - r-dplyr@1.1.2
+  - r-ggplot2@3.4.2
+  - r-stringr@1.5.0
+  - r-lubridate@1.9.2
+  - r-readr@2.1.4
+  - r-tidyr@1.3.0
+  - r-purrr@1.0.2
+  survey_analysis:
+  - r-survey@4.2.1
+  - r-srvyr@1.2.0
+  - r-sampling@2.9
+  - r-lavaan@0.6.16
+  - r-psych@2.3.6
+  - r-car@3.1.2
+  - r-mass@7.3.60
+  - r-nnet@7.3.19
+  social_networks:
+  - r-igraph@1.5.1
+  - r-network@1.18.1
+  - r-sna@2.7.1
+  - r-statnet@2019.6
+  - r-ergm@4.5.0
+  - r-tergm@4.2.0
+  - gephi@0.10.1 +java
+  - py-networkx@3.1 %gcc@11.4.0
+  - py-igraph@0.10.6 %gcc@11.4.0
+  econometrics:
+  - r-plm@2.6.3
+  - r-systemfit@1.1.28
+  - r-aer@1.2.10
+  - r-urca@1.3.3
+  - r-vars@1.5.10
+  - r-forecast@8.21
+  - r-tseries@0.10.54
+  - r-dynlm@0.3.6
+  text_analysis:
+  - r-tm@0.7.11
+  - r-topicmodels@0.2.14
+  - r-quanteda@3.3.1
+  - r-tidytext@0.4.1
+  - r-wordcloud@2.6
+  - r-sentimentr@2.9.0
+  - py-nltk@3.8.1 %gcc@11.4.0
+  - py-spacy@3.6.1 %gcc@11.4.0
+  - py-textblob@0.17.1 %gcc@11.4.0
+  python_social:
+  - python@3.11.5 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-pandas@2.0.3 %gcc@11.4.0
+  - py-numpy@1.25.2 %gcc@11.4.0 +blas+lapack
+  - py-scipy@1.11.2 %gcc@11.4.0 +blas+lapack
+  - py-scikit-learn@1.3.0 %gcc@11.4.0 +blas+lapack
+  - py-statsmodels@0.14.0 %gcc@11.4.0
+  - py-seaborn@0.12.2 %gcc@11.4.0
+  - py-matplotlib@3.7.2 %gcc@11.4.0
+  geospatial_social:
+  - r-sf@1.0.14
+  - r-sp@2.0.0
+  - r-rgdal@1.6.7
+  - r-leaflet@2.2.0
+  - r-mapview@2.11.0
+  - r-tmap@3.3.4
+  - py-geopandas@0.13.2 %gcc@11.4.0
+  - py-folium@0.14.0 %gcc@11.4.0
+  - qgis@3.32.3 %gcc@11.4.0 +python +server
+  machine_learning_social:
+  - py-scikit-learn@1.3.0 %gcc@11.4.0 +blas+lapack
+  - py-xgboost@1.7.6 %gcc@11.4.0
+  - py-lightgbm@4.0.0 %gcc@11.4.0
+  - r-randomforest@4.7.1.1
+  - r-caret@6.0.94
+  - r-glmnet@4.1.7
+  - r-e1071@1.7.13
+  databases:
+  - postgresql@15.4 %gcc@11.4.0 +gssapi +ldap +openssl +python +uuid +xml
+  - mysql@8.1.0 %gcc@11.4.0 +ssl
+  - sqlite@3.42.0 %gcc@11.4.0 +fts +rtree
+  - r-dbi@1.1.3
+  - r-rodbc@1.3.20
+  - r-rsqlite@2.3.1
+  - py-sqlalchemy@2.0.19 %gcc@11.4.0
+  visualization:
+  - r-ggplot2@3.4.2
+  - r-plotly@4.10.2
+  - r-shiny@1.7.5
+  - r-shinydashboard@0.7.2
+  - r-leaflet@2.2.0
+  - py-plotly@5.15.0 %gcc@11.4.0
+  - py-bokeh@3.2.1 %gcc@11.4.0
+  - py-streamlit@1.25.0 %gcc@11.4.0
+  workflow_orchestration:
+  - nextflow@23.04.1 +java
+  - snakemake@7.32.4 +python
+  - r-targets@1.2.2
+  - r-drake@7.13.8
+aws_instance_recommendations:
+  development:
+    instance_type: t3.medium
+    vcpus: 2
+    memory_gb: 4
+    storage_gb: 100
+    cost_per_hour: 0.0416
+    use_case: Small survey analysis and development
+  survey_analysis:
+    instance_type: r6i.2xlarge
+    vcpus: 8
+    memory_gb: 64
+    storage_gb: 500
+    cost_per_hour: 0.504
+    use_case: Medium-scale survey data analysis
+  large_datasets:
+    instance_type: r6i.4xlarge
+    vcpus: 16
+    memory_gb: 128
+    storage_gb: 1000
+    cost_per_hour: 1.02
+    use_case: Large survey datasets and panel studies
+  network_analysis:
+    instance_type: c6i.4xlarge
+    vcpus: 16
+    memory_gb: 32
+    storage_gb: 500
+    cost_per_hour: 0.68
+    use_case: Social network analysis and graph computations
+  machine_learning:
+    instance_type: c6i.8xlarge
+    vcpus: 32
+    memory_gb: 64
+    storage_gb: 1000
+    cost_per_hour: 1.36
+    use_case: ML-based social science research
+estimated_cost:
+  compute: 600
+  storage: 200
+  data_transfer: 100
+  survey_tools: 150
+  total: 1050
+research_capabilities:
+- Large-scale survey data analysis
+- Social network analysis and modeling
+- Econometric time series analysis
+- Text analysis and sentiment mining
+- Behavioral experiment analysis
+- Geospatial social analysis
+- Machine learning for social prediction
+- Panel data and longitudinal studies
+aws_data_sources:
+- World Bank Open Data - Economic and development indicators
+- US Census American Community Survey - Demographic data
+- General Social Survey - Social attitudes and behaviors
+- European Social Survey - Cross-national survey data
+demo_workflows:
+- name: Survey Data Analysis
+  description: Complex survey analysis with sampling weights
+  dataset: American Community Survey microdata
+  expected_runtime: 1-3 hours
+  cost_estimate: 1.5
+- name: Social Network Analysis
+  description: Community detection in social networks
+  dataset: Facebook Social Circles dataset
+  expected_runtime: 2-4 hours
+  cost_estimate: 2.7
+- name: Text Sentiment Analysis
+  description: Political sentiment analysis of social media
+  dataset: Twitter political discourse sample
+  expected_runtime: 2-6 hours
+  cost_estimate: 4.1
+- name: Econometric Time Series
+  description: Economic indicator forecasting with ARIMA
+  dataset: FRED economic indicators
+  expected_runtime: 1-2 hours
+  cost_estimate: 1.0
+social_science_features:
+  analysis_types: [descriptive, inferential, causal, predictive]
+  data_sources: [surveys, social_media, administrative, experimental]
+  methods: [regression, multilevel, network, text_analysis, machine_learning]
+  visualization: [ggplot2, plotly, leaflet, shiny, streamlit]
+mpi_optimizations:
+  efa_enabled: false
+  max_nodes: 4
+  placement_strategy: spread
+  network_backend: enhanced_networking
+scaling_profiles:
+  individual_research:
+    nodes: 1
+    efficiency: 95
+    use_case: Single researcher projects
+    memory_per_core_gb: 8
+  collaborative_study:
+    nodes: 2-3
+    efficiency: 90
+    use_case: Multi-investigator studies
+    memory_per_core_gb: 12
+  large_scale_survey:
+    nodes: 4-6
+    efficiency: 85
+    use_case: National survey analysis
+    memory_per_core_gb: 16
+aws_integration:
+  datasets_available: 4
+  demo_workflows_available: 4
+  total_data_volume_tb: 25
+  integration_date: '2024-01-15'
+  data_access_patterns:
+    cost_optimized: S3 Standard-IA for longitudinal survey data
+    performance_optimized: S3 Standard for active research datasets
+    security: Encrypted storage for sensitive demographic data

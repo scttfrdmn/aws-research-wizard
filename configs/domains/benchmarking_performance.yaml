@@ -1,0 +1,177 @@
+name: HPC Benchmarking & Performance Analysis Laboratory
+description: Comprehensive platform for HPC benchmarking, application profiling, and
+  system optimization with GPU acceleration
+primary_domains:
+- High-Performance Computing
+- Performance Analysis
+- System Benchmarking
+- Application Optimization
+- Scalability Testing
+target_users: Performance analysts, HPC engineers, system administrators (1-30 users)
+spack_packages:
+  hpc_benchmarks:
+  - hpl@2.3 %gcc@11.4.0 +openmp
+  - hpcg@3.1 %gcc@11.4.0 +openmp
+  - stream@5.10 %gcc@11.4.0 +openmp
+  - nas-parallel-benchmarks@3.4.2 %gcc@11.4.0 +openmp +mpi
+  - lammps@20230802 %gcc@11.4.0 +mpi +openmp +cuda
+  - gromacs@2023.2 %gcc@11.4.0 +mpi +openmp +cuda +fftw
+  - namd@3.0 %gcc@11.4.0 +cuda +fftw
+  profiling_tools:
+  - intel-oneapi-vtune@2023.2.0 %gcc@11.4.0
+  - advisor@2023.2.0 %gcc@11.4.0
+  - tau@2.32.1 %gcc@11.4.0 +mpi +openmp +papi +cuda
+  - scalasca@2.6.1 %gcc@11.4.0 +mpi +cube
+  - score-p@8.0 %gcc@11.4.0 +mpi +openmp +cuda +papi
+  - valgrind@3.21.0 %gcc@11.4.0 +mpi +boost
+  - gprof@2.40 %gcc@11.4.0
+  hardware_monitoring:
+  - papi@7.0.1 %gcc@11.4.0 +cuda +nvml
+  - likwid@5.2.2 %gcc@11.4.0 +accessdaemon +nvidia
+  - perf@6.3 %gcc@11.4.0
+  - oprofile@1.4.0 %gcc@11.4.0
+  - nvtop@3.0.1 %gcc@11.4.0 +nvidia
+  storage_benchmarks:
+  - ior@3.3.0 %gcc@11.4.0 +mpi +hdf5 +netcdf
+  - mdtest@3.4.0 %gcc@11.4.0 +mpi
+  - fio@3.35 %gcc@11.4.0
+  - izone@1.0 %gcc@11.4.0
+  - bonnie++@2.00a %gcc@11.4.0
+  network_benchmarks:
+  - osu-micro-benchmarks@6.2 %gcc@11.4.0 +mpi
+  - netperf@2.7.0 %gcc@11.4.0
+  - iperf3@3.14 %gcc@11.4.0
+  - hpcc@1.5.0 %gcc@11.4.0 +mpi
+  gpu_benchmarks:
+  - cuda@12.2.2 %gcc@11.4.0
+  - cudnn@8.9.4.25 %gcc@11.4.0 +cuda
+  - nccl@2.18.3 %gcc@11.4.0 +cuda
+  - nvidia-ml-py@12.535.108 %gcc@11.4.0
+  - gpu-burn@1.1 %gcc@11.4.0 +cuda
+  python_analysis:
+  - python@3.11.5 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-numpy@1.25.2 %gcc@11.4.0
+  - py-pandas@2.0.3 %gcc@11.4.0
+  - py-matplotlib@3.7.2 %gcc@11.4.0
+  - py-plotly@5.15.0 %gcc@11.4.0
+  - py-perfplot@0.10.2 %gcc@11.4.0
+  - py-line-profiler@4.1.1 %gcc@11.4.0
+  - py-memory-profiler@0.61.0 %gcc@11.4.0
+  - py-py-spy@0.3.14 %gcc@11.4.0
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.2xlarge
+    vcpus: 8
+    memory_gb: 16
+    storage_gb: 200
+    cost_per_hour: 0.34
+    use_case: Development and small benchmarks
+  cpu_benchmarking:
+    instance_type: c6i.8xlarge
+    vcpus: 32
+    memory_gb: 64
+    storage_gb: 500
+    cost_per_hour: 1.36
+    use_case: CPU-intensive benchmarking and profiling
+  memory_benchmarking:
+    instance_type: r6i.8xlarge
+    vcpus: 32
+    memory_gb: 256
+    storage_gb: 1000
+    cost_per_hour: 2.05
+    use_case: Memory-intensive benchmarks and analysis
+  hpc_cluster:
+    instance_type: hpc6a.48xlarge
+    vcpus: 96
+    memory_gb: 384
+    storage_gb: 2000
+    cost_per_hour: 2.88
+    efa_enabled: true
+    placement_group: cluster
+    enhanced_networking: sr-iov
+    use_case: HPC cluster benchmarking with EFA and enhanced networking
+  gpu_benchmarking:
+    instance_type: p4d.24xlarge
+    vcpus: 96
+    memory_gb: 1152
+    gpu_count: 8
+    gpu_memory: 320 GB total
+    efa_enabled: true
+    cost_per_hour: 32.77
+    use_case: GPU benchmarking and multi-GPU performance analysis
+  storage_testing:
+    instance_type: i4i.8xlarge
+    vcpus: 32
+    memory_gb: 256
+    nvme_ssd_gb: 7500
+    cost_per_hour: 2.43
+    use_case: High-performance storage benchmarking
+estimated_cost:
+  compute: 1500
+  gpu: 1200
+  storage: 400
+  data_transfer: 150
+  total: 3250
+research_capabilities:
+- HPC application benchmarking with MPI scaling analysis
+- GPU performance testing and multi-GPU scaling
+- Storage I/O performance characterization
+- Network latency and bandwidth optimization
+- Application profiling and optimization recommendations
+- Comparative performance analysis across instance types
+- Scalability testing up to 64 nodes with EFA
+- Energy efficiency and cost-performance analysis
+aws_data_sources:
+- AWS Performance Insights for database benchmarking
+- CloudWatch metrics for system monitoring
+- AWS Cost and Usage Reports for cost analysis
+- EC2 Instance Metadata for hardware information
+- EFA monitoring metrics for network performance
+demo_workflows:
+- name: HPC Benchmark Suite
+  description: Run HPL, HPCG, and NAS benchmarks on cluster
+  dataset: Standard HPC benchmark inputs
+  expected_runtime: 2-6 hours
+  cost_estimate: 25.8
+- name: Application Performance Profiling
+  description: Profile LAMMPS molecular dynamics simulation
+  dataset: LAMMPS benchmark problems
+  expected_runtime: 1-3 hours
+  cost_estimate: 12.4
+- name: GPU Scaling Analysis
+  description: Multi-GPU performance scaling with NCCL
+  dataset: Deep learning training workload
+  expected_runtime: 4-8 hours
+  cost_estimate: 156.2
+- name: Storage I/O Benchmark
+  description: Comprehensive storage performance testing
+  dataset: IOR and mdtest benchmark datasets
+  expected_runtime: 1-2 hours
+  cost_estimate: 6.5
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 64
+  placement_strategy: cluster
+  network_backend: efa
+scaling_profiles:
+  single_node:
+    nodes: 1
+    efficiency: 100
+    use_case: Single-node performance characterization
+  small_cluster:
+    nodes: 2-8
+    efficiency: 95
+    use_case: Small-scale cluster benchmarking
+  large_cluster:
+    nodes: 16-64
+    efficiency: 85
+    use_case: Large-scale HPC performance analysis
+aws_integration:
+  datasets_available: 0
+  demo_workflows_available: 0
+  total_data_volume_tb: 0
+  integration_date: '2023-12-01'
+  data_access_patterns:
+    cost_optimized: Use S3 Intelligent Tiering
+    performance_optimized: Access from same AWS region
+    security: Data encrypted in transit and at rest

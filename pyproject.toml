@@ -1,0 +1,247 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aws-research-wizard"
+version = "1.0.0"
+description = "Comprehensive research computing environments optimized for AWS"
+authors = [
+    {name = "Scott Friedman", email = "scott@friedman.io"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.setuptools]
+py-modules = [
+    "research_infrastructure_wizard",
+    "aws_environment_checker", 
+    "gui_research_wizard",
+    "comprehensive_spack_domains",
+    "finops_research_solutions",
+    "spack_environment_importer",
+    "instancefinder",
+    "research_analyzer",
+    "research_solutions_analyzer",
+    "researcher_ready_solutions",
+    "spack_research_solutions",
+    "agricultural_sciences_pack",
+    "atmospheric_chemistry_pack",
+    "benchmarking_performance_pack",
+    "cybersecurity_research_pack",
+    "food_science_nutrition_pack",
+    "forestry_natural_resources_pack",
+    "geospatial_research_pack",
+    "renewable_energy_systems_pack",
+    "visualization_studio_pack"
+]
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: System :: Distributed Computing",
+]
+dependencies = [
+    "boto3>=1.28.0",
+    "botocore>=1.31.0",
+    "streamlit>=1.25.0",
+    "pandas>=2.0.0",
+    "numpy>=1.25.0",
+    "plotly>=5.15.0",
+    "pyyaml>=6.0",
+    "requests>=2.31.0",
+    "click>=8.1.0",
+    "rich>=13.0.0",
+    "jinja2>=3.1.0",
+    "typing-extensions>=4.5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Linting and formatting
+    "black>=23.7.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+    "mypy>=1.5.0",
+    "pylint>=2.17.0",
+    "bandit>=1.7.5",
+    
+    # Testing
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-xdist>=3.3.0",
+    "coverage>=7.3.0",
+    "moto>=4.2.0",  # AWS service mocking
+    
+    # Documentation
+    "sphinx>=7.1.0",
+    "sphinx-rtd-theme>=1.3.0",
+    "sphinx-autodoc-typehints>=1.24.0",
+    "myst-parser>=2.0.0",
+    
+    # Pre-commit hooks
+    "pre-commit>=3.4.0",
+    
+    # Type stubs
+    "types-PyYAML>=6.0.0",
+    "types-requests>=2.31.0",
+    "boto3-stubs[essential]>=1.28.0",
+]
+
+[project.scripts]
+aws-research-wizard = "aws_research_wizard.cli:main"
+aws-env-check = "aws_environment_checker:main"
+
+[project.urls]
+Homepage = "https://github.com/scttfrdmn/aws-research-wizard"
+Documentation = "https://github.com/scttfrdmn/aws-research-wizard/blob/main/README.md"
+Repository = "https://github.com/scttfrdmn/aws-research-wizard.git"
+Issues = "https://github.com/scttfrdmn/aws-research-wizard/issues"
+
+# Tool configurations
+[tool.black]
+line-length = 100
+target-version = ['py39', 'py310', 'py311', 'py312']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | venv
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+src_paths = [".", "tests"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = "streamlit.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "plotly.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "moto.*"
+ignore_missing_imports = true
+
+[tool.pylint.messages_control]
+disable = [
+    "C0103",  # invalid-name
+    "C0114",  # missing-module-docstring
+    "R0903",  # too-few-public-methods
+    "R0913",  # too-many-arguments
+    "W0212",  # protected-access (for testing)
+]
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.pylint.design]
+max-args = 8
+max-locals = 20
+max-returns = 8
+max-branches = 15
+max-statements = 60
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_functions = ["test_*"]
+python_classes = ["Test*"]
+addopts = [
+    "--cov=.",
+    "--cov-report=html:htmlcov",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--cov-fail-under=85",
+    "--strict-markers",
+    "--disable-warnings",
+    "-v"
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "aws: marks tests that require AWS credentials",
+]
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "tests/*",
+    "venv/*",
+    "*/venv/*",
+    ".venv/*",
+    "*/.venv/*",
+    "setup.py",
+    "*/site-packages/*",
+    "*/__pycache__/*",
+    "*/migrations/*",
+    "conftest.py",
+]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+show_missing = true
+precision = 2
+fail_under = 85
+
+[tool.bandit]
+exclude_dirs = ["tests", "venv", ".venv"]
+skips = ["B101", "B601"]  # Skip assert_used and shell_injection_subprocess for tests

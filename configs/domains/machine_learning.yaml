@@ -1,0 +1,191 @@
+name: AI/ML Research Acceleration Platform
+description: Comprehensive platform for machine learning research, training, and deployment
+  with GPU optimization
+primary_domains:
+- Machine Learning
+- Artificial Intelligence
+- Deep Learning
+- Computer Vision
+- Natural Language Processing
+target_users: ML researchers, data scientists, AI engineers (1-25 users)
+spack_packages:
+  ml_frameworks:
+  - pytorch@2.0.1 %gcc@11.4.0 +cuda +nccl
+  - tensorflow@2.13.0 %gcc@11.4.0 +cuda +nccl
+  - onnx@1.14.1 %gcc@11.4.0
+  - openvino@2023.1.0 %gcc@11.4.0
+  - tensorrt@8.6.1 %gcc@11.4.0 +cuda
+  gpu_computing:
+  - cuda@12.2.2 %gcc@11.4.0
+  - cudnn@8.9.4.25 %gcc@11.4.0 +cuda
+  - cupy@12.2.0 %gcc@11.4.0 +cuda
+  - thrust@2.1.0 %gcc@11.4.0 +cuda
+  - cutensor@1.7.0.1 %gcc@11.4.0 +cuda
+  distributed_training:
+  - nccl@2.18.3 %gcc@11.4.0 +cuda
+  - aws-ofi-nccl@1.7.0 %gcc@11.4.0 +cuda
+  - horovod@0.28.1 %gcc@11.4.0 +cuda +pytorch +tensorflow
+  - deepspeed@0.10.1 %gcc@11.4.0 +cuda
+  python_ml:
+  - python@3.11.5 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-scikit-learn@1.3.0 %gcc@11.4.0
+  - py-pandas@2.0.3 %gcc@11.4.0
+  - py-numpy@1.25.2 %gcc@11.4.0
+  - py-scipy@1.11.2 %gcc@11.4.0
+  - py-matplotlib@3.7.2 %gcc@11.4.0
+  - py-seaborn@0.12.2 %gcc@11.4.0
+  - py-plotly@5.15.0 %gcc@11.4.0
+  - py-jupyter@1.0.0
+  - py-jupyterlab@4.0.3
+  computer_vision:
+  - opencv@4.8.0 %gcc@11.4.0 +python +cuda
+  - pillow-simd@10.0.0 %gcc@11.4.0
+  - py-torchvision@0.15.2 %gcc@11.4.0 +cuda
+  - py-albumentations@1.3.1 %gcc@11.4.0
+  nlp_tools:
+  - py-transformers@4.33.2 %gcc@11.4.0
+  - py-datasets@2.14.4 %gcc@11.4.0
+  - py-tokenizers@0.13.3 %gcc@11.4.0
+  - py-spacy@3.6.1 %gcc@11.4.0
+  - py-nltk@3.8.1 %gcc@11.4.0
+  optimization:
+  - py-optuna@3.3.0 %gcc@11.4.0
+  - py-hyperopt@0.2.7 %gcc@11.4.0
+  - py-ray@2.6.1 %gcc@11.4.0
+  - py-mlflow@2.5.0 %gcc@11.4.0
+  - py-wandb@0.15.8 %gcc@11.4.0
+aws_instance_recommendations:
+  development:
+    instance_type: g5.xlarge
+    vcpus: 4
+    memory_gb: 16
+    gpu_count: 1
+    gpu_memory: 24 GB
+    storage_gb: 200
+    cost_per_hour: 1.006
+    use_case: Development and prototyping
+  single_gpu_training:
+    instance_type: g5.2xlarge
+    vcpus: 8
+    memory_gb: 32
+    gpu_count: 1
+    gpu_memory: 24 GB
+    storage_gb: 500
+    cost_per_hour: 1.212
+    use_case: Single GPU model training
+  multi_gpu_training:
+    instance_type: g5.12xlarge
+    vcpus: 48
+    memory_gb: 192
+    gpu_count: 4
+    gpu_memory: 96 GB total
+    storage_gb: 2000
+    cost_per_hour: 5.672
+    use_case: Multi-GPU training and large models
+  large_model_training:
+    instance_type: p4d.24xlarge
+    vcpus: 96
+    memory_gb: 1152
+    gpu_count: 8
+    gpu_memory: 320 GB total
+    efa_enabled: true
+    placement_group: cluster
+    enhanced_networking: sr-iov
+    network_performance: 400 Gbps
+    cost_per_hour: 32.77
+    use_case: Large language models and distributed training
+  inference_optimized:
+    instance_type: inf2.xlarge
+    vcpus: 4
+    memory_gb: 16
+    inferentia_chips: 1
+    storage_gb: 100
+    cost_per_hour: 0.76
+    use_case: High-throughput model inference
+estimated_cost:
+  compute: 2000
+  gpu: 1500
+  storage: 300
+  data_transfer: 200
+  total: 4000
+research_capabilities:
+- Large language model training and fine-tuning
+- Computer vision model development with CUDA acceleration
+- Distributed training across multiple GPUs and nodes
+- MLOps pipeline development with experiment tracking
+- High-performance model inference and deployment
+- Hyperparameter optimization at scale
+- Transfer learning and foundation model adaptation
+- Reinforcement learning research environments
+aws_data_sources:
+- Common Crawl Web Corpus - Petabyte-scale web crawl data for NLP
+- Open Images Dataset V7 - Annotated image dataset for computer vision
+- ImageNet Object Localization Challenge - Large-scale image classification dataset
+- MLPerf Training Datasets - Standard machine learning benchmark datasets
+demo_workflows:
+- name: Image Classification Training
+  description: Train ResNet model on Open Images dataset
+  dataset: Open Images V7 - subset of 100k images
+  expected_runtime: 2-4 hours
+  cost_estimate: 12.5
+- name: NLP Model Fine-tuning
+  description: Fine-tune BERT model on scientific literature
+  dataset: PubMed abstracts from NCBI
+  expected_runtime: 4-8 hours
+  cost_estimate: 35.2
+- name: Large Model Distributed Training
+  description: Multi-node training of 7B parameter language model
+  dataset: Common Crawl subset + Wikipedia
+  expected_runtime: 12-24 hours
+  cost_estimate: 156.8
+- name: Computer Vision Pipeline
+  description: End-to-end object detection pipeline
+  dataset: COCO 2017 detection dataset
+  expected_runtime: 6-12 hours
+  cost_estimate: 45.6
+- name: Image Classification Demo
+  description: Train ResNet on Open Images subset
+  dataset: Open Images Dataset V7
+  expected_runtime: 3-6
+  cost_estimate: 1.63
+- name: NLP Model Training Demo
+  description: Language model training on Common Crawl subset
+  dataset: Common Crawl Web Corpus
+  expected_runtime: 4-8
+  cost_estimate: 0.81
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 16
+  placement_strategy: cluster
+  network_backend: efa
+  gpu_communication: nccl
+scaling_profiles:
+  single_gpu:
+    nodes: 1
+    gpus_per_node: 1
+    efficiency: 100
+    use_case: Model development and small datasets
+  multi_gpu:
+    nodes: 1
+    gpus_per_node: 4-8
+    efficiency: 95
+    use_case: Large model training on single node
+  distributed_training:
+    nodes: 2-8
+    gpus_per_node: 8
+    efficiency: 85
+    use_case: Very large models requiring multi-node training
+  massive_scale:
+    nodes: 8-16
+    gpus_per_node: 8
+    efficiency: 80
+    use_case: Foundation model training and research
+aws_integration:
+  datasets_available: 4
+  demo_workflows_available: 2
+  total_data_volume_tb: 1102
+  integration_date: '2023-12-01'
+  data_access_patterns:
+    cost_optimized: Use S3 Intelligent Tiering
+    performance_optimized: Access from same AWS region
+    security: Data encrypted in transit and at rest

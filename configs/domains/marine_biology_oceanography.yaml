@@ -1,0 +1,251 @@
+name: "Marine Biology & Oceanography Research Pack"
+description: "Comprehensive environment for marine biology, oceanography, and marine ecosystem research"
+primary_domains: ["marine_biology", "oceanography", "marine_ecology", "fisheries_science"]
+target_users: "Marine biologists, oceanographers, fisheries scientists, coastal researchers, marine ecologists"
+
+spack_packages:
+  oceanographic_modeling:
+    - "netcdf-c@4.9.2"
+    - "netcdf-fortran@4.6.1" 
+    - "hdf5@1.14.3 +fortran +cxx"
+    - "pnetcdf@1.12.3"
+    - "nco@5.1.7"
+    - "cdo@2.2.2"
+    - "ferret@7.6.0"
+    - "ncview@2.1.8"
+  
+  marine_data_analysis:
+    - "r@4.3.1 +X +external-lapack"
+    - "r-tidyverse@2.0.0"
+    - "r-sf@1.0-14"
+    - "r-raster@3.6-23"
+    - "r-ncdf4@1.21"
+    - "r-lubridate@1.9.2"
+    - "r-dplyr@1.1.3"
+    - "python@3.11.5 +tkinter"
+    - "py-pandas@2.1.1"
+    - "py-numpy@1.25.2"
+    - "py-scipy@1.11.3"
+    - "py-matplotlib@3.7.2"
+    - "py-seaborn@0.12.2"
+    - "py-xarray@2023.8.0"
+  
+  marine_biology_tools:
+    - "blast-plus@2.14.1"
+    - "muscle@5.1"
+    - "mafft@7.515"
+    - "fasttree@2.1.11"
+    - "iqtree@2.2.5"
+    - "mothur@1.48.0"
+    - "qiime2@2023.7"
+    - "vsearch@2.22.1"
+    - "cutadapt@4.4"
+  
+  marine_imaging:
+    - "opencv@4.8.1 +python3"
+    - "imagemagick@7.1.1-15"
+    - "vtk@9.3.0 +python +qt"
+    - "paraview@5.11.2 +python3"
+    - "py-scikit-image@0.21.0"
+    - "py-pillow@10.0.0"
+  
+  marine_statistics:
+    - "r-vegan@2.6-4"
+    - "r-mgcv@1.9-0"
+    - "r-mass@7.3-60"
+    - "r-cluster@2.1.4"
+    - "r-randomforest@4.7-1.1"
+    - "py-scikit-learn@1.3.0"
+    - "py-statsmodels@0.14.0"
+  
+  geospatial_marine:
+    - "gdal@3.7.2 +python"
+    - "geos@3.12.0"
+    - "proj@9.3.0"
+    - "postgis@3.4.0"
+    - "grass@8.3.0"
+    - "saga@9.1.1"
+    - "r-rgdal@1.6-7"
+    - "r-sp@2.0-0"
+
+aws_instance_recommendations:
+  marine_data_processing:
+    instance_type: "r6i.4xlarge"
+    vcpus: 16
+    memory_gb: 128
+    storage_gb: 500
+    cost_per_hour: 1.152
+    use_case: "Processing large oceanographic datasets, marine environmental data analysis"
+    efa_enabled: false
+  
+  marine_modeling_compute:
+    instance_type: "c6i.8xlarge"
+    vcpus: 32
+    memory_gb: 64
+    storage_gb: 1000
+    cost_per_hour: 1.632
+    use_case: "Ocean circulation modeling, marine ecosystem simulations"
+    efa_enabled: true
+    placement_group: "cluster"
+    enhanced_networking: "sr-iov"
+  
+  marine_hpc_cluster:
+    instance_type: "c6i.16xlarge"
+    vcpus: 64
+    memory_gb: 128
+    storage_gb: 2000
+    cost_per_hour: 3.264
+    use_case: "Large-scale marine biogeochemical modeling, coupled ocean-atmosphere models"
+    efa_enabled: true
+    placement_group: "cluster"
+    enhanced_networking: "sr-iov"
+  
+  marine_gpu_analysis:
+    instance_type: "g5.2xlarge"
+    vcpus: 8
+    memory_gb: 32
+    storage_gb: 450
+    cost_per_hour: 1.212
+    use_case: "Deep learning for marine species identification, underwater image analysis"
+    efa_enabled: false
+
+estimated_cost:
+  compute: 1200.0
+  storage: 250.0
+  network: 150.0
+  data_transfer: 200.0
+  total: 1800.0
+  small_team_monthly: 850.0
+  medium_team_monthly: 2100.0
+  large_team_monthly: 4500.0
+  enterprise_monthly: 8200.0
+
+research_capabilities:
+  - "Oceanographic data analysis and visualization"
+  - "Marine biodiversity assessment and monitoring"
+  - "Ocean circulation and climate modeling"
+  - "Marine biogeochemical cycle analysis"
+  - "Fisheries stock assessment and management"
+  - "Coral reef and marine ecosystem health monitoring"
+  - "Marine microbial community analysis"
+  - "Underwater image and video analysis"
+  - "Marine pollution and environmental impact assessment"
+  - "Coastal erosion and sea level rise modeling"
+  - "Marine acoustic data analysis (hydrophones, sonar)"
+  - "Satellite oceanography and remote sensing"
+  - "Marine food web and ecosystem modeling"
+  - "Ocean acidification impact studies"
+
+aws_data_sources:
+  - "NOAA Global Ocean Data Analysis - Global ocean temperature, salinity, and circulation data"
+  - "NASA Ocean Color Data - Satellite-derived ocean color and chlorophyll measurements"
+  - "MODIS Ocean Color - Ocean color and sea surface temperature data"
+  - "Landsat Marine Coastal Imagery - Coastal zone and marine habitat monitoring"
+  - "Sentinel-2 Marine Applications - High-resolution marine and coastal imagery"
+  - "NOAA Tides and Currents - Real-time and historical tide and current data"
+
+demo_workflows:
+  - name: "Ocean Temperature Analysis"
+    description: "Analyze global ocean temperature trends using NOAA ocean data"
+    dataset: "NOAA Global Ocean Data Analysis"
+    expected_runtime: "2-3 hours"
+    cost_estimate: 18.50
+    input_data_gb: 45
+    steps:
+      - "Download NOAA ocean temperature data"
+      - "Process and quality control oceanographic data"
+      - "Generate temperature trend analysis"
+      - "Create interactive ocean temperature maps"
+      - "Statistical analysis of warming patterns"
+  
+  - name: "Marine Biodiversity Hotspot Mapping"
+    description: "Identify marine biodiversity hotspots using species occurrence data"
+    dataset: "OBIS Marine Species Data"
+    expected_runtime: "4-6 hours"
+    cost_estimate: 32.75
+    input_data_gb: 120
+    steps:
+      - "Load marine species occurrence databases"
+      - "Process and clean biodiversity data"
+      - "Calculate species richness and endemism"
+      - "Generate biodiversity hotspot maps"
+      - "Perform conservation priority analysis"
+  
+  - name: "Coral Reef Health Assessment"
+    description: "Assess coral reef health using satellite imagery and field data"
+    dataset: "Landsat Marine Coastal Imagery"
+    expected_runtime: "3-5 hours"
+    cost_estimate: 28.20
+    input_data_gb: 85
+    steps:
+      - "Download coral reef satellite imagery"
+      - "Preprocess and atmospheric correction"
+      - "Extract coral reef spectral signatures"
+      - "Calculate coral health indices"
+      - "Generate reef health assessment reports"
+
+mpi_optimizations:
+  efa_enabled: true
+  mpi_libraries: ["openmpi@4.1.5", "mpich@4.1.2"]
+  parallel_io: true
+  collective_operations: true
+
+scaling_profiles:
+  small_scale:
+    nodes: 1
+    cores_per_node: 16
+    memory_per_node: 128
+    use_case: "Small oceanographic datasets, individual analysis"
+  
+  medium_scale:
+    nodes: 4
+    cores_per_node: 32
+    memory_per_node: 64
+    use_case: "Regional ocean modeling, medium-sized marine datasets"
+  
+  large_scale:
+    nodes: 16
+    cores_per_node: 64
+    memory_per_node: 128
+    use_case: "Global ocean circulation models, large-scale marine biogeochemistry"
+
+marine_features:
+  oceanographic_data_formats:
+    - "NetCDF (CF Convention compliant)"
+    - "HDF5 for large datasets"
+    - "GRIB for meteorological ocean data"
+    - "OPeNDAP for remote data access"
+  
+  marine_databases:
+    - "OBIS (Ocean Biodiversity Information System)"
+    - "WoRMS (World Register of Marine Species)"
+    - "GBIF marine species records"
+    - "FishBase global fish database"
+    - "AlgaeBase marine algae database"
+  
+  visualization_tools:
+    - "Ocean Data View (ODV)"
+    - "Ferret for oceanographic analysis"
+    - "QGIS marine extensions"
+    - "ParaView for 3D ocean visualization"
+    - "Matplotlib with cartopy for maps"
+  
+  specialized_software:
+    - "ROMS (Regional Ocean Modeling System)"
+    - "FVCOM (Finite Volume Community Ocean Model)"
+    - "HYCOM (Hybrid Coordinate Ocean Model)"
+    - "MOM6 (Modular Ocean Model)"
+    - "NEMO (Nucleus for European Modelling of the Ocean)"
+
+security_features:
+  data_encryption: "AES-256 encryption for sensitive marine research data"
+  access_control: "Role-based access for multi-institutional marine collaborations"
+  compliance: "FAIR data principles for marine data sharing"
+  backup_strategy: "Multi-region backup for critical oceanographic datasets"
+
+aws_integration:
+  datasets_available: 6
+  demo_workflows_available: 3
+  total_data_volume_tb: 850
+  primary_data_types: ["oceanographic_time_series", "satellite_imagery", "species_occurrence", "environmental_monitoring"]
+  cost_optimization: "S3 Intelligent Tiering for large oceanographic archives"

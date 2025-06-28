@@ -1,0 +1,327 @@
+{
+  "integration_summary": {
+    "configurations_updated": 8,
+    "total_datasets": 25,
+    "total_workflows": 4,
+    "domains_with_data": [
+      "genomics",
+      "climate_modeling",
+      "machine_learning",
+      "geospatial_research",
+      "agricultural_sciences",
+      "atmospheric_chemistry",
+      "cybersecurity_research",
+      "benchmarking_performance"
+    ],
+    "validation_errors": []
+  },
+  "domain_statistics": {
+    "genomics": {
+      "datasets_available": 3,
+      "demo_workflows": 2,
+      "total_data_volume_tb": 15305,
+      "primary_datasets": [
+        "1000 Genomes Project",
+        "NCBI Sequence Read Archive",
+        "Genome Aggregation Database"
+      ]
+    },
+    "climate_modeling": {
+      "datasets_available": 4,
+      "demo_workflows": 0,
+      "total_data_volume_tb": 4080,
+      "primary_datasets": [
+        "ERA5 Reanalysis Data",
+        "NOAA Global Forecast System",
+        "NASA MERRA-2 Reanalysis",
+        "NASA Global Precipitation Measurement"
+      ]
+    },
+    "machine_learning": {
+      "datasets_available": 4,
+      "demo_workflows": 2,
+      "total_data_volume_tb": 1102,
+      "primary_datasets": [
+        "Common Crawl Web Corpus",
+        "Open Images Dataset V7",
+        "ImageNet Object Localization Challenge",
+        "MLPerf Training Datasets"
+      ]
+    },
+    "geospatial_research": {
+      "datasets_available": 4,
+      "demo_workflows": 0,
+      "total_data_volume_tb": 5165,
+      "primary_datasets": [
+        "Landsat Collection 2",
+        "Sentinel-2 Cloud-Optimized GeoTIFFs",
+        "MODIS Nadir BRDF-Adjusted Reflectance",
+        "USDA NASS Cropland Data Layer"
+      ]
+    },
+    "agricultural_sciences": {
+      "datasets_available": 6,
+      "demo_workflows": 0,
+      "total_data_volume_tb": 20445,
+      "primary_datasets": [
+        "NCBI Sequence Read Archive",
+        "Landsat Collection 2",
+        "Sentinel-2 Cloud-Optimized GeoTIFFs",
+        "MODIS Nadir BRDF-Adjusted Reflectance",
+        "USDA NASS Cropland Data Layer"
+      ]
+    },
+    "atmospheric_chemistry": {
+      "datasets_available": 4,
+      "demo_workflows": 0,
+      "total_data_volume_tb": 4080,
+      "primary_datasets": [
+        "ERA5 Reanalysis Data",
+        "NOAA Global Forecast System",
+        "NASA MERRA-2 Reanalysis",
+        "NASA Global Precipitation Measurement"
+      ]
+    },
+    "cybersecurity_research": {
+      "datasets_available": 0,
+      "demo_workflows": 0,
+      "total_data_volume_tb": 0,
+      "primary_datasets": []
+    },
+    "benchmarking_performance": {
+      "datasets_available": 0,
+      "demo_workflows": 0,
+      "total_data_volume_tb": 0,
+      "primary_datasets": []
+    }
+  },
+  "dataset_catalog": [
+    {
+      "id": "thousandgenomes",
+      "category": "genomics_bioinformatics",
+      "name": "1000 Genomes Project",
+      "description": "International genome sequencing consortium data",
+      "size_tb": 260,
+      "format": "VCF, BAM, CRAM",
+      "domains": [
+        "genomics"
+      ],
+      "location": "s3://1000genomes/"
+    },
+    {
+      "id": "common_crawl",
+      "category": "machine_learning_ai",
+      "name": "Common Crawl Web Corpus",
+      "description": "Petabyte-scale web crawl data for NLP",
+      "size_tb": 380,
+      "format": "WARC, WET, WAT",
+      "domains": [
+        "machine_learning"
+      ],
+      "location": "s3://commoncrawl/"
+    },
+    {
+      "id": "era5_reanalysis",
+      "category": "climate_atmospheric",
+      "name": "ERA5 Reanalysis Data",
+      "description": "ECMWF ERA5 atmospheric reanalysis data",
+      "size_tb": 2500,
+      "format": "NetCDF",
+      "domains": [
+        "climate_modeling",
+        "atmospheric_chemistry"
+      ],
+      "location": "s3://era5-pds/"
+    },
+    {
+      "id": "gnomad",
+      "category": "genomics_bioinformatics",
+      "name": "Genome Aggregation Database",
+      "description": "Population genomics variant database",
+      "size_tb": 45,
+      "format": "VCF, Parquet",
+      "domains": [
+        "genomics"
+      ],
+      "location": "s3://gnomad-public-us-east-1/"
+    },
+    {
+      "id": "hpc_benchmarks",
+      "category": "benchmarking_performance",
+      "name": "HPC Benchmark Reference Datasets",
+      "description": "Standard HPC benchmark input datasets",
+      "size_tb": 0.1171875,
+      "format": "Binary, Text",
+      "domains": [
+        "benchmarking_performance"
+      ],
+      "location": "s3://hpc-benchmarks-pds/"
+    },
+    {
+      "id": "imagenet",
+      "category": "machine_learning_ai",
+      "name": "ImageNet Object Localization Challenge",
+      "description": "Large-scale image classification dataset",
+      "size_tb": 150,
+      "format": "JPEG, XML",
+      "domains": [
+        "machine_learning"
+      ],
+      "location": "s3://imagenet/"
+    },
+    {
+      "id": "landsat_collection2",
+      "category": "earth_observation",
+      "name": "Landsat Collection 2",
+      "description": "Landsat satellite imagery archive",
+      "size_tb": 1800,
+      "format": "Cloud-Optimized GeoTIFF",
+      "domains": [
+        "geospatial_research",
+        "agricultural_sciences"
+      ],
+      "location": "s3://usgs-landsat/"
+    },
+    {
+      "id": "cti_stix",
+      "category": "cybersecurity",
+      "name": "MITRE ATT&CK STIX Data",
+      "description": "Cyber threat intelligence in STIX format",
+      "size_tb": 0.244140625,
+      "format": "JSON, STIX",
+      "domains": [
+        "cybersecurity_research"
+      ],
+      "location": "s3://mitre-attack/"
+    },
+    {
+      "id": "mlperf_datasets",
+      "category": "benchmarking_performance",
+      "name": "MLPerf Training Datasets",
+      "description": "Standard machine learning benchmark datasets",
+      "size_tb": 12,
+      "format": "TFRecord, Parquet",
+      "domains": [
+        "benchmarking_performance",
+        "machine_learning"
+      ],
+      "location": "s3://mlperf-datasets/"
+    },
+    {
+      "id": "modis_mcd43a4",
+      "category": "earth_observation",
+      "name": "MODIS Nadir BRDF-Adjusted Reflectance",
+      "description": "MODIS daily surface reflectance product",
+      "size_tb": 120,
+      "format": "HDF4, COG",
+      "domains": [
+        "geospatial_research",
+        "agricultural_sciences"
+      ],
+      "location": "s3://modis-pds/"
+    },
+    {
+      "id": "malware_bazaar",
+      "category": "cybersecurity",
+      "name": "MalwareBazaar Sample Collection",
+      "description": "Curated malware samples for research",
+      "size_tb": 0.830078125,
+      "format": "PE, ELF, Mach-O",
+      "domains": [
+        "cybersecurity_research"
+      ],
+      "location": "s3://malware-samples-research/"
+    },
+    {
+      "id": "nasa_gpm",
+      "category": "agricultural_environmental",
+      "name": "NASA Global Precipitation Measurement",
+      "description": "Global precipitation satellite observations",
+      "size_tb": 280,
+      "format": "HDF5, NetCDF",
+      "domains": [
+        "climate_modeling",
+        "atmospheric_chemistry",
+        "agricultural_sciences"
+      ],
+      "location": "s3://gpm-pds/"
+    },
+    {
+      "id": "nasa_merra2",
+      "category": "climate_atmospheric",
+      "name": "NASA MERRA-2 Reanalysis",
+      "description": "Modern-Era Retrospective analysis for Research and Applications",
+      "size_tb": 850,
+      "format": "NetCDF4",
+      "domains": [
+        "climate_modeling",
+        "atmospheric_chemistry"
+      ],
+      "location": "s3://nasa-merra2/"
+    },
+    {
+      "id": "ncbi_sra",
+      "category": "genomics_bioinformatics",
+      "name": "NCBI Sequence Read Archive",
+      "description": "Public sequencing data repository",
+      "size_tb": 15000,
+      "format": "SRA, FASTQ",
+      "domains": [
+        "genomics",
+        "agricultural_sciences"
+      ],
+      "location": "s3://sra-pub-run-odp/"
+    },
+    {
+      "id": "noaa_gfs",
+      "category": "climate_atmospheric",
+      "name": "NOAA Global Forecast System",
+      "description": "Global numerical weather prediction data",
+      "size_tb": 450,
+      "format": "GRIB2",
+      "domains": [
+        "climate_modeling",
+        "atmospheric_chemistry"
+      ],
+      "location": "s3://noaa-gfs-bdp-pds/"
+    },
+    {
+      "id": "open_images",
+      "category": "machine_learning_ai",
+      "name": "Open Images Dataset V7",
+      "description": "Annotated image dataset for computer vision",
+      "size_tb": 560,
+      "format": "JPEG, CSV",
+      "domains": [
+        "machine_learning"
+      ],
+      "location": "s3://open-images-dataset/"
+    },
+    {
+      "id": "sentinel2_l2a",
+      "category": "earth_observation",
+      "name": "Sentinel-2 Cloud-Optimized GeoTIFFs",
+      "description": "ESA Sentinel-2 Level-2A atmospheric corrected imagery",
+      "size_tb": 3200,
+      "format": "Cloud-Optimized GeoTIFF",
+      "domains": [
+        "geospatial_research",
+        "agricultural_sciences"
+      ],
+      "location": "s3://sentinel-cogs/"
+    },
+    {
+      "id": "usda_nass_cdl",
+      "category": "agricultural_environmental",
+      "name": "USDA NASS Cropland Data Layer",
+      "description": "Crop-specific land cover classification",
+      "size_tb": 45,
+      "format": "GeoTIFF",
+      "domains": [
+        "agricultural_sciences",
+        "geospatial_research"
+      ],
+      "location": "s3://usda-nass-cdl/"
+    }
+  ]
+}

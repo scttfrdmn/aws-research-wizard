@@ -1,0 +1,195 @@
+name: Atmospheric Chemistry & Air Quality Research Laboratory
+description: Comprehensive platform for atmospheric chemistry modeling, air quality
+  analysis, and chemical transport simulations
+primary_domains:
+- Atmospheric Chemistry
+- Air Quality Science
+- Environmental Modeling
+- Climate Chemistry
+- Pollution Studies
+target_users: Atmospheric chemists, air quality researchers, environmental scientists
+  (1-15 users)
+spack_packages:
+  atmospheric_models:
+  - wrf@4.5.0 %gcc@11.4.0 +netcdf +hdf5 +mpi +openmp
+  - wrf-chem@4.5.0 %gcc@11.4.0 +netcdf +mpi +kpp
+  - geos-chem@14.1.1 %gcc@11.4.0 +netcdf +mpi +openmp
+  - cmaq@5.4 %gcc@11.4.0 +netcdf +mpi +openmp
+  - cam-chem@6.3.0 %gcc@11.4.0 +netcdf +mpi
+  - mozart@4.0 %gcc@11.4.0 +netcdf +mpi
+  chemical_mechanisms:
+  - kpp@2.5.0 %gcc@11.4.0 +openmp
+  - boxmodel@3.1 %gcc@11.4.0
+  - mcm@3.3.1 %gcc@11.4.0
+  - saprc@7.1 %gcc@11.4.0
+  - cb6@6.3 %gcc@11.4.0
+  data_formats:
+  - netcdf-c@4.9.2 %gcc@11.4.0 +mpi +parallel-netcdf +hdf5
+  - netcdf-fortran@4.6.1 %gcc@11.4.0
+  - hdf5@1.14.2 %gcc@11.4.0 +mpi +threadsafe +fortran
+  - parallel-netcdf@1.12.3 %gcc@11.4.0
+  - grib-api@1.28.0 %gcc@11.4.0 +fortran +python
+  - eccodes@2.31.0 %gcc@11.4.0 +fortran +python
+  data_processing:
+  - cdo@2.2.2 %gcc@11.4.0 +netcdf +hdf5
+  - nco@5.1.6 %gcc@11.4.0 +netcdf +openmpi
+  - ncview@2.1.9 %gcc@11.4.0 +netcdf
+  - ncl@6.6.2 %gcc@11.4.0 +hdf5 +netcdf
+  - ferret@7.6.0 %gcc@11.4.0 +netcdf
+  - grads@2.2.3 %gcc@11.4.0
+  python_atmospheric:
+  - python@3.11.5 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-xarray@2023.7.0 %gcc@11.4.0
+  - py-dask@2023.7.1 %gcc@11.4.0
+  - py-numpy@1.25.2 %gcc@11.4.0
+  - py-scipy@1.11.2 %gcc@11.4.0
+  - py-pandas@2.0.3 %gcc@11.4.0
+  - py-matplotlib@3.7.2 %gcc@11.4.0
+  - py-cartopy@0.21.1 %gcc@11.4.0
+  - py-metpy@1.5.1 %gcc@11.4.0
+  - py-iris@3.6.1 %gcc@11.4.0
+  - py-esmpy@8.5.0 %gcc@11.4.0
+  - py-pynio@1.5.5 %gcc@11.4.0
+  chemistry_libraries:
+  - sundials@6.6.0 %gcc@11.4.0 +mpi +openmp +hypre
+  - cvode@6.6.0 %gcc@11.4.0 +mpi +openmp
+  - arkode@5.6.0 %gcc@11.4.0 +mpi +openmp
+  - cantera@3.0.0 %gcc@11.4.0 +python +sundials
+  - chemkin@19.2 %gcc@11.4.0
+  emission_processing:
+  - smoke@4.8.1 %gcc@11.4.0 +netcdf
+  - megan@3.2 %gcc@11.4.0 +netcdf
+  - edgar@6.1 %gcc@11.4.0
+  - ceds@2021 %gcc@11.4.0
+  - finn@2.5 %gcc@11.4.0
+  visualization:
+  - paraview@5.11.2 %gcc@11.4.0 +python +mpi +osmesa
+  - visit@3.3.3 %gcc@11.4.0 +mpi +python
+  - vapor@3.8.0 %gcc@11.4.0 +python
+  - idv@6.2 %gcc@11.4.0
+  satellite_data:
+  - gdal@3.7.1 %gcc@11.4.0 +python +netcdf +hdf5
+  - proj@9.2.1 %gcc@11.4.0
+  - geos@3.12.0 %gcc@11.4.0
+  - hdf-eos@2.20 %gcc@11.4.0
+  - hdf-eos5@5.1.16 %gcc@11.4.0
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.2xlarge
+    vcpus: 8
+    memory_gb: 16
+    storage_gb: 200
+    cost_per_hour: 0.34
+    use_case: Model development and testing
+  regional_modeling:
+    instance_type: c6i.8xlarge
+    vcpus: 32
+    memory_gb: 64
+    storage_gb: 1000
+    cost_per_hour: 1.36
+    use_case: Regional air quality modeling with WRF-Chem
+  global_chemistry:
+    instance_type: hpc6a.24xlarge
+    vcpus: 48
+    memory_gb: 192
+    storage_gb: 2000
+    efa_enabled: true
+    placement_group: cluster
+    enhanced_networking: sr-iov
+    network_performance: 50 Gbps
+    cost_per_hour: 1.44
+    use_case: Global chemical transport modeling with GEOS-Chem
+  data_intensive:
+    instance_type: r6i.8xlarge
+    vcpus: 32
+    memory_gb: 256
+    storage_gb: 2000
+    cost_per_hour: 2.05
+    use_case: Large atmospheric dataset processing and analysis
+  ensemble_runs:
+    instance_type: hpc6a.48xlarge
+    vcpus: 96
+    memory_gb: 384
+    storage_gb: 4000
+    efa_enabled: true
+    placement_group: cluster
+    enhanced_networking: sr-iov
+    network_performance: 100 Gbps
+    cost_per_hour: 2.88
+    use_case: Ensemble atmospheric chemistry simulations
+estimated_cost:
+  compute: 1000
+  storage: 350
+  data_transfer: 200
+  satellite_data: 150
+  total: 1700
+research_capabilities:
+- GEOS-Chem global chemical transport modeling
+- WRF-Chem regional air quality simulations
+- Atmospheric emission inventory processing
+- Satellite data integration and analysis
+- Chemical mechanism development and testing
+- Air quality forecasting and assessment
+- Climate-chemistry coupling studies
+- Ozone and particulate matter modeling
+aws_data_sources:
+- ERA5 Reanalysis Data - ECMWF ERA5 atmospheric reanalysis data
+- NOAA Global Forecast System - Global numerical weather prediction data
+- NASA MERRA-2 Reanalysis - Modern-Era Retrospective analysis for Research and Applications
+- NASA Global Precipitation Measurement - Global precipitation satellite observations
+demo_workflows:
+- name: Regional Air Quality Simulation
+  description: WRF-Chem simulation for California wildfire smoke
+  dataset: MODIS fire data + NOAA GFS meteorology
+  expected_runtime: 4-8 hours
+  cost_estimate: 22.4
+- name: Global Ozone Analysis
+  description: GEOS-Chem global ozone simulation and satellite comparison
+  dataset: OMI satellite ozone + MERRA-2 meteorology
+  expected_runtime: 6-12 hours
+  cost_estimate: 45.6
+- name: Emission Inventory Processing
+  description: Process EDGAR global emission inventory for model input
+  dataset: EDGAR v6.1 global emission database
+  expected_runtime: 2-4 hours
+  cost_estimate: 8.75
+- name: Satellite Data Analysis
+  description: TROPOMI NO2 data processing and trend analysis
+  dataset: Copernicus TROPOMI satellite observations
+  expected_runtime: 3-6 hours
+  cost_estimate: 15.2
+chemistry_features:
+  mechanisms: SAPRC, CB6, MCM, MOZART chemical mechanisms
+  emissions: EDGAR, MEGAN, FINN emission inventories
+  meteorology: WRF, GEOS-FP, MERRA-2 meteorological drivers
+  observations: MODIS, OMI, TROPOMI satellite integration
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 32
+  placement_strategy: cluster
+  network_backend: efa
+scaling_profiles:
+  local_scale:
+    nodes: 1-2
+    efficiency: 95
+    use_case: Urban/local air quality modeling
+    grid_resolution: 1-5 km
+  regional_scale:
+    nodes: 4-8
+    efficiency: 90
+    use_case: Regional atmospheric chemistry
+    grid_resolution: 5-25 km
+  global_scale:
+    nodes: 16-32
+    efficiency: 85
+    use_case: Global chemical transport modeling
+    grid_resolution: 25-200 km
+aws_integration:
+  datasets_available: 4
+  demo_workflows_available: 0
+  total_data_volume_tb: 4080
+  integration_date: '2023-12-01'
+  data_access_patterns:
+    cost_optimized: Use S3 Intelligent Tiering
+    performance_optimized: Access from same AWS region
+    security: Data encrypted in transit and at rest

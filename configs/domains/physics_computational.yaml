@@ -1,0 +1,205 @@
+name: Physics & Computational Physics Laboratory
+description: Advanced computational platform for theoretical physics, quantum mechanics,
+  condensed matter physics, and high-energy physics simulations
+primary_domains:
+- Theoretical Physics
+- Condensed Matter Physics
+- High Energy Physics
+- Quantum Mechanics
+- Statistical Physics
+target_users: Physicists, theoretical researchers, HEP analysts
+  (1-25 users)
+spack_packages:
+  quantum_mechanics:
+  - quantum-espresso@7.2 %gcc@11.4.0 +mpi +openmp +scalapack +elpa
+  - qmcpack@3.16.0 %gcc@11.4.0 +mpi +cuda +complex
+  - psi4@1.8.2 %gcc@11.4.0 +mpi +python +chemps2
+  - openfermion@1.6.0 %gcc@11.4.0 +python
+  - cirq@1.2.0 %gcc@11.4.0 +python
+  - qiskit@0.44.1 %gcc@11.4.0 +python
+  - pennylane@0.32.0 %gcc@11.4.0 +python
+  condensed_matter:
+  - wannier90@3.1.0 %gcc@11.4.0 +mpi +shared
+  - siesta@4.1.5 %gcc@11.4.0 +mpi +netcdf +flook
+  - elk@8.5.2 %gcc@11.4.0 +mpi +openmp +libxc
+  - exciting@22 %gcc@11.4.0 +mpi +openmp
+  - wien2k@23.2 %gcc@11.4.0 +mpi +openmp
+  - crystal@23 %gcc@11.4.0 +mpi
+  - kwant@1.4.3 %gcc@11.4.0 +python +mumps
+  high_energy_physics:
+  - root@6.28.06 %gcc@11.4.0 +fortran +gdml +http +mathmore +minuit +python +roofit +tmva +unuran +vc +vdt +veccore +x
+  - geant4@11.1.2 %gcc@11.4.0 +mpi +opengl +python +qt +threads +vecgeom
+  - pythia8@8.309 %gcc@11.4.0 +shared +python +fastjet +hepmc
+  - fastjet@3.4.0 %gcc@11.4.0 +python +plugins
+  - herwig7@7.2.3 %gcc@11.4.0 +mpi +python
+  - madgraph5@3.5.1 %gcc@11.4.0 +python
+  - sherpa@2.2.15 %gcc@11.4.0 +mpi +python +hepmc +fastjet
+  statistical_physics:
+  - gsl@2.7.1 %gcc@11.4.0 +external-cblas
+  - boost@1.82.0 %gcc@11.4.0 +mpi +python +numpy +serialization
+  - eigen@3.4.0 %gcc@11.4.0 +fftw +metis +mpfr +scotch +suitesparse
+  - armadillo@12.6.2 %gcc@11.4.0 +hdf5 +superlu +arpack
+  - itensor@3.1.11 %gcc@11.4.0 +mpi +openmp
+  - alps@2.3.0 %gcc@11.4.0 +mpi +python
+  numerical_methods:
+  - petsc@3.19.4 %gcc@11.4.0 +mpi +openmp +hypre +mumps +superlu-dist +metis +parmetis
+  - slepc@3.19.1 %gcc@11.4.0 +arpack
+  - trilinos@15.0.0 %gcc@11.4.0 +mpi +openmp +boost +hdf5 +netcdf +python
+  - sundials@6.6.0 %gcc@11.4.0 +mpi +openmp +hypre +petsc
+  - hypre@2.29.0 %gcc@11.4.0 +mpi +openmp +superlu-dist
+  - mumps@5.5.1 %gcc@11.4.0 +mpi +openmp +scotch +ptscotch +metis +parmetis
+  - superlu-dist@8.1.2 %gcc@11.4.0 +mpi +openmp
+  math_libraries:
+  - openblas@0.3.23 %gcc@11.4.0 +fortran +pic +shared threads=openmp
+  - scalapack@2.2.0 %gcc@11.4.0 +pic +shared
+  - fftw@3.3.10 %gcc@11.4.0 +mpi +openmp +pfft_patches
+  - mkl@2023.2.0 %gcc@11.4.0 +cluster +ilp64
+  - netlib-lapack@3.11.0 %gcc@11.4.0 +fortran +pic +shared
+  python_physics:
+  - python@3.11.5 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-numpy@1.25.2 %gcc@11.4.0 +blas+lapack
+  - py-scipy@1.11.2 %gcc@11.4.0 +blas+lapack
+  - py-matplotlib@3.7.2 %gcc@11.4.0 +movies
+  - py-sympy@1.12 %gcc@11.4.0
+  - py-fenics@2019.1.0 %gcc@11.4.0 +mpi +petsc +hdf5
+  - py-dolfin@2019.1.0 %gcc@11.4.0 +mpi +petsc +hdf5
+  - py-firedrake@0.13.0 %gcc@11.4.0 +mpi +petsc
+  machine_learning_physics:
+  - pytorch@2.0.1 %gcc@11.4.0 +cuda +distributed +kineto +magma +nccl +numa +onnx_ml +qnnpack +tensorpipe +xnnpack
+  - tensorflow@2.13.0 %gcc@11.4.0 +cuda +nccl +tensorrt
+  - py-scikit-learn@1.3.0 %gcc@11.4.0 +blas+lapack
+  - py-jax@0.4.14 %gcc@11.4.0 +cuda
+  - py-flax@0.7.2 %gcc@11.4.0
+  visualization:
+  - paraview@5.11.2 %gcc@11.4.0 +python +mpi +osmesa +qt
+  - visit@3.3.3 %gcc@11.4.0 +mpi +python +qt
+  - vtk@9.3.0 %gcc@11.4.0 +python +qt +mpi +opengl2
+  - mayavi@4.8.1 %gcc@11.4.0 +python +qt
+  - gnuplot@5.4.8 %gcc@11.4.0 +X +qt +cairo +gd +latex +libcerf +pbm
+  workflow_orchestration:
+  - nextflow@23.04.1 +java
+  - snakemake@7.32.4 +python
+  - dask@2023.7.1 +python +distributed
+  - ray@2.6.1 +python
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.2xlarge
+    vcpus: 8
+    memory_gb: 16
+    storage_gb: 200
+    cost_per_hour: 0.34
+    use_case: Theory development and small calculations
+  quantum_calculations:
+    instance_type: hpc6a.24xlarge
+    vcpus: 48
+    memory_gb: 192
+    storage_gb: 1000
+    efa_enabled: true
+    placement_group: cluster
+    enhanced_networking: sr-iov
+    network_performance: 50 Gbps
+    cost_per_hour: 1.44
+    use_case: DFT and quantum many-body calculations
+  large_scale_physics:
+    instance_type: hpc6a.48xlarge
+    vcpus: 96
+    memory_gb: 384
+    storage_gb: 2000
+    efa_enabled: true
+    placement_group: cluster
+    enhanced_networking: sr-iov
+    network_performance: 100 Gbps
+    cost_per_hour: 2.88
+    use_case: Large-scale physics simulations
+  hep_analysis:
+    instance_type: r6i.8xlarge
+    vcpus: 32
+    memory_gb: 256
+    storage_gb: 4000
+    cost_per_hour: 2.05
+    use_case: High energy physics data analysis
+  gpu_physics:
+    instance_type: p4d.24xlarge
+    vcpus: 96
+    memory_gb: 1152
+    gpu_memory_gb: 320
+    gpus: 8
+    storage_gb: 8000
+    cost_per_hour: 32.77
+    use_case: GPU-accelerated physics simulations and ML
+estimated_cost:
+  compute: 2800
+  storage: 500
+  data_transfer: 200
+  specialized_software: 300
+  total: 3800
+research_capabilities:
+- Quantum many-body calculations
+- Condensed matter band structure analysis
+- High energy physics Monte Carlo simulations
+- Statistical mechanics and phase transitions
+- Quantum computing algorithm development
+- Machine learning for physics discovery
+- Finite element method simulations
+- Large-scale numerical optimization
+aws_data_sources:
+- CERN Open Data Portal - High energy physics collision data
+- Materials Project - Computed condensed matter properties
+- Quantum Algorithm Zoo - Quantum computing algorithms
+- NIST Physics Data - Fundamental physics constants and data
+demo_workflows:
+- name: Quantum Many-Body Calculation
+  description: DMRG calculation of 1D Heisenberg model
+  dataset: Synthetic quantum spin system
+  expected_runtime: 4-8 hours
+  cost_estimate: 11.5
+- name: High Energy Physics Analysis
+  description: Higgs boson analysis with ROOT framework
+  dataset: CERN Open Data CMS events
+  expected_runtime: 6-12 hours
+  cost_estimate: 24.6
+- name: Condensed Matter Band Structure
+  description: Electronic band structure calculation with Quantum ESPRESSO
+  dataset: Materials Project crystal structures
+  expected_runtime: 2-6 hours
+  cost_estimate: 8.6
+- name: Quantum Algorithm Simulation
+  description: Variational quantum eigensolver with Qiskit
+  dataset: Molecular Hamiltonian parameters
+  expected_runtime: 1-4 hours
+  cost_estimate: 13.1
+physics_features:
+  quantum_frameworks: [Qiskit, Cirq, PennyLane, OpenFermion]
+  simulation_methods: [Monte_Carlo, DMRG, DFT, Molecular_Dynamics]
+  hep_tools: [ROOT, Geant4, Pythia, MadGraph, Sherpa]
+  numerical_solvers: [PETSc, Trilinos, SUNDIALS, HYPRE]
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 32
+  placement_strategy: cluster
+  network_backend: efa
+scaling_profiles:
+  single_system:
+    nodes: 1-2
+    efficiency: 95
+    use_case: Small quantum systems, molecules
+    memory_per_core_gb: 4
+  medium_scale:
+    nodes: 4-8
+    efficiency: 90
+    use_case: Condensed matter systems
+    memory_per_core_gb: 8
+  large_scale:
+    nodes: 16-32
+    efficiency: 85
+    use_case: Many-body systems, HEP simulations
+    memory_per_core_gb: 12
+aws_integration:
+  datasets_available: 4
+  demo_workflows_available: 4
+  total_data_volume_tb: 450
+  integration_date: '2024-01-15'
+  data_access_patterns:
+    cost_optimized: S3 Intelligent Tiering for simulation results
+    performance_optimized: EFS for active calculations
+    security: Encrypted storage for proprietary physics research

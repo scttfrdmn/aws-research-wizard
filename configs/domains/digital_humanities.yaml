@@ -1,0 +1,216 @@
+name: Digital Humanities Research Laboratory
+description: Computational platform for text analysis, cultural analytics, digital
+  archives, and humanities data science research
+primary_domains:
+- Digital Humanities
+- Text Analysis and Mining
+- Cultural Analytics
+- Digital Archives
+- Humanities Data Science
+target_users: Humanists, digital scholars, cultural analysts, librarians
+  (1-10 users)
+spack_packages:
+  text_processing:
+  - python@3.11.5 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-nltk@3.8.1 %gcc@11.4.0
+  - py-spacy@3.6.1 %gcc@11.4.0
+  - py-gensim@4.3.1 %gcc@11.4.0
+  - py-scikit-learn@1.3.0 %gcc@11.4.0 +blas+lapack
+  - py-pandas@2.0.3 %gcc@11.4.0
+  - py-numpy@1.25.2 %gcc@11.4.0 +blas+lapack
+  - py-textblob@0.17.1 %gcc@11.4.0
+  - py-polyglot@16.7.4 %gcc@11.4.0
+  natural_language:
+  - py-transformers@4.32.1 %gcc@11.4.0
+  - py-torch@2.0.1 %gcc@11.4.0 +distributed
+  - py-tensorflow@2.13.0 %gcc@11.4.0
+  - py-huggingface-hub@0.16.4 %gcc@11.4.0
+  - py-datasets@2.14.4 %gcc@11.4.0
+  - py-tokenizers@0.13.3 %gcc@11.4.0
+  - py-sentence-transformers@2.2.2 %gcc@11.4.0
+  corpus_analysis:
+  - mallet@2.0.8 +java
+  - stanford-corenlp@4.5.0 +java
+  - py-stanza@1.5.1 %gcc@11.4.0
+  - py-flair@0.12.2 %gcc@11.4.0
+  - py-allennlp@2.10.1 %gcc@11.4.0
+  - py-gensim@4.3.1 %gcc@11.4.0
+  - weka@3.8.6 +java
+  digital_archives:
+  - tika@2.8.0 +java
+  - solr@9.3.0 +java
+  - elasticsearch@8.9.0 +java
+  - py-beautifulsoup4@4.12.2 %gcc@11.4.0
+  - py-requests@2.31.0 %gcc@11.4.0
+  - py-scrapy@2.10.1 %gcc@11.4.0
+  - py-newspaper3k@0.2.8 %gcc@11.4.0
+  - tesseract@5.3.1 %gcc@11.4.0 +training
+  image_analysis:
+  - opencv@4.8.0 %gcc@11.4.0 +python +imgcodecs +videoio
+  - py-pillow@10.0.0 %gcc@11.4.0 +jpeg +png +tiff
+  - py-scikit-image@0.21.0 %gcc@11.4.0
+  - imagemagick@7.1.1-15 %gcc@11.4.0 +png +jpeg +tiff +ghostscript
+  - py-matplotlib@3.7.2 %gcc@11.4.0
+  - py-seaborn@0.12.2 %gcc@11.4.0
+  - py-plotly@5.15.0 %gcc@11.4.0
+  geospatial_humanities:
+  - gdal@3.7.1 %gcc@11.4.0 +python +netcdf +hdf5 +geos +proj
+  - proj@9.2.1 %gcc@11.4.0
+  - geos@3.12.0 %gcc@11.4.0
+  - py-geopandas@0.13.2 %gcc@11.4.0
+  - py-folium@0.14.0 %gcc@11.4.0
+  - py-shapely@2.0.1 %gcc@11.4.0
+  - postgis@3.3.3 %gcc@11.4.0 +sfcgal
+  - qgis@3.32.3 %gcc@11.4.0 +python +server
+  network_analysis:
+  - py-networkx@3.1 %gcc@11.4.0
+  - py-igraph@0.10.6 %gcc@11.4.0
+  - gephi@0.10.1 +java
+  - py-graph-tool@2.55 %gcc@11.4.0 +openmp
+  - py-snap-stanford@6.0.0 %gcc@11.4.0
+  - cytoscape@3.10.1 +java
+  databases:
+  - postgresql@15.4 %gcc@11.4.0 +gssapi +ldap +openssl +python +uuid +xml
+  - mysql@8.1.0 %gcc@11.4.0 +ssl
+  - sqlite@3.42.0 %gcc@11.4.0 +fts +rtree
+  - mongodb@7.0.0 %gcc@11.4.0
+  - neo4j@5.11.0 +java
+  - redis@7.2.0 %gcc@11.4.0
+  r_digital_humanities:
+  - r@4.3.1 %gcc@11.4.0 +X+external-lapack ^openblas@0.3.23
+  - r-tm@0.7-11
+  - r-topicmodels@0.2-14
+  - r-quanteda@3.3.1
+  - r-tidytext@0.4.1
+  - r-stringr@1.5.0
+  - r-ggplot2@3.4.2
+  - r-dplyr@1.1.2
+  - r-igraph@1.5.1
+  - r-leaflet@2.2.0
+  web_technologies:
+  - nodejs@20.5.1 %gcc@11.4.0 +icu4c +openssl
+  - apache-httpd@2.4.57 %gcc@11.4.0 +ssl
+  - nginx@1.25.1 %gcc@11.4.0 +ssl
+  - py-django@4.2.4 %gcc@11.4.0
+  - py-flask@2.3.2 %gcc@11.4.0
+  - py-fastapi@0.101.1 %gcc@11.4.0
+  - py-streamlit@1.25.0 %gcc@11.4.0
+  workflow_orchestration:
+  - nextflow@23.04.1 +java
+  - snakemake@7.32.4 +python
+  - py-luigi@3.4.0 %gcc@11.4.0
+  - py-prefect@2.11.5 %gcc@11.4.0
+aws_instance_recommendations:
+  development:
+    instance_type: t3.medium
+    vcpus: 2
+    memory_gb: 4
+    storage_gb: 100
+    cost_per_hour: 0.0416
+    use_case: Small text analysis and development
+  text_processing:
+    instance_type: c6i.2xlarge
+    vcpus: 8
+    memory_gb: 16
+    storage_gb: 500
+    cost_per_hour: 0.34
+    use_case: Medium-scale corpus analysis and NLP tasks
+  large_corpus_analysis:
+    instance_type: r6i.4xlarge
+    vcpus: 16
+    memory_gb: 128
+    storage_gb: 1000
+    cost_per_hour: 1.02
+    use_case: Large text corpora and memory-intensive analysis
+  machine_learning:
+    instance_type: p3.2xlarge
+    vcpus: 8
+    memory_gb: 61
+    gpu_memory_gb: 16
+    gpus: 1
+    storage_gb: 1000
+    cost_per_hour: 3.06
+    use_case: Deep learning for text analysis and cultural analytics
+  digital_archives:
+    instance_type: m6i.4xlarge
+    vcpus: 16
+    memory_gb: 64
+    storage_gb: 2000
+    cost_per_hour: 0.768
+    use_case: Digital archive processing and web services
+estimated_cost:
+  compute: 400
+  storage: 200
+  data_transfer: 50
+  web_services: 100
+  total: 750
+research_capabilities:
+- Large-scale text analysis and mining
+- Topic modeling and document clustering
+- Named entity recognition and sentiment analysis
+- Cultural analytics and digital storytelling
+- Historical network analysis
+- Geospatial humanities and mapping
+- Digital archive creation and management
+- Multilingual text processing
+aws_data_sources:
+- Common Crawl - Web crawl data for linguistic analysis
+- HathiTrust Digital Library - Digitized books and texts
+- Internet Archive Books - Public domain literature
+- Project Gutenberg - Classic literature corpus
+demo_workflows:
+- name: Topic Modeling Historical Newspapers
+  description: LDA topic modeling on historical newspaper archives
+  dataset: Chronicling America historical newspapers
+  expected_runtime: 2-4 hours
+  cost_estimate: 2.7
+- name: Named Entity Recognition
+  description: Extract people, places, and organizations from literary texts
+  dataset: Project Gutenberg literature corpus
+  expected_runtime: 1-2 hours
+  cost_estimate: 0.68
+- name: Cultural Network Analysis
+  description: Social network analysis of historical correspondences
+  dataset: Letters and Diaries corpus
+  expected_runtime: 1-3 hours
+  cost_estimate: 1.5
+- name: Multilingual Sentiment Analysis
+  description: Cross-cultural sentiment analysis of social media
+  dataset: Twitter API multilingual sample
+  expected_runtime: 2-5 hours
+  cost_estimate: 3.8
+digital_humanities_features:
+  text_formats: [plain_text, xml, json, csv, pdf, epub]
+  languages_supported: [english, spanish, french, german, italian, chinese, japanese]
+  analysis_methods: [topic_modeling, sentiment_analysis, ner, network_analysis]
+  visualization_tools: [matplotlib, plotly, gephi, leaflet, d3js]
+mpi_optimizations:
+  efa_enabled: false
+  max_nodes: 4
+  placement_strategy: spread
+  network_backend: enhanced_networking
+scaling_profiles:
+  individual_research:
+    nodes: 1
+    efficiency: 95
+    use_case: Single researcher projects
+    memory_per_core_gb: 4
+  collaborative_project:
+    nodes: 2-3
+    efficiency: 90
+    use_case: Small team digital humanities projects
+    memory_per_core_gb: 8
+  large_scale_analysis:
+    nodes: 4-6
+    efficiency: 85
+    use_case: Big data humanities research
+    memory_per_core_gb: 12
+aws_integration:
+  datasets_available: 4
+  demo_workflows_available: 4
+  total_data_volume_tb: 15
+  integration_date: '2024-01-15'
+  data_access_patterns:
+    cost_optimized: S3 Standard-IA for archival texts
+    performance_optimized: S3 Standard for active corpora
+    security: Encrypted storage for sensitive historical documents

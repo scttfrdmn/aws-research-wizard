@@ -1,0 +1,203 @@
+name: Neuroscience & Brain Research Laboratory
+description: Comprehensive platform for computational neuroscience, brain imaging analysis,
+  neural network modeling, and neuroinformatics research
+primary_domains:
+- Computational Neuroscience
+- Brain Imaging Analysis
+- Neural Network Modeling
+- Neuroinformatics
+- Cognitive Science
+target_users: Neuroscientists, brain imaging researchers, computational biologists
+  (1-20 users)
+spack_packages:
+  neuroimaging_analysis:
+  - fsl@6.0.7.4 %gcc@11.4.0 +shared
+  - freesurfer@7.4.1 %gcc@11.4.0 +openmp
+  - ants@2.5.0 %gcc@11.4.0 +itk +vtk
+  - afni@23.3.00 %gcc@11.4.0 +openmp +python
+  - spm@12.8 %gcc@11.4.0 +matlab
+  - nibabel@5.1.0 %gcc@11.4.0 +python
+  - nilearn@0.10.1 %gcc@11.4.0 +python
+  - dipy@1.7.0 %gcc@11.4.0 +python +cython
+  brain_connectivity:
+  - connectome-workbench@1.5.0 %gcc@11.4.0 +qt
+  - dsi-studio@2023.8.2 %gcc@11.4.0 +qt +openmp
+  - mrtrix3@3.0.4 %gcc@11.4.0 +python +fftw
+  - camino@3.0 %gcc@11.4.0 +java
+  - probtrackx@6.0.7 %gcc@11.4.0 +cuda
+  neural_simulation:
+  - neuron@8.2.2 %gcc@11.4.0 +mpi +python +interviews
+  - brian2@2.5.4 %gcc@11.4.0 +python +cython
+  - nest@3.5.0 %gcc@11.4.0 +mpi +openmp +python
+  - genesis@2.4.0 %gcc@11.4.0 +mpi
+  - moose@4.0.0 %gcc@11.4.0 +python +hdf5
+  - nengo@3.2.0 %gcc@11.4.0 +python
+  electrophysiology:
+  - spike2@10.0 %gcc@11.4.0
+  - klusta@3.0.16 %gcc@11.4.0 +python
+  - kilosort@4.0 %gcc@11.4.0 +python +cuda
+  - phy@2.0 %gcc@11.4.0 +python +qt
+  - neo@0.12.0 %gcc@11.4.0 +python
+  - elephant@0.14.0 %gcc@11.4.0 +python
+  data_formats:
+  - hdf5@1.14.2 %gcc@11.4.0 +mpi +threadsafe +fortran
+  - netcdf-c@4.9.2 %gcc@11.4.0 +mpi +parallel-netcdf +hdf5
+  - nifti@3.0.0 %gcc@11.4.0 +shared
+  - minc@2.4.6 %gcc@11.4.0 +hdf5 +netcdf
+  - dcmtk@3.6.7 %gcc@11.4.0 +pic
+  python_neuro:
+  - python@3.11.5 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-numpy@1.25.2 %gcc@11.4.0 +blas+lapack
+  - py-scipy@1.11.2 %gcc@11.4.0 +blas+lapack
+  - py-matplotlib@3.7.2 %gcc@11.4.0 +tk
+  - py-pandas@2.0.3 %gcc@11.4.0
+  - py-scikit-learn@1.3.0 %gcc@11.4.0 +blas+lapack
+  - py-scikit-image@0.21.0 %gcc@11.4.0
+  - py-networkx@3.1 %gcc@11.4.0
+  - py-seaborn@0.12.2 %gcc@11.4.0
+  - py-plotly@5.15.0 %gcc@11.4.0
+  machine_learning_neuro:
+  - pytorch@2.0.1 %gcc@11.4.0 +cuda +distributed +kineto +magma +nccl +numa +onnx_ml +qnnpack +tensorpipe +xnnpack
+  - tensorflow@2.13.0 %gcc@11.4.0 +cuda +nccl +tensorrt
+  - py-keras@2.13.1 %gcc@11.4.0
+  - py-torch-geometric@2.3.1 %gcc@11.4.0
+  - py-nilearn@0.10.1 %gcc@11.4.0
+  r_neuroscience:
+  - r@4.3.1 %gcc@11.4.0 +X+external-lapack ^openblas@0.3.23
+  - r-neurobase@1.32.4
+  - r-fslr@2.25.2
+  - r-rnifti@1.4.5
+  - r-oro-nifti@0.11.4
+  - r-brainr@1.6.0
+  - r-igraph@1.5.1
+  - r-network@1.18.1
+  - r-sna@2.7.1
+  visualization_neuro:
+  - paraview@5.11.2 %gcc@11.4.0 +python +mpi +osmesa +qt
+  - visit@3.3.3 %gcc@11.4.0 +mpi +python +qt
+  - vtk@9.3.0 %gcc@11.4.0 +python +qt +opengl2
+  - itk@5.3.0 %gcc@11.4.0 +python +review +rtk
+  - mayavi@4.8.1 %gcc@11.4.0 +python +qt
+  workflow_orchestration:
+  - nextflow@23.04.1 +java
+  - snakemake@7.32.4 +python
+  - nipype@1.8.6 +python
+  - pydra@0.23 +python
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.2xlarge
+    vcpus: 8
+    memory_gb: 16
+    storage_gb: 200
+    cost_per_hour: 0.34
+    use_case: Small-scale analysis and development
+  brain_imaging:
+    instance_type: r6i.4xlarge
+    vcpus: 16
+    memory_gb: 128
+    storage_gb: 1000
+    cost_per_hour: 1.02
+    use_case: fMRI and structural brain imaging analysis
+  large_cohort_imaging:
+    instance_type: r6i.8xlarge
+    vcpus: 32
+    memory_gb: 256
+    storage_gb: 2000
+    cost_per_hour: 2.05
+    use_case: Large cohort studies and population brain imaging
+  neural_simulation:
+    instance_type: hpc6a.24xlarge
+    vcpus: 48
+    memory_gb: 192
+    storage_gb: 1000
+    efa_enabled: true
+    placement_group: cluster
+    enhanced_networking: sr-iov
+    network_performance: 50 Gbps
+    cost_per_hour: 1.44
+    use_case: Large-scale neural network simulations
+  gpu_accelerated:
+    instance_type: p4d.24xlarge
+    vcpus: 96
+    memory_gb: 1152
+    gpu_memory_gb: 320
+    gpus: 8
+    storage_gb: 8000
+    cost_per_hour: 32.77
+    use_case: Deep learning and GPU-accelerated brain imaging
+estimated_cost:
+  compute: 1500
+  storage: 400
+  data_transfer: 150
+  imaging_data: 300
+  total: 2350
+research_capabilities:
+- Structural and functional MRI analysis
+- Diffusion tensor imaging and tractography
+- Electrophysiology data processing
+- Neural network modeling and simulation
+- Brain connectivity analysis
+- Deep learning for neuroimaging
+- Population neuroscience studies
+- Real-time brain-computer interfaces
+aws_data_sources:
+- Human Connectome Project - High-resolution brain imaging data
+- UK Biobank Brain Imaging - Population-scale neuroimaging dataset
+- ADNI Alzheimer's Dataset - Longitudinal brain imaging and clinical data
+- OpenNeuro - Open brain imaging datasets
+demo_workflows:
+- name: Structural Brain Analysis
+  description: FreeSurfer cortical thickness analysis on MRI data
+  dataset: Human Connectome Project structural MRI
+  expected_runtime: 3-6 hours
+  cost_estimate: 18.5
+- name: fMRI Connectivity Analysis
+  description: Resting-state functional connectivity analysis
+  dataset: UK Biobank resting-state fMRI
+  expected_runtime: 2-4 hours
+  cost_estimate: 12.3
+- name: DTI Tractography
+  description: White matter tractography using DSI Studio
+  dataset: Human Connectome Project diffusion MRI
+  expected_runtime: 4-8 hours
+  cost_estimate: 25.7
+- name: Neural Network Simulation
+  description: Large-scale cortical network simulation with NEST
+  dataset: Synthetic neural network parameters
+  expected_runtime: 6-12 hours
+  cost_estimate: 45.2
+neuroscience_features:
+  imaging_modalities: [MRI, fMRI, DTI, EEG, MEG, PET, SPECT]
+  analysis_types: [structural, functional, connectivity, electrophysiology]
+  simulation_tools: [NEURON, NEST, Brian2, GENESIS, MOOSE]
+  ml_applications: [classification, segmentation, prediction, clustering]
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 16
+  placement_strategy: cluster
+  network_backend: efa
+scaling_profiles:
+  single_subject:
+    nodes: 1
+    efficiency: 95
+    use_case: Individual brain analysis
+    memory_per_core_gb: 8
+  cohort_analysis:
+    nodes: 2-4
+    efficiency: 90
+    use_case: Small cohort studies
+    memory_per_core_gb: 12
+  population_study:
+    nodes: 8-16
+    efficiency: 85
+    use_case: Large population neuroimaging
+    memory_per_core_gb: 16
+aws_integration:
+  datasets_available: 4
+  demo_workflows_available: 4
+  total_data_volume_tb: 850
+  integration_date: '2024-01-15'
+  data_access_patterns:
+    cost_optimized: Use S3 Intelligent Tiering for imaging archives
+    performance_optimized: EFS for active analysis, S3 for long-term storage
+    security: HIPAA-compliant encryption for clinical neuroimaging data

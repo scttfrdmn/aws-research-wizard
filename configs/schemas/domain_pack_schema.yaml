@@ -1,0 +1,154 @@
+# Domain Pack Configuration Schema
+type: object
+required:
+  - name
+  - description
+  - primary_domains
+  - target_users
+  - spack_packages
+  - aws_instance_recommendations
+  - estimated_cost
+  - research_capabilities
+
+properties:
+  name:
+    type: string
+    description: "Human-readable name of the research pack"
+    
+  description:
+    type: string
+    description: "Detailed description of the pack's purpose and capabilities"
+    
+  primary_domains:
+    type: array
+    items:
+      type: string
+    description: "List of primary research domains this pack serves"
+    
+  target_users:
+    type: string
+    description: "Description of intended user base and scale"
+    
+  spack_packages:
+    type: object
+    description: "Categorized Spack package specifications"
+    patternProperties:
+      "^[a-zA-Z_]+$":
+        type: array
+        items:
+          type: string
+          pattern: "^[a-zA-Z0-9@.+_-]+.*$"
+          
+  aws_instance_recommendations:
+    type: object
+    description: "AWS instance configurations for different use cases"
+    patternProperties:
+      "^[a-zA-Z_]+$":
+        type: object
+        required:
+          - instance_type
+          - vcpus
+          - memory_gb
+          - cost_per_hour
+          - use_case
+        properties:
+          instance_type:
+            type: string
+            pattern: "^[a-z0-9]+\\.[a-z0-9]+$"
+          vcpus:
+            type: integer
+            minimum: 1
+          memory_gb:
+            type: integer
+            minimum: 1
+          storage_gb:
+            type: integer
+            minimum: 10
+          cost_per_hour:
+            type: number
+            minimum: 0
+          use_case:
+            type: string
+          efa_enabled:
+            type: boolean
+            default: false
+          placement_group:
+            type: string
+            enum: ["cluster", "partition", "spread"]
+          enhanced_networking:
+            type: string
+            enum: ["sr-iov", "standard"]
+          network_performance:
+            type: string
+            
+  estimated_cost:
+    type: object
+    required:
+      - compute
+      - storage
+      - total
+    properties:
+      compute:
+        type: number
+        minimum: 0
+      storage:
+        type: number
+        minimum: 0
+      network:
+        type: number
+        minimum: 0
+      data_transfer:
+        type: number
+        minimum: 0
+      total:
+        type: number
+        minimum: 0
+        
+  research_capabilities:
+    type: array
+    items:
+      type: string
+    description: "List of specific research capabilities enabled"
+    
+  aws_data_sources:
+    type: array
+    items:
+      type: string
+    description: "Optional AWS data sources and services used"
+    
+  demo_workflows:
+    type: array
+    items:
+      type: object
+      required:
+        - name
+        - description
+        - dataset
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        dataset:
+          type: string
+        expected_runtime:
+          type: string
+        cost_estimate:
+          type: number
+          
+  mpi_optimizations:
+    type: object
+    properties:
+      efa_enabled:
+        type: boolean
+        default: false
+      max_nodes:
+        type: integer
+        minimum: 1
+        maximum: 64
+      placement_strategy:
+        type: string
+        enum: ["cluster", "partition", "spread"]
+      network_backend:
+        type: string
+        enum: ["efa", "enhanced_networking", "standard"]

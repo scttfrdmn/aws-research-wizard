@@ -1,0 +1,203 @@
+name: Cybersecurity Research & Threat Analysis Laboratory
+description: Comprehensive platform for cybersecurity research, threat analysis, digital
+  forensics, and security analytics with isolated environments
+primary_domains:
+- Cybersecurity
+- Information Security
+- Digital Forensics
+- Threat Intelligence
+- Malware Analysis
+target_users: Security researchers, threat analysts, digital forensics experts (1-20
+  users)
+spack_packages:
+  security_frameworks:
+  - metasploit@6.3.25 %gcc@11.4.0
+  - nmap@7.94 %gcc@11.4.0
+  - wireshark@4.0.8 %gcc@11.4.0 +qt
+  - john-the-ripper@1.9.0 %gcc@11.4.0 +openmp +cuda
+  - hashcat@6.2.6 %gcc@11.4.0 +cuda
+  - aircrack-ng@1.7 %gcc@11.4.0
+  - burp-suite@2023.8.2 %gcc@11.4.0
+  malware_analysis:
+  - yara@4.3.2 %gcc@11.4.0 +cuckoo +magic
+  - radare2@5.8.8 %gcc@11.4.0
+  - ghidra@10.3.2 %gcc@11.4.0
+  - clamav@1.1.1 %gcc@11.4.0
+  - volatility@2.6.1 %gcc@11.4.0
+  - binwalk@2.3.4 %gcc@11.4.0
+  - ida-free@8.3 %gcc@11.4.0
+  forensics_tools:
+  - sleuthkit@4.12.1 %gcc@11.4.0
+  - autopsy@4.20.0 %gcc@11.4.0
+  - foremost@1.5.7 %gcc@11.4.0
+  - photorec@7.1 %gcc@11.4.0
+  - testdisk@7.1 %gcc@11.4.0
+  - bulk-extractor@2.0.3 %gcc@11.4.0
+  - dcfldd@1.9.1 %gcc@11.4.0
+  cryptography:
+  - openssl@3.1.2 %gcc@11.4.0
+  - libsodium@1.0.18 %gcc@11.4.0
+  - gnupg@2.4.3 %gcc@11.4.0
+  - crypto++@8.8.0 %gcc@11.4.0
+  - botan@3.1.1 %gcc@11.4.0
+  - mbedtls@3.4.1 %gcc@11.4.0
+  - nettle@3.9.1 %gcc@11.4.0
+  network_security:
+  - snort@3.1.64.0 %gcc@11.4.0
+  - suricata@7.0.0 %gcc@11.4.0
+  - zeek@6.0.1 %gcc@11.4.0
+  - tcpdump@4.99.4 %gcc@11.4.0
+  - nfcapd@1.7.3 %gcc@11.4.0
+  - ntopng@5.6 %gcc@11.4.0
+  - kismet@2023.07.R1 %gcc@11.4.0
+  vulnerability_scanning:
+  - nessus@10.6.1 %gcc@11.4.0
+  - openvas@22.7.1 %gcc@11.4.0
+  - nuclei@2.9.15 %gcc@11.4.0
+  - nikto@2.5.0 %gcc@11.4.0
+  - dirb@2.22 %gcc@11.4.0
+  - gobuster@3.6.0 %gcc@11.4.0
+  - sqlmap@1.7.7 %gcc@11.4.0
+  python_security:
+  - python@3.11.5 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-scapy@2.5.0 %gcc@11.4.0
+  - py-requests@2.31.0 %gcc@11.4.0
+  - py-beautifulsoup4@4.12.2 %gcc@11.4.0
+  - py-pycryptodome@3.18.0 %gcc@11.4.0
+  - py-cryptography@41.0.3 %gcc@11.4.0
+  - py-paramiko@3.2.0 %gcc@11.4.0
+  - py-impacket@0.11.0 %gcc@11.4.0
+  - py-pwntools@4.10.0 %gcc@11.4.0
+  - py-binwalk@2.3.4 %gcc@11.4.0
+  ml_security:
+  - pytorch@2.0.1 %gcc@11.4.0 +cuda +nccl
+  - tensorflow@2.13.0 %gcc@11.4.0 +cuda
+  - py-scikit-learn@1.3.0 %gcc@11.4.0
+  - py-pandas@2.0.3 %gcc@11.4.0
+  - py-numpy@1.25.2 %gcc@11.4.0
+  - py-matplotlib@3.7.2 %gcc@11.4.0
+  - py-seaborn@0.12.2 %gcc@11.4.0
+  database_security:
+  - postgresql@15.4 %gcc@11.4.0 +ssl
+  - mongodb@7.0.0 %gcc@11.4.0 +ssl
+  - redis@7.2.0 %gcc@11.4.0 +tls
+  - elasticsearch@8.9.0 %gcc@11.4.0
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.xlarge
+    vcpus: 4
+    memory_gb: 8
+    storage_gb: 100
+    cost_per_hour: 0.17
+    use_case: Development and light security testing
+  malware_analysis:
+    instance_type: c6i.4xlarge
+    vcpus: 16
+    memory_gb: 32
+    storage_gb: 500
+    cost_per_hour: 0.68
+    use_case: Isolated malware analysis and reverse engineering
+  network_monitoring:
+    instance_type: r6i.4xlarge
+    vcpus: 16
+    memory_gb: 128
+    storage_gb: 1000
+    cost_per_hour: 1.02
+    use_case: Network traffic analysis and intrusion detection
+  forensics_workstation:
+    instance_type: r6i.8xlarge
+    vcpus: 32
+    memory_gb: 256
+    storage_gb: 2000
+    cost_per_hour: 2.05
+    use_case: Digital forensics and large dataset analysis
+  gpu_cracking:
+    instance_type: p4d.24xlarge
+    vcpus: 96
+    memory_gb: 1152
+    gpu_count: 8
+    gpu_memory: 320 GB total
+    cost_per_hour: 32.77
+    use_case: GPU-accelerated cryptographic analysis and password cracking
+  threat_intelligence:
+    instance_type: c6i.8xlarge
+    vcpus: 32
+    memory_gb: 64
+    storage_gb: 1000
+    cost_per_hour: 1.36
+    use_case: Large-scale threat intelligence processing
+estimated_cost:
+  compute: 800
+  gpu: 600
+  storage: 300
+  security_services: 200
+  total: 1900
+research_capabilities:
+- Advanced malware analysis and reverse engineering
+- Network intrusion detection and traffic analysis
+- Digital forensics and incident response workflows
+- GPU-accelerated cryptographic analysis
+- Vulnerability assessment and penetration testing
+- Threat intelligence collection and analysis
+- Security machine learning and anomaly detection
+- Compliance and risk assessment frameworks
+aws_data_sources:
+- AWS Security Hub findings and compliance data
+- VPC Flow Logs for network analysis
+- CloudTrail logs for audit analysis
+- GuardDuty threat intelligence findings
+- Common Vulnerabilities and Exposures (CVE) database
+- Threat intelligence feeds from AWS Marketplace
+demo_workflows:
+- name: Malware Analysis Pipeline
+  description: Analyze suspicious binaries using YARA and Radare2
+  dataset: Curated malware samples from MalwareBazaar
+  expected_runtime: 1-3 hours
+  cost_estimate: 8.5
+- name: Network Intrusion Detection
+  description: Deploy Suricata IDS with rule optimization
+  dataset: DARPA intrusion detection datasets
+  expected_runtime: 2-4 hours
+  cost_estimate: 12.3
+- name: Digital Forensics Investigation
+  description: Memory dump analysis and timeline reconstruction
+  dataset: NIST computer forensics reference datasets
+  expected_runtime: 3-6 hours
+  cost_estimate: 18.75
+- name: Cryptographic Attack Simulation
+  description: GPU-accelerated hash cracking demonstration
+  dataset: Publicly available hash challenge datasets
+  expected_runtime: 2-8 hours
+  cost_estimate: 98.4
+security_features:
+  isolation: Dedicated security groups and VPC isolation
+  compliance: FISMA, SOC2, and PCI DSS compatible configurations
+  encryption: EBS encryption and in-transit encryption enabled
+  logging: Comprehensive audit logging and monitoring
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 8
+  placement_strategy: cluster
+  network_backend: efa
+scaling_profiles:
+  single_analyst:
+    nodes: 1
+    efficiency: 100
+    use_case: Individual security research and analysis
+  team_analysis:
+    nodes: 2-4
+    efficiency: 90
+    use_case: Collaborative threat hunting and analysis
+  enterprise_scale:
+    nodes: 4-8
+    efficiency: 85
+    use_case: Large-scale threat intelligence and forensics
+aws_integration:
+  datasets_available: 0
+  demo_workflows_available: 0
+  total_data_volume_tb: 0
+  integration_date: '2023-12-01'
+  data_access_patterns:
+    cost_optimized: Use S3 Intelligent Tiering
+    performance_optimized: Access from same AWS region
+    security: Data encrypted in transit and at rest

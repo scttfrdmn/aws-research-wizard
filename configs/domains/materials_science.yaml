@@ -1,0 +1,210 @@
+name: Materials Science & Engineering Laboratory
+description: Advanced computational platform for materials modeling, molecular dynamics,
+  density functional theory, and materials informatics research
+primary_domains:
+- Computational Materials Science
+- Molecular Dynamics Simulation
+- Density Functional Theory
+- Materials Informatics
+- Quantum Chemistry
+target_users: Materials scientists, computational chemists, physics researchers
+  (1-25 users)
+spack_packages:
+  quantum_chemistry:
+  - quantum-espresso@7.2 %gcc@11.4.0 +mpi +openmp +scalapack +elpa
+  - vasp@6.4.2 %gcc@11.4.0 +mpi +openmp +wannier90
+  - cp2k@2023.2 %gcc@11.4.0 +mpi +openmp +libxc +pexsi +sirius
+  - gaussian@16 %gcc@11.4.0 +mpi
+  - nwchem@7.2.0 %gcc@11.4.0 +mpi +openmp +python
+  - orca@5.0.4 %gcc@11.4.0 +mpi
+  - abinit@9.10.4 %gcc@11.4.0 +mpi +openmp +netcdf +hdf5
+  molecular_dynamics:
+  - lammps@2023.08.02 %gcc@11.4.0 +mpi +openmp +python +asphere +body +class2 +colloid +compress +coreshell +dipole +granular +kspace +manybody +mc +misc +molecule +peri +qeq +replica +rigid +shock +snap +srd
+  - gromacs@2023.3 %gcc@11.4.0 +mpi +openmp +cuda +python +blas +lapack
+  - namd@3.0 %gcc@11.4.0 +mpi +cuda +python
+  - amber@22 %gcc@11.4.0 +mpi +openmp +cuda +python
+  - hoomd-blue@4.6.0 %gcc@11.4.0 +mpi +cuda +python
+  - openmm@8.0.0 %gcc@11.4.0 +python +cuda +opencl
+  - dlpoly@5.1.0 %gcc@11.4.0 +mpi +openmp
+  materials_modeling:
+  - phonopy@2.20.0 %gcc@11.4.0 +python
+  - phono3py@2.6.0 %gcc@11.4.0 +python
+  - wannier90@3.1.0 %gcc@11.4.0 +mpi +shared
+  - elk@8.5.2 %gcc@11.4.0 +mpi +openmp +libxc
+  - siesta@4.1.5 %gcc@11.4.0 +mpi +netcdf +flook
+  - yambo@5.1.2 %gcc@11.4.0 +mpi +openmp +hdf5 +netcdf
+  - exciting@22 %gcc@11.4.0 +mpi +openmp
+  - castep@23.11 %gcc@11.4.0 +mpi
+  crystal_structure:
+  - pymatgen@2023.8.10 %gcc@11.4.0 +python
+  - ase@3.22.1 %gcc@11.4.0 +python
+  - spglib@2.0.2 %gcc@11.4.0 +python
+  - vesta@3.5.8 %gcc@11.4.0 +qt
+  - xcrysden@1.6.2 %gcc@11.4.0 +tcl +tk
+  - ovito@3.9.2 %gcc@11.4.0 +python +qt +ffmpeg
+  - avogadro@1.97.0 %gcc@11.4.0 +qt +python
+  machine_learning_materials:
+  - matminer@0.8.0 %gcc@11.4.0 +python
+  - megnet@1.3.2 %gcc@11.4.0 +python
+  - schnetpack@2.0.1 %gcc@11.4.0 +python
+  - dscribe@2.1.0 %gcc@11.4.0 +python
+  - automatminer@1.0.3 %gcc@11.4.0 +python
+  - m3gnet@0.2.4 %gcc@11.4.0 +python
+  math_libraries:
+  - openblas@0.3.23 %gcc@11.4.0 +fortran +pic +shared threads=openmp
+  - scalapack@2.2.0 %gcc@11.4.0 +pic +shared
+  - elpa@2023.05.001 %gcc@11.4.0 +openmp +cuda
+  - fftw@3.3.10 %gcc@11.4.0 +mpi +openmp +pfft_patches
+  - mkl@2023.2.0 %gcc@11.4.0 +cluster +ilp64
+  - petsc@3.19.4 %gcc@11.4.0 +mpi +openmp +hypre +mumps +superlu-dist
+  - slepc@3.19.1 %gcc@11.4.0 +arpack
+  data_formats:
+  - hdf5@1.14.2 %gcc@11.4.0 +mpi +threadsafe +fortran +cxx
+  - netcdf-c@4.9.2 %gcc@11.4.0 +mpi +parallel-netcdf +hdf5
+  - netcdf-fortran@4.6.1 %gcc@11.4.0
+  - cdf@3.9.0 %gcc@11.4.0
+  - xdrfile@1.1.4 %gcc@11.4.0 +pic +shared
+  python_materials:
+  - python@3.11.5 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-numpy@1.25.2 %gcc@11.4.0 +blas+lapack
+  - py-scipy@1.11.2 %gcc@11.4.0 +blas+lapack
+  - py-matplotlib@3.7.2 %gcc@11.4.0 +movies
+  - py-pandas@2.0.3 %gcc@11.4.0
+  - py-scikit-learn@1.3.0 %gcc@11.4.0 +blas+lapack
+  - py-jupyter@1.0.0 %gcc@11.4.0
+  - py-ipython@8.14.0 %gcc@11.4.0
+  - py-plotly@5.15.0 %gcc@11.4.0
+  visualization:
+  - paraview@5.11.2 %gcc@11.4.0 +python +mpi +osmesa +qt
+  - visit@3.3.3 %gcc@11.4.0 +mpi +python +qt
+  - vtk@9.3.0 %gcc@11.4.0 +python +qt +mpi +opengl2
+  - vmd@1.9.4a55 %gcc@11.4.0 +cuda +python
+  - pymol@2.5.0 %gcc@11.4.0 +python
+  workflow_orchestration:
+  - nextflow@23.04.1 +java
+  - snakemake@7.32.4 +python
+  - fireworks@2.0.3 +python
+  - atomate2@0.0.13 +python
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.4xlarge
+    vcpus: 16
+    memory_gb: 32
+    storage_gb: 500
+    cost_per_hour: 0.68
+    use_case: Small molecule calculations and development
+  dft_calculations:
+    instance_type: hpc6a.24xlarge
+    vcpus: 48
+    memory_gb: 192
+    storage_gb: 1000
+    efa_enabled: true
+    placement_group: cluster
+    enhanced_networking: sr-iov
+    network_performance: 50 Gbps
+    cost_per_hour: 1.44
+    use_case: Medium-scale DFT calculations with Quantum ESPRESSO
+  large_dft_systems:
+    instance_type: hpc6a.48xlarge
+    vcpus: 96
+    memory_gb: 384
+    storage_gb: 2000
+    efa_enabled: true
+    placement_group: cluster
+    enhanced_networking: sr-iov
+    network_performance: 100 Gbps
+    cost_per_hour: 2.88
+    use_case: Large-scale DFT calculations and plane-wave codes
+  molecular_dynamics:
+    instance_type: p4d.24xlarge
+    vcpus: 96
+    memory_gb: 1152
+    gpu_memory_gb: 320
+    gpus: 8
+    storage_gb: 8000
+    cost_per_hour: 32.77
+    use_case: GPU-accelerated molecular dynamics with GROMACS/NAMD
+  materials_informatics:
+    instance_type: r6i.8xlarge
+    vcpus: 32
+    memory_gb: 256
+    storage_gb: 2000
+    cost_per_hour: 2.05
+    use_case: Machine learning for materials discovery
+estimated_cost:
+  compute: 2500
+  storage: 600
+  data_transfer: 300
+  specialized_software: 400
+  total: 3800
+research_capabilities:
+- Density functional theory calculations
+- Molecular dynamics simulations
+- Crystal structure prediction
+- Electronic structure calculations
+- Phonon and thermal property calculations
+- Materials informatics and machine learning
+- High-throughput materials screening
+- Quantum Monte Carlo calculations
+aws_data_sources:
+- Materials Project - Computed materials properties database
+- NOMAD Repository - Materials science data and calculations
+- AFLOW Database - High-throughput materials calculations
+- Crystallographic Open Database - Crystal structure repository
+demo_workflows:
+- name: DFT Band Structure Calculation
+  description: Electronic band structure calculation with Quantum ESPRESSO
+  dataset: Materials Project crystal structures
+  expected_runtime: 2-6 hours
+  cost_estimate: 8.6
+- name: Molecular Dynamics Simulation
+  description: GROMACS simulation of polymer chains
+  dataset: Synthetic polymer structures
+  expected_runtime: 4-12 hours
+  cost_estimate: 35.4
+- name: High-Throughput Materials Screening
+  description: Automated DFT calculations for new materials discovery
+  dataset: Generated crystal structures
+  expected_runtime: 12-48 hours
+  cost_estimate: 86.4
+- name: Machine Learning Materials Properties
+  description: ML prediction of materials properties using MatMiner
+  dataset: Materials Project property data
+  expected_runtime: 1-3 hours
+  cost_estimate: 6.2
+materials_features:
+  calculation_types: [DFT, MD, Monte_Carlo, Phonons, BSE, GW]
+  property_predictions: [electronic, mechanical, thermal, optical, magnetic]
+  software_ecosystems: [VASP, Quantum_ESPRESSO, GROMACS, LAMMPS]
+  ml_frameworks: [PyTorch, TensorFlow, MatMiner, SchNetPack]
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 32
+  placement_strategy: cluster
+  network_backend: efa
+  recommended_ppn: 48  # processes per node for HPC6a
+scaling_profiles:
+  small_molecules:
+    nodes: 1-2
+    efficiency: 95
+    use_case: Organic molecules, small clusters
+    memory_per_core_gb: 4
+  crystalline_systems:
+    nodes: 4-8
+    efficiency: 90
+    use_case: Bulk crystals, surfaces, interfaces
+    memory_per_core_gb: 6
+  large_scale_screening:
+    nodes: 16-32
+    efficiency: 85
+    use_case: High-throughput calculations
+    memory_per_core_gb: 8
+aws_integration:
+  datasets_available: 4
+  demo_workflows_available: 4
+  total_data_volume_tb: 120
+  integration_date: '2024-01-15'
+  data_access_patterns:
+    cost_optimized: S3 Intelligent Tiering for calculation results
+    performance_optimized: EFS for active calculations, S3 for archives
+    security: Encrypted storage for proprietary materials data

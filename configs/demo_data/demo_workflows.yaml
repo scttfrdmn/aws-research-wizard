@@ -1,0 +1,458 @@
+# Demo Workflows Configuration
+# Detailed workflow specifications using AWS Open Data
+
+workflows:
+  # Genomics and Bioinformatics Workflows
+  genomics:
+    gatk_variant_calling:
+      name: "GATK Variant Calling Pipeline"
+      description: "Complete GATK4 best practices workflow on 1000 Genomes data"
+      dataset: "1000 Genomes Project"
+      dataset_location: "s3://1000genomes/"
+      input_data:
+        - type: "reference_genome"
+          location: "s3://1000genomes/technical/reference/GRCh38_reference_genome/"
+          size_gb: 3.2
+        - type: "sample_data"
+          location: "s3://1000genomes/phase3/data/HG00096/sequence_read/"
+          size_gb: 8.5
+        - type: "known_sites"
+          location: "s3://1000genomes/technical/working/20130723_phase3_wg/"
+          size_gb: 2.1
+      workflow_steps:
+        - step: "fastqc_quality_control"
+          duration_minutes: 15
+          resources: "c6i.xlarge"
+        - step: "bwa_mem_alignment"
+          duration_minutes: 45
+          resources: "c6i.4xlarge"
+        - step: "mark_duplicates"
+          duration_minutes: 20
+          resources: "r6i.2xlarge"
+        - step: "base_recalibration"
+          duration_minutes: 25
+          resources: "c6i.2xlarge"
+        - step: "haplotype_caller"
+          duration_minutes: 35
+          resources: "c6i.4xlarge"
+        - step: "variant_filtration"
+          duration_minutes: 10
+          resources: "c6i.xlarge"
+      expected_output:
+        vcf_file: "HG00096.filtered.vcf.gz"
+        metrics: "alignment_metrics.txt"
+        size_gb: 1.2
+      estimated_runtime: "2-3 hours"
+      estimated_cost: 8.50
+      
+    rnaseq_differential_expression:
+      name: "RNA-seq Differential Expression Analysis"
+      description: "Complete RNA-seq pipeline using GTEx tissue samples"
+      dataset: "GTEx Expression Data"
+      dataset_location: "s3://gtex-dataset/"
+      input_data:
+        - type: "fastq_files"
+          location: "s3://gtex-dataset/rnaseq/samples/"
+          size_gb: 12.0
+        - type: "reference_transcriptome"
+          location: "s3://gtex-dataset/references/gencode.v26/"
+          size_gb: 1.8
+        - type: "gene_annotation"
+          location: "s3://gtex-dataset/references/gencode.v26.annotation.gtf"
+          size_gb: 0.3
+      workflow_steps:
+        - step: "quality_control"
+          duration_minutes: 20
+          resources: "c6i.2xlarge"
+        - step: "salmon_quantification"
+          duration_minutes: 30
+          resources: "c6i.4xlarge"
+        - step: "deseq2_analysis"
+          duration_minutes: 25
+          resources: "r6i.4xlarge"
+        - step: "pathway_enrichment"
+          duration_minutes: 15
+          resources: "c6i.2xlarge"
+      expected_output:
+        expression_matrix: "gene_expression_counts.csv"
+        differential_genes: "significant_genes.csv"
+        plots: "volcano_plot.png"
+        size_gb: 0.8
+      estimated_runtime: "1.5-2 hours"
+      estimated_cost: 6.25
+
+  # Climate Modeling Workflows
+  climate_modeling:
+    era5_temperature_trends:
+      name: "ERA5 Temperature Trend Analysis"
+      description: "Global temperature trend analysis using ERA5 reanalysis data"
+      dataset: "ERA5 Reanalysis Data"
+      dataset_location: "s3://era5-pds/"
+      input_data:
+        - type: "temperature_data"
+          location: "s3://era5-pds/2023/01/data/temperature_2m.nc"
+          size_gb: 4.2
+        - type: "precipitation_data"
+          location: "s3://era5-pds/2023/01/data/total_precipitation.nc"
+          size_gb: 3.8
+      workflow_steps:
+        - step: "data_download"
+          duration_minutes: 30
+          resources: "c6i.2xlarge"
+        - step: "data_preprocessing"
+          duration_minutes: 45
+          resources: "r6i.4xlarge"
+        - step: "trend_calculation"
+          duration_minutes: 25
+          resources: "c6i.4xlarge"
+        - step: "visualization"
+          duration_minutes: 20
+          resources: "c6i.2xlarge"
+      expected_output:
+        trend_maps: "temperature_trends_global.png"
+        statistics: "trend_statistics.nc"
+        time_series: "regional_time_series.csv"
+        size_gb: 2.1
+      estimated_runtime: "2-3 hours"
+      estimated_cost: 12.40
+
+    wrf_regional_simulation:
+      name: "WRF Regional Weather Simulation"
+      description: "High-resolution weather simulation using NOAA GFS data"
+      dataset: "NOAA Global Forecast System"
+      dataset_location: "s3://noaa-gfs-bdp-pds/"
+      input_data:
+        - type: "initial_conditions"
+          location: "s3://noaa-gfs-bdp-pds/gfs.20231201/00/"
+          size_gb: 8.5
+        - type: "boundary_conditions"
+          location: "s3://noaa-gfs-bdp-pds/gfs.20231201/06/"
+          size_gb: 6.2
+      workflow_steps:
+        - step: "wps_preprocessing"
+          duration_minutes: 60
+          resources: "hpc6a.12xlarge"
+        - step: "wrf_simulation"
+          duration_minutes: 180
+          resources: "hpc6a.24xlarge"
+        - step: "post_processing"
+          duration_minutes: 30
+          resources: "c6i.8xlarge"
+      expected_output:
+        forecast_fields: "wrfout_d01_2023-12-01_00:00:00"
+        plots: "surface_temperature_forecast.png"
+        size_gb: 15.4
+      estimated_runtime: "4-5 hours"
+      estimated_cost: 28.75
+
+  # Machine Learning Workflows
+  machine_learning:
+    image_classification_training:
+      name: "Image Classification with Open Images"
+      description: "Train ResNet-50 on Open Images dataset subset"
+      dataset: "Open Images Dataset V7"
+      dataset_location: "s3://open-images-dataset/"
+      input_data:
+        - type: "training_images"
+          location: "s3://open-images-dataset/train/"
+          size_gb: 25.0
+        - type: "validation_images"
+          location: "s3://open-images-dataset/validation/"
+          size_gb: 8.5
+        - type: "annotations"
+          location: "s3://open-images-dataset/annotations/"
+          size_gb: 1.2
+      workflow_steps:
+        - step: "data_preprocessing"
+          duration_minutes: 45
+          resources: "c6i.4xlarge"
+        - step: "model_training"
+          duration_minutes: 180
+          resources: "p4d.24xlarge"
+        - step: "model_evaluation"
+          duration_minutes: 30
+          resources: "g5.2xlarge"
+        - step: "inference_testing"
+          duration_minutes: 15
+          resources: "g5.xlarge"
+      expected_output:
+        trained_model: "resnet50_openimages.pth"
+        metrics: "training_metrics.json"
+        confusion_matrix: "confusion_matrix.png"
+        size_gb: 2.8
+      estimated_runtime: "4-5 hours"
+      estimated_cost: 156.20
+
+    nlp_bert_finetuning:
+      name: "BERT Fine-tuning on Common Crawl"
+      description: "Fine-tune BERT model on domain-specific text from Common Crawl"
+      dataset: "Common Crawl Web Corpus"
+      dataset_location: "s3://commoncrawl/"
+      input_data:
+        - type: "text_corpus"
+          location: "s3://commoncrawl/crawl-data/CC-MAIN-2023-40/"
+          size_gb: 15.0
+        - type: "pretrained_model"
+          location: "huggingface://bert-base-uncased"
+          size_gb: 1.3
+      workflow_steps:
+        - step: "text_preprocessing"
+          duration_minutes: 90
+          resources: "c6i.8xlarge"
+        - step: "tokenization"
+          duration_minutes: 60
+          resources: "r6i.4xlarge"
+        - step: "model_finetuning"
+          duration_minutes: 240
+          resources: "p4d.24xlarge"
+        - step: "evaluation"
+          duration_minutes: 30
+          resources: "g5.2xlarge"
+      expected_output:
+        finetuned_model: "bert_specialized.bin"
+        evaluation_metrics: "eval_results.json"
+        sample_outputs: "model_predictions.txt"
+        size_gb: 4.2
+      estimated_runtime: "6-8 hours"
+      estimated_cost: 225.40
+
+  # Geospatial Research Workflows
+  geospatial_research:
+    landcover_classification:
+      name: "Land Cover Classification with Sentinel-2"
+      description: "Supervised classification of Sentinel-2 imagery"
+      dataset: "Sentinel-2 Cloud-Optimized GeoTIFFs"
+      dataset_location: "s3://sentinel-cogs/"
+      input_data:
+        - type: "satellite_imagery"
+          location: "s3://sentinel-cogs/sentinel-s2-l2a-cogs/32/T/NM/"
+          size_gb: 12.5
+        - type: "training_data"
+          location: "s3://landcover-training/corine_land_cover/"
+          size_gb: 0.8
+      workflow_steps:
+        - step: "image_preprocessing"
+          duration_minutes: 40
+          resources: "r6i.4xlarge"
+        - step: "feature_extraction"
+          duration_minutes: 30
+          resources: "c6i.4xlarge"
+        - step: "model_training"
+          duration_minutes: 60
+          resources: "g5.4xlarge"
+        - step: "classification"
+          duration_minutes: 45
+          resources: "g5.2xlarge"
+        - step: "accuracy_assessment"
+          duration_minutes: 15
+          resources: "c6i.2xlarge"
+      expected_output:
+        classified_map: "landcover_2023.tif"
+        accuracy_report: "classification_accuracy.pdf"
+        confusion_matrix: "accuracy_matrix.csv"
+        size_gb: 3.2
+      estimated_runtime: "3-4 hours"
+      estimated_cost: 22.15
+
+    change_detection_analysis:
+      name: "Multi-temporal Change Detection"
+      description: "Urban expansion analysis using Landsat time series"
+      dataset: "Landsat Collection 2"
+      dataset_location: "s3://usgs-landsat/"
+      input_data:
+        - type: "landsat_2010"
+          location: "s3://usgs-landsat/collection02/level-2/standard/oli-tirs/2010/"
+          size_gb: 8.2
+        - type: "landsat_2023"
+          location: "s3://usgs-landsat/collection02/level-2/standard/oli-tirs/2023/"
+          size_gb: 8.8
+      workflow_steps:
+        - step: "temporal_alignment"
+          duration_minutes: 45
+          resources: "r6i.4xlarge"
+        - step: "change_detection"
+          duration_minutes: 60
+          resources: "c6i.8xlarge"
+        - step: "change_mapping"
+          duration_minutes: 30
+          resources: "c6i.4xlarge"
+        - step: "statistics_calculation"
+          duration_minutes: 20
+          resources: "c6i.2xlarge"
+      expected_output:
+        change_map: "urban_change_2010_2023.tif"
+        change_statistics: "change_summary.csv"
+        visualization: "change_detection_plot.png"
+        size_gb: 4.1
+      estimated_runtime: "2.5-3.5 hours"
+      estimated_cost: 18.90
+
+  # Agricultural Sciences Workflows
+  agricultural_sciences:
+    crop_yield_prediction:
+      name: "Crop Yield Prediction with MODIS"
+      description: "Corn yield prediction using MODIS NDVI and weather data"
+      dataset: "MODIS NDVI and USDA Cropland Data Layer"
+      dataset_location: "s3://modis-pds/"
+      input_data:
+        - type: "modis_ndvi"
+          location: "s3://modis-pds/MCD43A4.006/2023/"
+          size_gb: 6.8
+        - type: "cropland_mask"
+          location: "s3://usda-nass-cdl/2023/"
+          size_gb: 2.1
+        - type: "weather_data"
+          location: "s3://noaa-global-summary/2023/"
+          size_gb: 1.5
+      workflow_steps:
+        - step: "data_aggregation"
+          duration_minutes: 50
+          resources: "r6i.4xlarge"
+        - step: "feature_engineering"
+          duration_minutes: 35
+          resources: "c6i.4xlarge"
+        - step: "model_training"
+          duration_minutes: 40
+          resources: "c6i.8xlarge"
+        - step: "yield_prediction"
+          duration_minutes: 25
+          resources: "c6i.4xlarge"
+      expected_output:
+        yield_map: "corn_yield_prediction_2023.tif"
+        model_metrics: "model_performance.json"
+        field_statistics: "county_yield_estimates.csv"
+        size_gb: 2.4
+      estimated_runtime: "2.5-3 hours"
+      estimated_cost: 15.85
+
+  # Atmospheric Chemistry Workflows
+  atmospheric_chemistry:
+    air_quality_modeling:
+      name: "Urban Air Quality Simulation"
+      description: "CMAQ air quality simulation using EPA emission inventory"
+      dataset: "EPA National Emission Inventory and MERRA-2"
+      dataset_location: "s3://epa-nei-pds/"
+      input_data:
+        - type: "emission_inventory"
+          location: "s3://epa-nei-pds/2020/nei2020_annual/"
+          size_gb: 4.5
+        - type: "meteorology"
+          location: "s3://nasa-merra2/M2T1NXSLV/"
+          size_gb: 3.2
+        - type: "initial_conditions"
+          location: "s3://cmaq-initial-conditions/2023/"
+          size_gb: 1.8
+      workflow_steps:
+        - step: "emission_processing"
+          duration_minutes: 60
+          resources: "c6i.8xlarge"
+        - step: "meteorology_processing"
+          duration_minutes: 45
+          resources: "r6i.4xlarge"
+        - step: "cmaq_simulation"
+          duration_minutes: 180
+          resources: "hpc6a.24xlarge"
+        - step: "post_processing"
+          duration_minutes: 30
+          resources: "c6i.4xlarge"
+      expected_output:
+        concentration_fields: "CCTM_ACONC_2023120100.nc"
+        ozone_maps: "surface_ozone_max.png"
+        statistics: "air_quality_summary.csv"
+        size_gb: 8.7
+      estimated_runtime: "5-6 hours"
+      estimated_cost: 32.60
+
+  # Cybersecurity Research Workflows
+  cybersecurity_research:
+    malware_analysis_pipeline:
+      name: "Automated Malware Analysis"
+      description: "YARA-based malware classification and analysis"
+      dataset: "MalwareBazaar Sample Collection"
+      dataset_location: "s3://malware-samples-research/"
+      input_data:
+        - type: "malware_samples"
+          location: "s3://malware-samples-research/2023/samples/"
+          size_gb: 2.8
+        - type: "yara_rules"
+          location: "s3://yara-rules-collection/comprehensive/"
+          size_gb: 0.3
+      workflow_steps:
+        - step: "sample_preparation"
+          duration_minutes: 20
+          resources: "c6i.4xlarge"
+        - step: "static_analysis"
+          duration_minutes: 45
+          resources: "c6i.8xlarge"
+        - step: "dynamic_analysis"
+          duration_minutes: 60
+          resources: "c6i.4xlarge"
+        - step: "report_generation"
+          duration_minutes: 15
+          resources: "c6i.2xlarge"
+      expected_output:
+        analysis_reports: "malware_analysis_results.json"
+        indicators: "ioc_extracted.csv"
+        classification: "malware_families.csv"
+        size_gb: 1.2
+      estimated_runtime: "2-3 hours"
+      estimated_cost: 11.45
+
+  # Benchmarking Performance Workflows
+  benchmarking_performance:
+    hpc_benchmark_suite:
+      name: "Comprehensive HPC Benchmark Suite"
+      description: "Run HPL, HPCG, and NAS benchmarks on cluster"
+      dataset: "HPC Benchmark Reference Datasets"
+      dataset_location: "s3://hpc-benchmarks-pds/"
+      input_data:
+        - type: "hpl_input"
+          location: "s3://hpc-benchmarks-pds/hpl/input_files/"
+          size_gb: 0.1
+        - type: "nas_benchmarks"
+          location: "s3://hpc-benchmarks-pds/nas/class_c/"
+          size_gb: 0.5
+      workflow_steps:
+        - step: "system_preparation"
+          duration_minutes: 30
+          resources: "hpc6a.48xlarge"
+        - step: "hpl_benchmark"
+          duration_minutes: 120
+          resources: "hpc6a.48xlarge"
+        - step: "hpcg_benchmark"
+          duration_minutes: 60
+          resources: "hpc6a.48xlarge"
+        - step: "nas_benchmarks"
+          duration_minutes: 90
+          resources: "hpc6a.48xlarge"
+        - step: "results_analysis"
+          duration_minutes: 20
+          resources: "c6i.4xlarge"
+      expected_output:
+        benchmark_results: "hpc_performance_results.json"
+        scaling_plots: "performance_scaling.png"
+        efficiency_report: "parallel_efficiency.pdf"
+        size_gb: 0.8
+      estimated_runtime: "5-6 hours"
+      estimated_cost: 45.60
+
+# Workflow Execution Parameters
+execution_parameters:
+  timeout_hours: 12
+  retry_attempts: 3
+  notification_email: "researcher@example.com"
+  output_bucket: "research-workflow-outputs"
+  
+# Cost Optimization Settings
+cost_optimization:
+  use_spot_instances: true
+  spot_instance_types: ["c6i", "r6i", "g5"]
+  auto_shutdown: true
+  idle_timeout_minutes: 30
+  
+# Monitoring and Logging
+monitoring:
+  cloudwatch_logs: true
+  custom_metrics: true
+  performance_tracking: true
+  resource_utilization: true

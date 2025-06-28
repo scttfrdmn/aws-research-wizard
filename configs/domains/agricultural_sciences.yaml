@@ -1,0 +1,200 @@
+name: Agricultural Sciences & Precision Agriculture Laboratory
+description: Comprehensive platform for crop modeling, precision agriculture, soil
+  science, and agricultural genomics
+primary_domains:
+- Agricultural Sciences
+- Precision Agriculture
+- Crop Science
+- Soil Science
+- Plant Genomics
+target_users: Agricultural researchers, agronomists, soil scientists, plant breeders
+  (1-20 users)
+spack_packages:
+  crop_modeling:
+  - dssat@4.8.2 %gcc@11.4.0 +fortran +netcdf
+  - apsim@2023.05.7336 %gcc@11.4.0 +mono +sqlite
+  - stics@10.1.0 %gcc@11.4.0 +fortran
+  - wofost@7.2.1 %gcc@11.4.0 +python +netcdf
+  - pcse@5.5.3 %gcc@11.4.0 +python
+  - aquacrop@7.0 %gcc@11.4.0 +python
+  - cropgrow@3.1.0 %gcc@11.4.0 +python
+  soil_modeling:
+  - swap@4.2.0 %gcc@11.4.0 +fortran +netcdf
+  - hydrus@3.05 %gcc@11.4.0 +fortran
+  - century@5.0 %gcc@11.4.0 +fortran
+  - rothc@26.3 %gcc@11.4.0 +fortran
+  - epic@1102 %gcc@11.4.0 +fortran
+  - dndc@9.5 %gcc@11.4.0 +fortran
+  agricultural_genomics:
+  - bwa@0.7.17 %gcc@11.4.0 +pic
+  - samtools@1.18 %gcc@11.4.0 +curses
+  - gatk@4.4.0.0
+  - vcftools@0.1.16 %gcc@11.4.0
+  - plink@1.90b6.26 %gcc@11.4.0
+  - admixture@1.3.0 %gcc@11.4.0
+  - structure@2.3.4 %gcc@11.4.0
+  - gapit@3.1.0 %gcc@11.4.0
+  python_agricultural:
+  - python@3.11.5 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-numpy@1.25.2 %gcc@11.4.0
+  - py-pandas@2.0.3 %gcc@11.4.0
+  - py-scipy@1.11.2 %gcc@11.4.0
+  - py-matplotlib@3.7.2 %gcc@11.4.0
+  - py-seaborn@0.12.2 %gcc@11.4.0
+  - py-scikit-learn@1.3.0 %gcc@11.4.0
+  - py-croppy@2.3.0 %gcc@11.4.0
+  - py-pydssat@0.5.0 %gcc@11.4.0
+  - py-pcse@5.5.3 %gcc@11.4.0
+  - py-agpy@1.2.0 %gcc@11.4.0
+  geospatial_analysis:
+  - gdal@3.7.1 %gcc@11.4.0 +python +netcdf +hdf5
+  - proj@9.2.1 %gcc@11.4.0
+  - geos@3.12.0 %gcc@11.4.0
+  - py-rasterio@1.3.8 %gcc@11.4.0
+  - py-geopandas@0.13.2 %gcc@11.4.0
+  - py-shapely@2.0.1 %gcc@11.4.0
+  - py-fiona@1.9.4 %gcc@11.4.0
+  - py-earthengine-api@0.1.364 %gcc@11.4.0
+  - py-sentinelsat@1.2.1 %gcc@11.4.0
+  climate_data:
+  - netcdf-c@4.9.2 %gcc@11.4.0 +mpi +parallel-netcdf +hdf5
+  - hdf5@1.14.2 %gcc@11.4.0 +mpi +threadsafe +fortran
+  - py-xarray@2023.7.0 %gcc@11.4.0
+  - py-netcdf4@1.6.4 %gcc@11.4.0
+  - py-cftime@1.6.2 %gcc@11.4.0
+  - py-xclim@0.45.0 %gcc@11.4.0
+  - cdo@2.2.2 %gcc@11.4.0 +netcdf +hdf5
+  r_agricultural:
+  - r@4.3.1 %gcc@11.4.0 +X+external-lapack
+  - r-dplyr@1.1.2 %gcc@11.4.0
+  - r-ggplot2@3.4.2 %gcc@11.4.0
+  - r-randomforest@4.7.1.1 %gcc@11.4.0
+  - r-raster@3.6.23 %gcc@11.4.0
+  - r-terra@1.7.39 %gcc@11.4.0
+  - r-sf@1.0.14 %gcc@11.4.0
+  - r-leaflet@2.1.2 %gcc@11.4.0
+  optimization:
+  - ipopt@3.14.13 %gcc@11.4.0 +mumps
+  - gurobi@10.0.2 %gcc@11.4.0
+  - cplex@22.1.1 %gcc@11.4.0
+  - py-scipy@1.11.2 %gcc@11.4.0
+  - py-cvxpy@1.3.2 %gcc@11.4.0
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.xlarge
+    vcpus: 4
+    memory_gb: 8
+    storage_gb: 100
+    cost_per_hour: 0.17
+    use_case: Development and testing of agricultural models
+  crop_modeling:
+    instance_type: c6i.4xlarge
+    vcpus: 16
+    memory_gb: 32
+    storage_gb: 500
+    cost_per_hour: 0.68
+    use_case: Crop growth simulation and yield prediction
+  geospatial_analysis:
+    instance_type: r6i.4xlarge
+    vcpus: 16
+    memory_gb: 128
+    storage_gb: 1000
+    cost_per_hour: 1.02
+    use_case: Large-scale geospatial and remote sensing analysis
+  regional_modeling:
+    instance_type: hpc6a.12xlarge
+    vcpus: 48
+    memory_gb: 192
+    storage_gb: 2000
+    efa_enabled: true
+    placement_group: cluster
+    enhanced_networking: sr-iov
+    network_performance: 50 Gbps
+    cost_per_hour: 1.73
+    use_case: Regional agricultural modeling with EFA
+  genomics_analysis:
+    instance_type: r6i.8xlarge
+    vcpus: 32
+    memory_gb: 256
+    storage_gb: 2000
+    cost_per_hour: 2.05
+    use_case: Plant genomics and breeding analysis
+estimated_cost:
+  compute: 700
+  storage: 250
+  satellite_data: 150
+  data_transfer: 100
+  total: 1200
+research_capabilities:
+- Crop growth modeling and yield prediction (DSSAT, APSIM)
+- Precision agriculture with satellite and drone data
+- Soil carbon and nitrogen cycling simulations
+- Plant breeding and genomics-assisted selection
+- Agricultural economics and optimization modeling
+- Climate change impact assessment on crops
+- Irrigation scheduling and water management
+- Pest and disease prediction modeling
+aws_data_sources:
+- NCBI Sequence Read Archive - Public sequencing data repository
+- Landsat Collection 2 - Landsat satellite imagery archive
+- Sentinel-2 Cloud-Optimized GeoTIFFs - ESA Sentinel-2 Level-2A atmospheric corrected
+  imagery
+- MODIS Nadir BRDF-Adjusted Reflectance - MODIS daily surface reflectance product
+- USDA NASS Cropland Data Layer - Crop-specific land cover classification
+- NASA Global Precipitation Measurement - Global precipitation satellite observations
+demo_workflows:
+- name: Corn Yield Prediction
+  description: DSSAT maize simulation using weather and soil data
+  dataset: USDA weather data + SSURGO soil database
+  expected_runtime: 2-4 hours
+  cost_estimate: 9.25
+- name: Precision Agriculture Analysis
+  description: Satellite-based crop monitoring and variable rate prescription
+  dataset: Sentinel-2 imagery + field boundary data
+  expected_runtime: 3-6 hours
+  cost_estimate: 15.4
+- name: Plant Genomics Pipeline
+  description: GWAS analysis for drought tolerance traits
+  dataset: Soybean diversity panel genotype and phenotype data
+  expected_runtime: 4-8 hours
+  cost_estimate: 18.7
+- name: Climate Impact Assessment
+  description: Future crop suitability under climate change scenarios
+  dataset: CMIP6 climate projections + global crop distribution
+  expected_runtime: 6-12 hours
+  cost_estimate: 28.5
+agricultural_features:
+  crop_models: DSSAT, APSIM, STICS, WOFOST crop simulation models
+  satellite_data: Landsat, Sentinel, MODIS agricultural monitoring
+  soil_data: SSURGO, HWSD, SoilGrids soil databases
+  weather_data: NOAA, NASA, ECMWF meteorological data
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 16
+  placement_strategy: cluster
+  network_backend: efa
+scaling_profiles:
+  field_scale:
+    nodes: 1
+    efficiency: 100
+    use_case: Individual field analysis
+    spatial_resolution: 1-10 m
+  farm_scale:
+    nodes: 1-2
+    efficiency: 95
+    use_case: Farm-level optimization
+    spatial_resolution: 10-100 m
+  regional_scale:
+    nodes: 4-16
+    efficiency: 85
+    use_case: Regional agricultural assessment
+    spatial_resolution: 100 m - 1 km
+aws_integration:
+  datasets_available: 6
+  demo_workflows_available: 0
+  total_data_volume_tb: 20445
+  integration_date: '2023-12-01'
+  data_access_patterns:
+    cost_optimized: Use S3 Intelligent Tiering
+    performance_optimized: Access from same AWS region
+    security: Data encrypted in transit and at rest

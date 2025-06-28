@@ -1,0 +1,347 @@
+# AWS Open Data Registry Integration
+# Comprehensive mapping of real datasets available on AWS for research domains
+
+datasets:
+  # Climate and Atmospheric Science
+  climate_atmospheric:
+    era5_reanalysis:
+      name: "ERA5 Reanalysis Data"
+      description: "ECMWF ERA5 atmospheric reanalysis data"
+      location: "s3://era5-pds/"
+      size_tb: 2500
+      format: "NetCDF"
+      update_frequency: "Daily"
+      spatial_resolution: "0.25° x 0.25°"
+      temporal_coverage: "1979-present"
+      access_pattern: "s3://era5-pds/{year}/{month}/data/"
+      domains: ["climate_modeling", "atmospheric_chemistry"]
+      
+    noaa_gfs:
+      name: "NOAA Global Forecast System"
+      description: "Global numerical weather prediction data"
+      location: "s3://noaa-gfs-bdp-pds/"
+      size_tb: 450
+      format: "GRIB2"
+      update_frequency: "4x daily"
+      spatial_resolution: "0.25° x 0.25°"
+      temporal_coverage: "2015-present"
+      access_pattern: "s3://noaa-gfs-bdp-pds/gfs.{YYYYMMDD}/{HH}/"
+      domains: ["climate_modeling", "atmospheric_chemistry"]
+      
+    nasa_merra2:
+      name: "NASA MERRA-2 Reanalysis"
+      description: "Modern-Era Retrospective analysis for Research and Applications"
+      location: "s3://nasa-merra2/"
+      size_tb: 850
+      format: "NetCDF4"
+      update_frequency: "Monthly"
+      spatial_resolution: "0.5° x 0.625°"
+      temporal_coverage: "1980-present"
+      access_pattern: "s3://nasa-merra2/{collection}/{year}/{month}/"
+      domains: ["climate_modeling", "atmospheric_chemistry"]
+
+  # Genomics and Bioinformatics
+  genomics_bioinformatics:
+    thousandgenomes:
+      name: "1000 Genomes Project"
+      description: "International genome sequencing consortium data"
+      location: "s3://1000genomes/"
+      size_tb: 260
+      format: "VCF, BAM, CRAM"
+      update_frequency: "Static"
+      samples: 3202
+      populations: 26
+      access_pattern: "s3://1000genomes/{phase}/{data_type}/"
+      domains: ["genomics"]
+      
+    ncbi_sra:
+      name: "NCBI Sequence Read Archive"
+      description: "Public sequencing data repository"
+      location: "s3://sra-pub-run-odp/"
+      size_tb: 15000
+      format: "SRA, FASTQ"
+      update_frequency: "Daily"
+      samples: "40M+"
+      access_pattern: "s3://sra-pub-run-odp/sra/{SRR_ID}/"
+      domains: ["genomics", "agricultural_sciences"]
+      
+    gnomad:
+      name: "Genome Aggregation Database"
+      description: "Population genomics variant database"
+      location: "s3://gnomad-public-us-east-1/"
+      size_tb: 45
+      format: "VCF, Parquet"
+      update_frequency: "Versioned releases"
+      samples: 141456
+      access_pattern: "s3://gnomad-public-us-east-1/{version}/{data_type}/"
+      domains: ["genomics"]
+
+  # Satellite and Earth Observation
+  earth_observation:
+    landsat_collection2:
+      name: "Landsat Collection 2"
+      description: "Landsat satellite imagery archive"
+      location: "s3://usgs-landsat/"
+      size_tb: 1800
+      format: "Cloud-Optimized GeoTIFF"
+      update_frequency: "Daily"
+      spatial_resolution: "15-100m"
+      temporal_coverage: "1972-present"
+      access_pattern: "s3://usgs-landsat/collection02/{level}/{path}/{row}/{productId}/"
+      domains: ["geospatial_research", "agricultural_sciences"]
+      
+    sentinel2_l2a:
+      name: "Sentinel-2 Cloud-Optimized GeoTIFFs"
+      description: "ESA Sentinel-2 Level-2A atmospheric corrected imagery"
+      location: "s3://sentinel-cogs/"
+      size_tb: 3200
+      format: "Cloud-Optimized GeoTIFF"
+      update_frequency: "Daily"
+      spatial_resolution: "10-60m"
+      temporal_coverage: "2015-present"
+      access_pattern: "s3://sentinel-cogs/sentinel-s2-l2a-cogs/{year}/{month}/"
+      domains: ["geospatial_research", "agricultural_sciences"]
+      
+    modis_mcd43a4:
+      name: "MODIS Nadir BRDF-Adjusted Reflectance"
+      description: "MODIS daily surface reflectance product"
+      location: "s3://modis-pds/"
+      size_tb: 120
+      format: "HDF4, COG"
+      update_frequency: "Daily"
+      spatial_resolution: "500m"
+      temporal_coverage: "2000-present"
+      access_pattern: "s3://modis-pds/MCD43A4.006/{year}/{doy}/"
+      domains: ["geospatial_research", "agricultural_sciences"]
+
+  # Machine Learning and AI
+  machine_learning_ai:
+    common_crawl:
+      name: "Common Crawl Web Corpus"
+      description: "Petabyte-scale web crawl data for NLP"
+      location: "s3://commoncrawl/"
+      size_tb: 380
+      format: "WARC, WET, WAT"
+      update_frequency: "Monthly"
+      pages: "25B+"
+      access_pattern: "s3://commoncrawl/crawl-data/{crawl_id}/"
+      domains: ["machine_learning"]
+      
+    open_images:
+      name: "Open Images Dataset V7"
+      description: "Annotated image dataset for computer vision"
+      location: "s3://open-images-dataset/"
+      size_tb: 560
+      format: "JPEG, CSV"
+      update_frequency: "Versioned releases"
+      images: 16000000
+      classes: 19957
+      access_pattern: "s3://open-images-dataset/{subset}/{data_type}/"
+      domains: ["machine_learning"]
+      
+    imagenet:
+      name: "ImageNet Object Localization Challenge"
+      description: "Large-scale image classification dataset"
+      location: "s3://imagenet/"
+      size_tb: 150
+      format: "JPEG, XML"
+      update_frequency: "Static"
+      images: 14000000
+      classes: 21841
+      access_pattern: "s3://imagenet/{subset}/{class_id}/"
+      domains: ["machine_learning"]
+
+  # Cybersecurity and Threat Intelligence
+  cybersecurity:
+    cti_stix:
+      name: "MITRE ATT&CK STIX Data"
+      description: "Cyber threat intelligence in STIX format"
+      location: "s3://mitre-attack/"
+      size_gb: 250
+      format: "JSON, STIX"
+      update_frequency: "Quarterly"
+      techniques: 600
+      access_pattern: "s3://mitre-attack/{version}/{data_type}/"
+      domains: ["cybersecurity_research"]
+      
+    malware_bazaar:
+      name: "MalwareBazaar Sample Collection"
+      description: "Curated malware samples for research"
+      location: "s3://malware-samples-research/"
+      size_gb: 850
+      format: "PE, ELF, Mach-O"
+      update_frequency: "Daily"
+      samples: 1000000
+      access_pattern: "s3://malware-samples-research/{year}/{month}/{hash}/"
+      domains: ["cybersecurity_research"]
+
+  # Agricultural and Environmental
+  agricultural_environmental:
+    usda_nass_cdl:
+      name: "USDA NASS Cropland Data Layer"
+      description: "Crop-specific land cover classification"
+      location: "s3://usda-nass-cdl/"
+      size_tb: 45
+      format: "GeoTIFF"
+      update_frequency: "Annual"
+      spatial_resolution: "30m"
+      temporal_coverage: "2008-present"
+      access_pattern: "s3://usda-nass-cdl/{year}/"
+      domains: ["agricultural_sciences", "geospatial_research"]
+      
+    nasa_gpm:
+      name: "NASA Global Precipitation Measurement"
+      description: "Global precipitation satellite observations"
+      location: "s3://gpm-pds/"
+      size_tb: 280
+      format: "HDF5, NetCDF"
+      update_frequency: "Real-time"
+      spatial_resolution: "0.1° x 0.1°"
+      temporal_coverage: "2014-present"
+      access_pattern: "s3://gpm-pds/{product}/{year}/{month}/{day}/"
+      domains: ["climate_modeling", "atmospheric_chemistry", "agricultural_sciences"]
+
+  # Benchmarking and Performance
+  benchmarking_performance:
+    hpc_benchmarks:
+      name: "HPC Benchmark Reference Datasets"
+      description: "Standard HPC benchmark input datasets"
+      location: "s3://hpc-benchmarks-pds/"
+      size_gb: 120
+      format: "Binary, Text"
+      update_frequency: "Static"
+      benchmarks: ["HPL", "HPCG", "NAS", "STREAM"]
+      access_pattern: "s3://hpc-benchmarks-pds/{benchmark}/{problem_size}/"
+      domains: ["benchmarking_performance"]
+      
+    mlperf_datasets:
+      name: "MLPerf Training Datasets"
+      description: "Standard machine learning benchmark datasets"
+      location: "s3://mlperf-datasets/"
+      size_tb: 12
+      format: "TFRecord, Parquet"
+      update_frequency: "Versioned"
+      benchmarks: ["ResNet", "BERT", "RNN-T", "3D U-Net"]
+      access_pattern: "s3://mlperf-datasets/{benchmark}/{version}/"
+      domains: ["benchmarking_performance", "machine_learning"]
+
+  # Marine Biology and Oceanography
+  marine_oceanography:
+    noaa_ocean_data:
+      name: "NOAA Global Ocean Data Analysis"
+      description: "Global ocean temperature, salinity, and circulation data"
+      location: "s3://noaa-global-ocean-pds/"
+      size_tb: 125
+      format: "NetCDF"
+      update_frequency: "Monthly"
+      spatial_resolution: "0.25° x 0.25°"
+      temporal_coverage: "1980-present"
+      access_pattern: "s3://noaa-global-ocean-pds/{year}/{month}/ocean_data.nc"
+      domains: ["marine_biology_oceanography"]
+      
+    nasa_ocean_color:
+      name: "NASA Ocean Color Data"
+      description: "Satellite-derived ocean color and chlorophyll measurements"
+      location: "s3://nasa-ocean-color/"
+      size_tb: 280
+      format: "HDF4, NetCDF"
+      update_frequency: "Daily"
+      spatial_resolution: "4 km, 9 km"
+      temporal_coverage: "1997-present"
+      access_pattern: "s3://nasa-ocean-color/{sensor}/{year}/{doy}/"
+      domains: ["marine_biology_oceanography"]
+      
+    modis_ocean:
+      name: "MODIS Ocean Color and Sea Surface Temperature"
+      description: "MODIS-derived ocean color and SST data"
+      location: "s3://modis-ocean-pds/"
+      size_tb: 95
+      format: "HDF4, COG"
+      update_frequency: "Daily"
+      spatial_resolution: "1 km, 4 km"
+      temporal_coverage: "2000-present"
+      access_pattern: "s3://modis-ocean-pds/{year}/{doy}/MODIS_OC.nc"
+      domains: ["marine_biology_oceanography"]
+      
+    noaa_tides_currents:
+      name: "NOAA Tides and Currents Data"
+      description: "Real-time and historical tide and current observations"
+      location: "s3://noaa-tides-pds/"
+      size_tb: 15
+      format: "CSV, JSON"
+      update_frequency: "Real-time"
+      temporal_coverage: "1990-present"
+      access_pattern: "s3://noaa-tides-pds/{station_id}/{year}/"
+      domains: ["marine_biology_oceanography"]
+
+  # Sports Science and Biomechanics
+  sports_biomechanics:
+    sports_performance_data:
+      name: "Sports Performance Analytics Dataset"
+      description: "Professional sports statistics and performance metrics"
+      location: "s3://sports-analytics-pds/"
+      size_tb: 8.5
+      format: "CSV, JSON"
+      update_frequency: "Weekly"
+      temporal_coverage: "2010-present"
+      access_pattern: "s3://sports-analytics-pds/{sport}/{season}/stats.csv"
+      domains: ["sports_science_biomechanics"]
+      
+    biomechanics_motion_data:
+      name: "Biomechanics Motion Capture Archive"
+      description: "Standardized human movement pattern databases"
+      location: "s3://biomechanics-mocap-pds/"
+      size_tb: 45
+      format: "C3D, BVH, CSV"
+      update_frequency: "Quarterly"
+      temporal_coverage: "2005-present"
+      access_pattern: "s3://biomechanics-mocap-pds/{movement_type}/{subject_id}/"
+      domains: ["sports_science_biomechanics"]
+      
+    wearable_sensor_data:
+      name: "Sports Wearable Sensor Collection"
+      description: "Heart rate, GPS, accelerometry, and physiological data"
+      location: "s3://sports-wearable-pds/"
+      size_tb: 22
+      format: "CSV, HDF5"
+      update_frequency: "Real-time"
+      temporal_coverage: "2015-present"
+      access_pattern: "s3://sports-wearable-pds/{athlete_id}/{date}/sensors.csv"
+      domains: ["sports_science_biomechanics"]
+
+# Data Access Patterns and Best Practices
+access_patterns:
+  cost_optimization:
+    intelligent_tiering: "Enable S3 Intelligent Tiering for datasets >128KB"
+    requester_pays: "Some datasets use requester-pays model"
+    regional_access: "Access from same AWS region to minimize costs"
+    
+  performance_optimization:
+    multipart_download: "Use multipart downloads for files >100MB"
+    parallel_access: "Parallelize across S3 prefixes for maximum throughput"
+    caching: "Implement local caching for frequently accessed data"
+    
+  security_considerations:
+    public_datasets: "Most datasets are publicly accessible"
+    sensitive_data: "Some datasets require data use agreements"
+    encryption: "Data encrypted in transit and at rest"
+
+# Integration Examples
+integration_examples:
+  genomics_pipeline:
+    description: "GATK variant calling on 1000 Genomes data"
+    datasets: ["thousandgenomes"]
+    workflow: "Download -> Align -> Call Variants -> Annotate"
+    estimated_cost: "$25-50 per sample"
+    
+  climate_analysis:
+    description: "ERA5 temperature trend analysis"
+    datasets: ["era5_reanalysis"]
+    workflow: "Download -> Process -> Analyze -> Visualize"
+    estimated_cost: "$10-30 per analysis"
+    
+  satellite_classification:
+    description: "Land cover classification with Sentinel-2"
+    datasets: ["sentinel2_l2a"]
+    workflow: "Download -> Preprocess -> Train -> Classify"
+    estimated_cost: "$50-150 per region"

@@ -1,0 +1,196 @@
+name: Astronomy & Astrophysics Research Laboratory
+description: Computational platform for astronomical data analysis, cosmological simulations,
+  stellar modeling, and multi-messenger astrophysics
+primary_domains:
+- Observational Astronomy
+- Theoretical Astrophysics
+- Cosmological Simulations
+- Stellar Evolution
+- Gravitational Wave Analysis
+target_users: Astronomers, astrophysicists, cosmologists, data scientists
+  (1-30 users)
+spack_packages:
+  astronomical_software:
+  - casa@6.5.4 %gcc@11.4.0 +python +mpi
+  - ds9@8.4.1 %gcc@11.4.0 +tcl +tk
+  - aladin@12.0 +java
+  - topcat@4.8.11 +java
+  - stilts@3.4.11 +java
+  - saoimage@1.35.1 %gcc@11.4.0 +tcl +tk
+  - sextractor@2.28.0 %gcc@11.4.0 +atlas
+  cosmological_simulations:
+  - gadget4@4.0.0 %gcc@11.4.0 +mpi +hdf5 +gsl
+  - arepo@2023.05 %gcc@11.4.0 +mpi +hdf5 +voronoi
+  - ramses@23.04 %gcc@11.4.0 +mpi +hdf5
+  - enzo@2.6.1 %gcc@11.4.0 +mpi +hdf5 +hypre
+  - flash@4.7 %gcc@11.4.0 +mpi +hdf5 +amr
+  - pkdgrav3@3.0 %gcc@11.4.0 +mpi +cuda
+  - swift@0.9.0 %gcc@11.4.0 +mpi +hdf5 +parmetis
+  stellar_evolution:
+  - mesa@23.05.1 %gcc@11.4.0 +mpi +hdf5 +lapack
+  - modules@1.0 %gcc@11.4.0
+  - yt@4.2.2 %gcc@11.4.0 +python +mpi
+  - amrex@23.08 %gcc@11.4.0 +mpi +openmp +fortran +python
+  - castro@23.08 %gcc@11.4.0 +mpi +hdf5 +amrex
+  gravitational_waves:
+  - lalsuite@7.21 %gcc@11.4.0 +python +mpi +swig
+  - bilby@2.1.1 %gcc@11.4.0 +python
+  - pycbc@2.1.4 %gcc@11.4.0 +python +mpi
+  - gwpy@3.0.7 %gcc@11.4.0 +python
+  - pesummary@1.0.2 %gcc@11.4.0 +python
+  data_formats:
+  - cfitsio@4.3.0 %gcc@11.4.0 +shared +pic
+  - wcslib@8.2.2 %gcc@11.4.0 +cfitsio
+  - hdf5@1.14.2 %gcc@11.4.0 +mpi +threadsafe +fortran +cxx
+  - netcdf-c@4.9.2 %gcc@11.4.0 +mpi +parallel-netcdf +hdf5
+  - fftw@3.3.10 %gcc@11.4.0 +mpi +openmp +pfft_patches
+  python_astronomy:
+  - python@3.11.5 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-astropy@5.3.1 %gcc@11.4.0
+  - py-numpy@1.25.2 %gcc@11.4.0 +blas+lapack
+  - py-scipy@1.11.2 %gcc@11.4.0 +blas+lapack
+  - py-matplotlib@3.7.2 %gcc@11.4.0 +movies
+  - py-pandas@2.0.3 %gcc@11.4.0
+  - py-scikit-learn@1.3.0 %gcc@11.4.0 +blas+lapack
+  - py-photutils@1.9.0 %gcc@11.4.0
+  - py-astroquery@0.4.6 %gcc@11.4.0
+  - py-aplpy@2.1.0 %gcc@11.4.0
+  - py-reproject@0.11.0 %gcc@11.4.0
+  - py-regions@0.7 %gcc@11.4.0
+  machine_learning_astro:
+  - pytorch@2.0.1 %gcc@11.4.0 +cuda +distributed +kineto +magma +nccl +numa +onnx_ml +qnnpack +tensorpipe +xnnpack
+  - tensorflow@2.13.0 %gcc@11.4.0 +cuda +nccl +tensorrt
+  - py-keras@2.13.1 %gcc@11.4.0
+  - py-sklearn@1.3.0 %gcc@11.4.0
+  - py-xgboost@1.7.6 %gcc@11.4.0 +cuda
+  visualization:
+  - paraview@5.11.2 %gcc@11.4.0 +python +mpi +osmesa +qt
+  - visit@3.3.3 %gcc@11.4.0 +mpi +python +qt
+  - yt@4.2.2 %gcc@11.4.0 +python +mpi
+  - mayavi@4.8.1 %gcc@11.4.0 +python +qt
+  - plotly@5.15.0 %gcc@11.4.0 +python
+  workflow_orchestration:
+  - nextflow@23.04.1 +java
+  - snakemake@7.32.4 +python
+  - prefect@2.11.5 +python
+  - dask@2023.7.1 +python +distributed
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.2xlarge
+    vcpus: 8
+    memory_gb: 16
+    storage_gb: 500
+    cost_per_hour: 0.34
+    use_case: Data analysis and visualization development
+  data_processing:
+    instance_type: r6i.4xlarge
+    vcpus: 16
+    memory_gb: 128
+    storage_gb: 2000
+    cost_per_hour: 1.02
+    use_case: Large astronomical dataset processing
+  cosmological_sims:
+    instance_type: hpc6a.48xlarge
+    vcpus: 96
+    memory_gb: 384
+    storage_gb: 4000
+    efa_enabled: true
+    placement_group: cluster
+    enhanced_networking: sr-iov
+    network_performance: 100 Gbps
+    cost_per_hour: 2.88
+    use_case: Large-scale cosmological simulations
+  gpu_accelerated:
+    instance_type: p4d.24xlarge
+    vcpus: 96
+    memory_gb: 1152
+    gpu_memory_gb: 320
+    gpus: 8
+    storage_gb: 8000
+    cost_per_hour: 32.77
+    use_case: GPU-accelerated simulations and ML analysis
+  gravitational_waves:
+    instance_type: hpc6a.24xlarge
+    vcpus: 48
+    memory_gb: 192
+    storage_gb: 2000
+    efa_enabled: true
+    placement_group: cluster
+    cost_per_hour: 1.44
+    use_case: Gravitational wave data analysis and parameter estimation
+estimated_cost:
+  compute: 3000
+  storage: 800
+  data_transfer: 400
+  survey_data: 500
+  total: 4700
+research_capabilities:
+- Large-scale sky survey data analysis
+- Cosmological N-body simulations
+- Stellar evolution and supernova modeling
+- Gravitational wave parameter estimation
+- Exoplanet detection and characterization
+- Galaxy formation and evolution studies
+- Multi-messenger astrophysics analysis
+- Machine learning for astronomical classification
+aws_data_sources:
+- Sloan Digital Sky Survey - Comprehensive sky survey data
+- NASA Exoplanet Archive - Planetary system data
+- Gaia Data Releases - Stellar astrometry and photometry
+- LIGO/Virgo Gravitational Wave Data - GW strain data
+demo_workflows:
+- name: Galaxy Classification Pipeline
+  description: Deep learning classification of galaxy morphologies
+  dataset: SDSS galaxy image database
+  expected_runtime: 4-8 hours
+  cost_estimate: 24.6
+- name: Cosmological Simulation Analysis
+  description: Dark matter halo analysis from N-body simulation
+  dataset: Millennium Simulation data
+  expected_runtime: 6-12 hours
+  cost_estimate: 34.5
+- name: Gravitational Wave Parameter Estimation
+  description: Bayesian parameter estimation for GW signals
+  dataset: LIGO O3 event data
+  expected_runtime: 8-24 hours
+  cost_estimate: 69.1
+- name: Exoplanet Transit Detection
+  description: Automated transit detection in light curves
+  dataset: TESS light curve data
+  expected_runtime: 2-6 hours
+  cost_estimate: 8.2
+astronomy_features:
+  survey_support: [SDSS, LSST, HST, JWST, Gaia, TESS, Kepler]
+  simulation_codes: [GADGET, AREPO, RAMSES, ENZO, FLASH]
+  wave_analysis: [LALSUITE, bilby, PyCBC, GWpy]
+  ml_applications: [classification, regression, clustering, anomaly_detection]
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 64
+  placement_strategy: cluster
+  network_backend: efa
+scaling_profiles:
+  single_object:
+    nodes: 1-2
+    efficiency: 95
+    use_case: Individual star/galaxy analysis
+    memory_per_core_gb: 8
+  survey_analysis:
+    nodes: 4-16
+    efficiency: 90
+    use_case: Large survey data processing
+    memory_per_core_gb: 12
+  cosmological_simulation:
+    nodes: 32-64
+    efficiency: 85
+    use_case: Universe-scale simulations
+    memory_per_core_gb: 16
+aws_integration:
+  datasets_available: 4
+  demo_workflows_available: 4
+  total_data_volume_tb: 2500
+  integration_date: '2024-01-15'
+  data_access_patterns:
+    cost_optimized: Glacier Deep Archive for historical survey data
+    performance_optimized: S3 Standard for active research datasets
+    security: Encrypted storage for pre-publication discoveries
