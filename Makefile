@@ -1,14 +1,21 @@
 # Makefile for AWS Research Wizard
 # Provides convenient commands for development, testing, and deployment
 
-.PHONY: help install install-dev test test-unit test-integration test-coverage lint format type-check security clean docs build deploy-docs pre-commit setup-dev
+.PHONY: help install install-dev test test-unit test-integration test-coverage lint format type-check security clean docs build deploy-docs pre-commit setup-dev go-build go-test go-install build-all
 
 # Default target
 help: ## Show this help message
 	@echo "AWS Research Wizard - Development Commands"
 	@echo "=========================================="
 	@echo ""
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@echo "Python Implementation:"
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {if ($$1 !~ /^go-/) printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@echo ""
+	@echo "Go Implementation:"
+	@awk 'BEGIN {FS = ":.*?## "} /^go-[a-zA-Z_-]+:.*?## / {printf "\033[32m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@echo ""
+	@echo "Combined Targets:"
+	@awk 'BEGIN {FS = ":.*?## "} /^build-all:.*?## / {printf "\033[33m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 # Installation targets
 install: ## Install production dependencies
@@ -302,3 +309,77 @@ pip-list: ## List installed packages
 
 pip-outdated: ## Show outdated packages
 	pip list --outdated
+
+# Go Implementation Targets
+go-build: ## Build Go binary
+	@echo "🔨 Building Go implementation..."
+	cd go && make build
+	@echo "✅ Go binary built: go/build/aws-research-wizard-config"
+
+go-test: ## Run Go tests
+	@echo "🧪 Running Go tests..."
+	cd go && make test
+
+go-install: ## Install Go binary to ~/bin
+	@echo "📦 Installing Go binary..."
+	cd go && make install
+	@echo "✅ Go binary installed to ~/bin/aws-research-wizard"
+
+go-build-all: ## Build Go binaries for all platforms
+	@echo "🏗️ Building Go binaries for all platforms..."
+	cd go && make build-all
+	@echo "✅ Multi-platform binaries built in go/build/"
+
+go-clean: ## Clean Go build artifacts
+	@echo "🧹 Cleaning Go build artifacts..."
+	cd go && make clean
+
+go-dev: ## Quick Go development build and run
+	@echo "⚡ Quick Go development cycle..."
+	cd go && make dev
+
+go-fmt: ## Format Go code
+	@echo "🎨 Formatting Go code..."
+	cd go && make fmt
+
+go-lint: ## Run Go linter
+	@echo "🔍 Running Go linter..."
+	cd go && make lint
+
+go-security: ## Run Go security scanner
+	@echo "🔒 Running Go security scanner..."
+	cd go && make security
+
+# Combined Build Targets
+build-all: ## Build both Python and Go implementations
+	@echo "🏗️ Building both Python and Go implementations..."
+	make build
+	make go-build
+	@echo "✅ Both implementations built successfully!"
+
+install-all: ## Install both Python and Go implementations
+	@echo "📦 Installing both implementations..."
+	make install
+	make go-install
+	@echo "✅ Both implementations installed!"
+
+test-all: ## Run tests for both implementations
+	@echo "🧪 Running tests for both implementations..."
+	make test
+	make go-test
+	@echo "✅ All tests completed!"
+
+clean-all: ## Clean artifacts for both implementations
+	@echo "🧹 Cleaning all build artifacts..."
+	make clean
+	make go-clean
+	@echo "✅ All artifacts cleaned!"
+
+# Development workflow for both implementations
+dev-all: ## Development workflow for both implementations
+	@echo "⚡ Running development workflow for both implementations..."
+	make format
+	make go-fmt
+	make test-unit
+	make go-test
+	@echo "✅ Development workflow complete for both implementations!"

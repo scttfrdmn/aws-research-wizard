@@ -4,6 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Go 1.21+](https://img.shields.io/badge/go-1.21+-blue.svg)](https://golang.org/dl/)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 **Author:** Scott Friedman  
@@ -12,14 +13,40 @@
 
 ## 🎯 Overview
 
-The AWS Research Wizard provides pre-configured research packs with integrated AWS Open Data access, high-performance computing optimizations, and automated workflow execution capabilities. It bridges the gap between research computing needs and optimal AWS infrastructure deployment across 10 scientific domains with access to 50+ petabytes of real research data.
+The AWS Research Wizard provides pre-configured research packs with integrated AWS Open Data access, high-performance computing optimizations, and automated workflow execution capabilities. It bridges the gap between research computing needs and optimal AWS infrastructure deployment across 18 scientific domains with access to 50+ petabytes of real research data.
+
+### 🔄 Dual Implementation Approach
+
+**Two complementary implementations for different use cases:**
+
+| Feature | **Go Implementation** | **Python Implementation** |
+|---------|----------------------|---------------------------|
+| **Distribution** | Single binary (20MB) | Full environment (500MB+) |
+| **Startup Time** | < 0.1s | ~3s |
+| **Use Case** | Quick queries, HPC jobs, SSH access | Advanced analysis, tutorials, monitoring |
+| **Installation** | Download & run | pip install + dependencies |
+| **Best For** | Production deployment, automation | Development, research workflows |
+
+**Quick Start Options:**
+```bash
+# Go - Fast and lightweight
+./aws-research-wizard list
+./aws-research-wizard info genomics
+
+# Python - Full featured
+python python/tui_research_wizard.py
+python python/domain_tutorial_generator.py
+```
 
 ## 🚀 Key Features
 
-- **Multi-Domain Research Packs**: Pre-configured environments for 10 research domains
+- **Multi-Domain Research Packs**: Pre-configured environments for 18 research domains
+- **Dual Implementation**: Go binary for deployment + Python for advanced features
 - **AWS Open Data Integration**: Access to 50+ petabytes of real research datasets
+- **Terminal User Interfaces**: 3 specialized TUI systems for configuration and monitoring
 - **HPC Optimization**: EFA (Elastic Fabric Adapter) and MPI optimizations for parallel computing
 - **Demo Workflow Engine**: Executable workflows with real data and cost tracking
+- **S3 Transfer Optimization**: s5cmd integration (32x faster), rclone, ephemeral EFS
 - **Comprehensive Testing**: Automated validation and performance testing framework
 - **Cost Management**: Built-in cost estimation and optimization recommendations
 
