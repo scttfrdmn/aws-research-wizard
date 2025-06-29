@@ -160,7 +160,7 @@ workflows:
         type: "filter"
         parameters:
           age_threshold: "90_days"
-          include_patterns: ["*.vcf.gz"]
+          include_patterns: "*.vcf.gz"
         condition: ""
         on_failure: "stop"
     
