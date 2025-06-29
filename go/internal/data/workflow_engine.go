@@ -15,6 +15,7 @@ type WorkflowEngine struct {
 	bundlingEngine     *BundlingEngine
 	transferEngines    map[string]TransferEngine
 	warningSystem      *WarningSystem
+	domainProfileManager *ResearchDomainProfileManager
 	
 	// Execution state
 	activeWorkflows    map[string]*WorkflowExecution
@@ -223,6 +224,7 @@ func NewWorkflowEngine(config *WorkflowEngineConfig) *WorkflowEngine {
 		executionHistory:  make([]*WorkflowExecution, 0),
 		transferEngines:   make(map[string]TransferEngine),
 		progressCallbacks: make(map[string][]WorkflowProgressCallback),
+		domainProfileManager: NewResearchDomainProfileManager(),
 		config:           config,
 		shutdownChan:     make(chan struct{}),
 		eventBus:         &WorkflowEventBus{
@@ -266,6 +268,79 @@ func (we *WorkflowEngine) RegisterWarningSystem(system *WarningSystem) {
 	we.warningSystem = system
 }
 
+// GetDomainProfile returns the domain profile for optimization
+func (we *WorkflowEngine) GetDomainProfile(domain string) (*ResearchDomainProfile, bool) {
+	return we.domainProfileManager.GetProfile(domain)
+}
+
+// ApplyDomainOptimizations applies domain-specific optimizations to workflow configuration
+func (we *WorkflowEngine) ApplyDomainOptimizations(workflow *Workflow, projectConfig *ProjectConfig) error {
+	// Detect domain from project configuration or pattern analysis
+	domain := projectConfig.Project.Domain
+	if domain == "" {
+		// Try to infer from data profiles or use general profile
+		domain = "general"
+	}
+	
+	profile, exists := we.domainProfileManager.GetProfile(domain)
+	if !exists {
+		// No domain-specific optimizations available
+		return nil
+	}
+	
+	// Apply transfer optimizations
+	if workflow.Configuration.Concurrency == 0 {
+		workflow.Configuration.Concurrency = profile.TransferOptimization.OptimalConcurrency
+	}
+	
+	if workflow.Configuration.PartSize == "" {
+		workflow.Configuration.PartSize = profile.TransferOptimization.OptimalPartSize
+	}
+	
+	// Apply engine selection if not specified
+	if workflow.Engine == "" || workflow.Engine == "auto" {
+		if len(profile.TransferOptimization.PreferredEngines) > 0 {
+			workflow.Engine = profile.TransferOptimization.PreferredEngines[0]
+		}
+	}
+	
+	// Apply bundling strategy if enabled
+	if profile.BundlingStrategy.EnableBundling && len(workflow.PreProcessing) == 0 {
+		bundlingStep := ProcessingStep{
+			Name: "domain_optimized_bundling",
+			Type: "bundle",
+			Parameters: map[string]string{
+				"target_size":        profile.BundlingStrategy.TargetBundleSize,
+				"min_files":          fmt.Sprintf("%d", profile.BundlingStrategy.MinFilesForBundle),
+				"max_files":          fmt.Sprintf("%d", profile.BundlingStrategy.MaxFilesPerBundle),
+				"tool":               profile.BundlingStrategy.ToolPreference,
+				"compression":        fmt.Sprintf("%t", profile.BundlingStrategy.CompressionEnabled),
+				"preserve_path":      fmt.Sprintf("%t", profile.BundlingStrategy.PreservePath),
+				"grouping_strategy":  profile.BundlingStrategy.GroupingStrategy.Strategy,
+			},
+		}
+		workflow.PreProcessing = append(workflow.PreProcessing, bundlingStep)
+	}
+	
+	// Apply quality checks
+	for _, check := range profile.QualityChecks {
+		qualityStep := ProcessingStep{
+			Name: check.Name,
+			Type: "quality_check",
+			Parameters: map[string]string{
+				"check_type":   check.Type,
+				"command":      check.Command,
+				"severity":     check.Severity,
+				"auto_fix":     fmt.Sprintf("%t", check.AutoFix),
+				"description":  check.Description,
+			},
+		}
+		workflow.PostProcessing = append(workflow.PostProcessing, qualityStep)
+	}
+	
+	return nil
+}
+
 // ExecuteWorkflow executes a complete workflow from project configuration
 func (we *WorkflowEngine) ExecuteWorkflow(ctx context.Context, projectConfig *ProjectConfig, workflowName string) (*WorkflowExecution, error) {
 	// Find the specified workflow
@@ -283,6 +358,11 @@ func (we *WorkflowEngine) ExecuteWorkflow(ctx context.Context, projectConfig *Pr
 	
 	if !workflow.Enabled {
 		return nil, fmt.Errorf("workflow '%s' is disabled", workflowName)
+	}
+	
+	// Apply domain-specific optimizations
+	if err := we.ApplyDomainOptimizations(workflow, projectConfig); err != nil {
+		return nil, fmt.Errorf("failed to apply domain optimizations: %w", err)
 	}
 	
 	// Check concurrent workflow limit
