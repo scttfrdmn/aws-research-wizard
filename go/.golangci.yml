@@ -1,0 +1,138 @@
+run:
+  timeout: 5m
+  go: '1.21'
+  modules-download-mode: readonly
+
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+
+  gocyclo:
+    min-complexity: 15
+
+  govet:
+    check-shadowing: true
+    enable-all: true
+
+  goimports:
+    local-prefixes: github.com/aws-research-wizard/go
+
+  gofmt:
+    simplify: true
+
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+
+  misspell:
+    locale: US
+
+  lll:
+    line-length: 120
+
+  prealloc:
+    simple: true
+    range-loops: true
+    for-loops: false
+
+  whitespace:
+    multi-if: false
+    multi-func: false
+
+  wsl:
+    strict-append: true
+    allow-assign-and-call: true
+    allow-multiline-assign: true
+    allow-case-trailing-whitespace: true
+    allow-cuddle-declarations: false
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - gofmt
+    - goimports
+    - gocyclo
+    - goconst
+    - misspell
+    - lll
+    - prealloc
+    - whitespace
+    - wsl
+    - exportloopref
+    - gocritic
+    - gofumpt
+    - godot
+    - goprintffuncname
+    - gosec
+    - nakedret
+    - nolintlint
+    - revive
+    - unconvert
+    - unparam
+
+  disable:
+    - deadcode
+    - varcheck
+    - structcheck
+
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+        - goconst
+
+    # Exclude known linter issues
+    - path: internal/tui/
+      linters:
+        - lll
+        - wsl
+
+    # Ignore long lines in generated files
+    - path: internal/aws/
+      linters:
+        - lll
+
+    # Disable specific gosec rules for AWS SDK usage
+    - linters:
+        - gosec
+      text: "G204"  # Allow subprocess execution for AWS CLI
+
+  # Maximum issues count per one linter
+  max-issues-per-linter: 0
+
+  # Maximum count of issues with the same text
+  max-same-issues: 0
+
+  # Show only new issues created after git revision
+  new-from-rev: ""
+
+severity:
+  default-severity: error
+  case-sensitive: false
+  rules:
+    - linters:
+        - errcheck
+      severity: error
+    - linters:
+        - gosec
+      severity: warning
+    - linters:
+        - misspell
+      severity: info
