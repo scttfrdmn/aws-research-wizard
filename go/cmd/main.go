@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/aws-research-wizard/go/internal/commands/config"
+	"github.com/aws-research-wizard/go/internal/commands/data"
 	"github.com/aws-research-wizard/go/internal/commands/deploy"
 	"github.com/aws-research-wizard/go/internal/commands/monitor"
 )
@@ -27,8 +28,10 @@ and monitoring optimized AWS research environments across multiple scientific do
 
 Key Features:
 - Interactive domain configuration with 18+ research packs
+- S3 transfer optimization and AWS Open Data integration
 - Infrastructure deployment with CloudFormation automation  
 - Real-time monitoring with cost tracking and alerts
+- Data pipeline orchestration and progress tracking
 - Single binary distribution with zero dependencies
 - Cross-platform support (Linux, macOS, Windows)
 
@@ -48,6 +51,7 @@ Perfect for:
 	// Add subcommands
 	rootCmd.AddCommand(
 		config.NewConfigCommand(),
+		data.DataCmd,
 		deploy.NewDeployCommand(), 
 		monitor.NewMonitorCommand(),
 	)
