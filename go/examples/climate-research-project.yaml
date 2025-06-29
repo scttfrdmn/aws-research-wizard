@@ -1,0 +1,263 @@
+project:
+  name: "climate-data-management"
+  description: "Climate science data management with time-series optimization"
+  domain: "climate"
+  owner: "climate-research@university.edu"
+  budget: "$2000/month"
+  tags:
+    project: "global-climate-modeling"
+    grant: "NSF-CLIMATE-2024"
+    department: "atmospheric-sciences"
+  created_at: "2024-01-15T10:00:00Z"
+  updated_at: "2024-01-15T10:00:00Z"
+
+data_profiles:
+  satellite_observations:
+    name: "Satellite Observations"
+    description: "NetCDF files from satellite-based climate observations"
+    path: "/data/climate/satellite"
+    file_count: 50000
+    total_size: "15TB"
+    avg_file_size: "300MB"
+    file_types: [".nc", ".nc4", ".hdf5"]
+    access_pattern: "time_series_access"
+    priority: "high"
+    retention: "permanent"
+    metadata:
+      temporal_resolution: "daily"
+      spatial_resolution: "1km"
+      instruments: ["MODIS", "VIIRS", "AVHRR"]
+      variables: ["temperature", "precipitation", "cloud_cover"]
+
+  model_outputs:
+    name: "Climate Model Outputs"
+    description: "Global circulation model outputs and ensemble runs"
+    path: "/data/climate/models"
+    file_count: 8000
+    total_size: "25TB"
+    avg_file_size: "3.2GB"
+    file_types: [".nc", ".grb", ".grib2"]
+    access_pattern: "frequent_access"
+    priority: "high"
+    metadata:
+      model: "CESM2"
+      resolution: "1_degree"
+      scenario: "SSP5-8.5"
+      ensemble_members: 50
+
+  reanalysis_data:
+    name: "Reanalysis Data"
+    description: "Long-term atmospheric reanalysis datasets"
+    path: "/data/climate/reanalysis"
+    file_count: 150000
+    total_size: "45TB"
+    avg_file_size: "300MB"
+    file_types: [".nc", ".grib"]
+    access_pattern: "archival_with_occasional_access"
+    priority: "medium"
+    metadata:
+      dataset: "ERA5"
+      temporal_coverage: "1979-2023"
+      variables: ["temperature", "pressure", "humidity", "wind"]
+
+destinations:
+  operational_storage:
+    name: "Operational Climate Data Storage"
+    uri: "s3://climate-research-data/operational/"
+    storage_class: "STANDARD"
+    goals: ["fast_access", "high_throughput"]
+    region: "us-west-2"
+    encryption:
+      enabled: true
+      type: "SSE-S3"
+    lifecycle:
+      transition_ia: "60_days"
+      transition_glacier: "365_days"
+    metadata:
+      data_classification: "public_research"
+      compliance: "FAIR_data_principles"
+
+  archive_storage:
+    name: "Long-term Climate Archive"
+    uri: "s3://climate-research-archive/historical/"
+    storage_class: "GLACIER"
+    goals: ["minimum_cost", "long_term_preservation"]
+    region: "us-west-2"
+    encryption:
+      enabled: true
+      type: "SSE-S3"
+    lifecycle:
+      transition_da: "immediate"
+    metadata:
+      retention_policy: "permanent"
+
+workflows:
+  - name: "ingest_satellite_data"
+    description: "Daily ingestion of satellite climate observations"
+    source: "satellite_observations"
+    destination: "operational_storage"
+    engine: "auto"
+    triggers: ["schedule"]
+    schedule: "0 6 * * *"  # Daily at 6 AM
+    enabled: true
+    
+    preprocessing:
+      - name: "validate_netcdf"
+        type: "validate"
+        parameters:
+          format_check: "netcdf"
+          metadata_validation: "true"
+          spatial_bounds_check: "true"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "time_series_organization"
+        type: "organize"
+        parameters:
+          group_by: "date"
+          create_time_partitions: "true"
+          naming_convention: "YYYY/MM/DD/variable_name"
+        condition: ""
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 25
+      part_size: "128MB"
+      retry_attempts: 3
+      timeout: "4h"
+      checksum: true
+      overwrite_policy: "if_newer"
+      custom_parameters:
+        climate_mode: "true"
+        preserve_temporal_order: "true"
+        enable_compression: "true"
+
+  - name: "upload_model_outputs"
+    description: "Transfer large climate model outputs with parallel processing"
+    source: "model_outputs"
+    destination: "operational_storage"
+    engine: "s5cmd"
+    triggers: ["manual"]
+    enabled: true
+    
+    preprocessing:
+      - name: "ensemble_organization"
+        type: "organize"
+        parameters:
+          group_by: "ensemble_member"
+          create_hierarchical_structure: "true"
+        condition: ""
+        on_failure: "stop"
+    
+    configuration:
+      concurrency: 30
+      part_size: "256MB"
+      retry_attempts: 5
+      timeout: "24h"
+      checksum: true
+      bandwidth_limit: "500MB/s"
+      custom_parameters:
+        large_file_optimization: "true"
+        ensemble_parallel_upload: "true"
+
+  - name: "archive_reanalysis"
+    description: "Archive historical reanalysis data for long-term storage"
+    source: "reanalysis_data"
+    destination: "archive_storage"
+    engine: "rclone"
+    triggers: ["manual"]
+    enabled: true
+    
+    preprocessing:
+      - name: "compress_netcdf"
+        type: "compress"
+        parameters:
+          compression_method: "lz4"
+          compression_level: "6"
+          preserve_metadata: "true"
+        condition: ""
+        on_failure: "continue"
+      
+      - name: "create_catalog"
+        type: "catalog"
+        parameters:
+          generate_metadata_catalog: "true"
+          include_spatial_index: "true"
+          include_temporal_index: "true"
+        condition: ""
+        on_failure: "continue"
+    
+    postprocessing:
+      - name: "verify_integrity"
+        type: "validate"
+        parameters:
+          checksum_verification: "true"
+          netcdf_integrity_check: "true"
+        condition: "transfer_successful"
+        on_failure: "stop"
+    
+    configuration:
+      concurrency: 20
+      part_size: "64MB"
+      retry_attempts: 3
+      timeout: "48h"
+      checksum: true
+
+settings:
+  default_region: "us-west-2"
+  default_engine: "auto"
+  working_directory: "/tmp/climate-wizard"
+  log_level: "info"
+  max_concurrent_workflows: 5
+
+optimization:
+  enable_auto_optimization: true
+  
+  cost_optimization:
+    enabled: true
+    budget_limit: "$2000/month"
+    auto_bundle_small_files: false  # Climate data is typically large files
+    auto_compression: true
+    auto_storage_class_optimization: true
+    auto_lifecycle_policies: true
+    cost_alerts: ["75%", "90%"]
+  
+  performance_optimization:
+    enabled: true
+    auto_concurrency_tuning: true
+    auto_part_size_tuning: true
+    auto_engine_selection: true
+    network_optimization: true
+    max_transfer_speed: "2Gbps"
+  
+  reliability_optimization:
+    enabled: true
+    auto_retry: true
+    auto_verification: true
+    max_retry_attempts: 5
+    retry_delay: "60s"
+
+monitoring:
+  enabled: true
+  dashboard_enabled: true
+  
+  notification_channels:
+    - name: "climate_team"
+      type: "email"
+      endpoint: "climate-ops@university.edu"
+      enabled: true
+  
+  metrics:
+    collection_interval: "1m"
+    retention_period: "180d"
+    custom_metrics:
+      - "climate_data_volume"
+      - "model_output_frequency"
+      - "temporal_coverage_gaps"
+  
+  alerts:
+    transfer_failure: true
+    high_cost: true
+    slow_performance: true
+    cost_threshold: "$200/day"
+    performance_threshold: "100MB/s"

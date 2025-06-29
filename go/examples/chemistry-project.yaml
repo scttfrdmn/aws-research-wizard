@@ -1,0 +1,411 @@
+project:
+  name: "computational-chemistry-data"
+  description: "Computational chemistry data management for molecular simulations"
+  domain: "chemistry"
+  owner: "chemistry-team@university.edu"
+  budget: "$800/month"
+  tags:
+    project: "molecular-dynamics-simulations"
+    grant: "NSF-CHE-2024"
+    department: "chemistry"
+    computation_type: "quantum_chemistry"
+  created_at: "2024-01-15T10:00:00Z"
+  updated_at: "2024-01-15T10:00:00Z"
+
+data_profiles:
+  molecular_structures:
+    name: "Molecular Structure Files"
+    description: "3D molecular structures and conformations"
+    path: "/data/chemistry/structures"
+    file_count: 500000
+    total_size: "2TB"
+    avg_file_size: "4MB"
+    file_types: [".pdb", ".xyz", ".mol", ".sdf", ".cif"]
+    access_pattern: "frequent_read"
+    priority: "high"
+    retention: "10_years"
+    metadata:
+      structure_type: "optimized_geometries"
+      theory_level: "DFT_B3LYP"
+      basis_set: "6-31G*"
+      software: "Gaussian16"
+
+  simulation_data:
+    name: "Molecular Dynamics Trajectories"
+    description: "MD simulation trajectories and energy profiles"
+    path: "/data/chemistry/simulations"
+    file_count: 25000
+    total_size: "50TB"
+    avg_file_size: "2GB"
+    file_types: [".xtc", ".dcd", ".trr", ".nc", ".h5"]
+    access_pattern: "sequential_read"
+    priority: "high"
+    metadata:
+      simulation_time: "100_ns"
+      timestep: "2_fs"
+      force_field: "AMBER99SB"
+      water_model: "TIP3P"
+      temperature: "300K"
+
+  quantum_calculations:
+    name: "Quantum Chemistry Calculations"
+    description: "Electronic structure calculations and properties"
+    path: "/data/chemistry/quantum"
+    file_count: 100000
+    total_size: "10TB"
+    avg_file_size: "100MB"
+    file_types: [".log", ".out", ".chk", ".fchk", ".wfn"]
+    access_pattern: "write_once_read_occasionally"
+    priority: "medium"
+    metadata:
+      calculation_type: "single_point_energy"
+      method: "DFT"
+      functional: "B3LYP"
+      basis_set: "cc-pVTZ"
+
+  experimental_data:
+    name: "Experimental Spectroscopy Data"
+    description: "NMR, IR, and UV-Vis spectroscopy data"
+    path: "/data/chemistry/experimental"
+    file_count: 50000
+    total_size: "1TB"
+    avg_file_size: "20MB"
+    file_types: [".nmr", ".ir", ".uv", ".ms", ".csv", ".jdx"]
+    access_pattern: "frequent_access"
+    priority: "medium"
+    metadata:
+      instrument_type: "NMR_600MHz"
+      solvent: "CDCl3"
+      temperature: "298K"
+
+destinations:
+  chemistry_storage:
+    name: "Chemistry Data Storage"
+    uri: "s3://chemistry-research-data/primary/"
+    storage_class: "STANDARD"
+    goals: ["fast_access", "data_integrity"]
+    region: "us-east-1"
+    encryption:
+      enabled: true
+      type: "SSE-S3"
+    lifecycle:
+      transition_ia: "90_days"
+      transition_glacier: "365_days"
+    metadata:
+      data_classification: "research_data"
+      chemical_safety_level: "standard"
+
+  computational_cache:
+    name: "Computational Cache Storage"
+    uri: "s3://chemistry-computational-cache/temp/"
+    storage_class: "ONEZONE_IA"
+    goals: ["temporary_storage", "cost_optimize"]
+    region: "us-east-1"
+    encryption:
+      enabled: false
+    lifecycle:
+      expiration: "90_days"
+    metadata:
+      purpose: "computational_cache"
+      regenerable: "true"
+
+  archive_storage:
+    name: "Chemistry Data Archive"
+    uri: "s3://chemistry-archive/permanent/"
+    storage_class: "GLACIER"
+    goals: ["minimum_cost", "long_term_preservation"]
+    region: "us-east-1"
+    encryption:
+      enabled: true
+      type: "SSE-S3"
+    metadata:
+      preservation_policy: "10_years"
+
+workflows:
+  - name: "upload_molecular_structures"
+    description: "Upload and validate molecular structure files"
+    source: "molecular_structures"
+    destination: "chemistry_storage"
+    engine: "auto"
+    triggers: ["manual", "file_watcher"]
+    enabled: true
+    
+    preprocessing:
+      - name: "validate_structures"
+        type: "validate"
+        parameters:
+          pdb_validation: "true"
+          bond_length_check: "true"
+          geometry_validation: "true"
+          chirality_check: "true"
+        condition: ""
+        on_failure: "continue"
+      
+      - name: "generate_descriptors"
+        type: "analyze"
+        parameters:
+          calculate_molecular_descriptors: "true"
+          generate_fingerprints: "true"
+          calculate_properties: "true"
+        condition: ""
+        on_failure: "continue"
+      
+      - name: "format_standardization"
+        type: "transform"
+        parameters:
+          standardize_atom_names: "true"
+          normalize_coordinates: "true"
+          add_hydrogens: "true"
+        condition: ""
+        on_failure: "continue"
+    
+    postprocessing:
+      - name: "update_chemical_database"
+        type: "catalog"
+        parameters:
+          update_structure_database: "true"
+          generate_smiles: "true"
+          calculate_similarity_index: "true"
+        condition: "validation_passed"
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 30
+      part_size: "16MB"
+      retry_attempts: 2
+      timeout: "2h"
+      checksum: true
+      custom_parameters:
+        chemistry_mode: "true"
+        preserve_stereochemistry: "true"
+        validate_chemical_sanity: "true"
+
+  - name: "backup_simulation_data"
+    description: "Backup large MD simulation trajectories"
+    source: "simulation_data"
+    destination: "chemistry_storage"
+    engine: "s5cmd"
+    triggers: ["manual"]
+    enabled: true
+    
+    preprocessing:
+      - name: "validate_trajectories"
+        type: "validate"
+        parameters:
+          trajectory_integrity_check: "true"
+          frame_count_validation: "true"
+          coordinate_range_check: "true"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "compress_trajectories"
+        type: "compress"
+        parameters:
+          compression_method: "gzip"
+          compression_level: "6"
+          preserve_precision: "true"
+        condition: "file_size_gt_1GB"
+        on_failure: "continue"
+      
+      - name: "generate_analysis_summaries"
+        type: "analyze"
+        parameters:
+          calculate_rmsd: "true"
+          generate_energy_plots: "true"
+          create_trajectory_summary: "true"
+        condition: ""
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 8
+      part_size: "512MB"
+      retry_attempts: 3
+      timeout: "48h"
+      bandwidth_limit: "200MB/s"
+      custom_parameters:
+        md_trajectory_mode: "true"
+        preserve_temporal_order: "true"
+
+  - name: "sync_quantum_calculations"
+    description: "Synchronize quantum chemistry calculation results"
+    source: "quantum_calculations"
+    destination: "chemistry_storage"
+    engine: "rclone"
+    triggers: ["schedule"]
+    schedule: "0 4 * * *"  # Daily at 4 AM
+    enabled: true
+    
+    preprocessing:
+      - name: "validate_calculations"
+        type: "validate"
+        parameters:
+          scf_convergence_check: "true"
+          energy_validation: "true"
+          orbital_validation: "true"
+        condition: ""
+        on_failure: "continue"
+      
+      - name: "extract_properties"
+        type: "analyze"
+        parameters:
+          extract_energies: "true"
+          extract_frequencies: "true"
+          extract_charges: "true"
+          extract_dipole_moments: "true"
+        condition: ""
+        on_failure: "continue"
+    
+    postprocessing:
+      - name: "update_properties_database"
+        type: "catalog"
+        parameters:
+          store_calculated_properties: "true"
+          link_to_structures: "true"
+          generate_reports: "true"
+        condition: "extraction_successful"
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 15
+      part_size: "64MB"
+      retry_attempts: 2
+      timeout: "6h"
+      custom_parameters:
+        quantum_chemistry_mode: "true"
+        preserve_calculation_metadata: "true"
+
+  - name: "archive_old_calculations"
+    description: "Archive completed calculations to long-term storage"
+    source: "quantum_calculations"
+    destination: "archive_storage"
+    engine: "rclone"
+    triggers: ["schedule"]
+    schedule: "0 2 1 * *"  # Monthly on 1st at 2 AM
+    enabled: true
+    
+    preprocessing:
+      - name: "filter_completed_calculations"
+        type: "filter"
+        parameters:
+          age_threshold: "180_days"
+          status_filter: "completed"
+          include_successful_only: "true"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "prepare_archive_package"
+        type: "package"
+        parameters:
+          create_calculation_packages: "true"
+          include_metadata: "true"
+          verify_completeness: "true"
+        condition: ""
+        on_failure: "stop"
+    
+    configuration:
+      concurrency: 5
+      part_size: "128MB"
+      retry_attempts: 3
+      timeout: "24h"
+
+settings:
+  default_region: "us-east-1"
+  default_engine: "auto"
+  working_directory: "/tmp/chemistry-wizard"
+  log_level: "info"
+  max_concurrent_workflows: 3
+  
+  # Chemistry-specific settings
+  chemistry_settings:
+    molecular_validation: true
+    chemical_database_integration: true
+    property_calculation: true
+    safety_compliance_check: true
+
+optimization:
+  enable_auto_optimization: true
+  
+  cost_optimization:
+    enabled: true
+    budget_limit: "$800/month"
+    auto_bundle_small_files: true
+    auto_compression: true
+    auto_storage_class_optimization: true
+    cost_alerts: ["70%", "85%"]
+  
+  performance_optimization:
+    enabled: true
+    auto_concurrency_tuning: true
+    auto_part_size_tuning: true
+    auto_engine_selection: true
+    network_optimization: true
+    max_transfer_speed: "500MB/s"
+    # Chemistry-specific optimizations
+    molecular_file_optimization: true
+    trajectory_streaming: true
+  
+  reliability_optimization:
+    enabled: true
+    auto_retry: true
+    auto_verification: true
+    max_retry_attempts: 3
+    retry_delay: "30s"
+    chemical_data_integrity_checks: true
+
+monitoring:
+  enabled: true
+  dashboard_enabled: true
+  
+  notification_channels:
+    - name: "chemistry_team"
+      type: "email"
+      endpoint: "chem-ops@university.edu"
+      enabled: true
+    
+    - name: "computational_slack"
+      type: "slack"
+      endpoint: "https://hooks.slack.com/services/CHEM_WEBHOOK"
+      enabled: true
+      settings:
+        channel: "#computational-chemistry"
+  
+  metrics:
+    collection_interval: "2m"
+    retention_period: "120d"
+    export_to_cloudwatch: true
+    custom_metrics:
+      - "molecular_structures_processed"
+      - "simulation_data_volume"
+      - "calculation_success_rate"
+      - "chemical_property_extractions"
+      - "database_query_performance"
+  
+  alerts:
+    transfer_failure: true
+    high_cost: true
+    slow_performance: true
+    calculation_validation_failure: true
+    chemical_database_errors: true
+    structure_validation_issues: true
+    cost_threshold: "$80/day"
+    performance_threshold: "50MB/s"
+
+# Chemistry-specific compliance and safety
+compliance:
+  chemical_safety:
+    hazard_classification: "required"
+    safety_data_sheets: "linked"
+    regulatory_compliance: ["REACH", "CLP", "GHS"]
+    waste_tracking: "enabled"
+  
+  data_standards:
+    molecular_formats: ["PDB", "SDF", "MOL", "XYZ"]
+    spectroscopy_formats: ["JCAMP-DX", "AnIML"]
+    calculation_metadata: ["CompChem_convention"]
+    database_standards: ["InChI", "SMILES", "CAS_numbers"]
+  
+  research_integrity:
+    data_provenance: "required"
+    calculation_reproducibility: "enforced"
+    version_control: "mandatory"
+    peer_review: "enabled"

@@ -1,0 +1,336 @@
+project:
+  name: "ml-training-pipeline"
+  description: "Machine learning training data management with model artifact versioning"
+  domain: "machine_learning"
+  owner: "ml-team@university.edu"
+  budget: "$1500/month"
+  tags:
+    project: "deep-learning-research"
+    grant: "NSF-AI-2024"
+    department: "computer-science"
+  created_at: "2024-01-15T10:00:00Z"
+  updated_at: "2024-01-15T10:00:00Z"
+
+data_profiles:
+  training_datasets:
+    name: "Training Datasets"
+    description: "Large-scale training datasets for deep learning models"
+    path: "/data/ml/datasets"
+    file_count: 5000000
+    total_size: "50TB"
+    avg_file_size: "10MB"
+    file_types: [".jpg", ".png", ".tiff", ".h5", ".npy", ".parquet"]
+    access_pattern: "random_access"
+    priority: "high"
+    retention: "5_years"
+    metadata:
+      dataset_type: "computer_vision"
+      labels_included: "true"
+      augmented: "false"
+      train_test_split: "80_20"
+
+  model_artifacts:
+    name: "Model Artifacts"
+    description: "Trained models, checkpoints, and experiment artifacts"
+    path: "/data/ml/models"
+    file_count: 15000
+    total_size: "8TB"
+    avg_file_size: "500MB"
+    file_types: [".pt", ".h5", ".pkl", ".pb", ".onnx", ".safetensors"]
+    access_pattern: "versioned_access"
+    priority: "high"
+    metadata:
+      framework: "pytorch"
+      model_type: "transformer"
+      versioned: "true"
+      experiments_tracked: "true"
+
+  preprocessing_cache:
+    name: "Preprocessing Cache"
+    description: "Cached preprocessing results and feature embeddings"
+    path: "/data/ml/cache"
+    file_count: 2000000
+    total_size: "12TB"
+    avg_file_size: "6MB"
+    file_types: [".npy", ".h5", ".pkl", ".cache"]
+    access_pattern: "frequent_read"
+    priority: "medium"
+    retention: "1_year"
+    metadata:
+      cacheable: "true"
+      regenerable: "true"
+
+destinations:
+  training_storage:
+    name: "High-Performance Training Storage"
+    uri: "s3://ml-research-data/training/"
+    storage_class: "STANDARD"
+    goals: ["high_throughput", "low_latency"]
+    region: "us-east-1"
+    encryption:
+      enabled: true
+      type: "SSE-KMS"
+      key_id: "arn:aws:kms:us-east-1:123456789012:key/ml-training-key"
+    metadata:
+      data_classification: "proprietary"
+      access_pattern: "high_iops"
+
+  model_registry:
+    name: "Model Registry Storage"
+    uri: "s3://ml-model-registry/artifacts/"
+    storage_class: "STANDARD_IA"
+    goals: ["versioning", "cost_optimize"]
+    region: "us-east-1"
+    encryption:
+      enabled: true
+      type: "SSE-KMS"
+      key_id: "arn:aws:kms:us-east-1:123456789012:key/ml-models-key"
+    lifecycle:
+      transition_ia: "immediate"
+      transition_glacier: "180_days"
+    metadata:
+      versioning_enabled: "true"
+      model_lineage_tracking: "true"
+
+  cache_storage:
+    name: "Temporary Cache Storage"
+    uri: "s3://ml-research-cache/preprocessing/"
+    storage_class: "ONEZONE_IA"
+    goals: ["minimum_cost", "temporary_storage"]
+    region: "us-east-1"
+    encryption:
+      enabled: false
+    lifecycle:
+      expiration: "30_days"
+
+workflows:
+  - name: "upload_training_data"
+    description: "Parallel upload of training datasets with data validation"
+    source: "training_datasets"
+    destination: "training_storage"
+    engine: "s5cmd"
+    triggers: ["manual"]
+    enabled: true
+    
+    preprocessing:
+      - name: "validate_images"
+        type: "validate"
+        parameters:
+          image_validation: "true"
+          corruption_check: "true"
+          format_standardization: "true"
+        condition: ""
+        on_failure: "continue"
+      
+      - name: "create_manifests"
+        type: "catalog"
+        parameters:
+          generate_dataset_manifest: "true"
+          include_checksums: "true"
+          create_label_mapping: "true"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "optimize_layout"
+        type: "organize"
+        parameters:
+          shard_by_class: "true"
+          balanced_sharding: "true"
+          max_shard_size: "1GB"
+        condition: "large_dataset"
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 50
+      part_size: "32MB"
+      retry_attempts: 3
+      timeout: "12h"
+      checksum: true
+      overwrite_policy: "never"
+      custom_parameters:
+        ml_mode: "true"
+        preserve_directory_structure: "true"
+        enable_parallel_validation: "true"
+
+  - name: "backup_model_artifacts"
+    description: "Version-controlled backup of model artifacts and checkpoints"
+    source: "model_artifacts"
+    destination: "model_registry"
+    engine: "auto"
+    triggers: ["manual", "webhook"]
+    enabled: true
+    
+    preprocessing:
+      - name: "version_models"
+        type: "version"
+        parameters:
+          versioning_scheme: "semantic"
+          git_integration: "true"
+          experiment_tracking: "mlflow"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "validate_models"
+        type: "validate"
+        parameters:
+          model_format_check: "true"
+          inference_test: "true"
+          compatibility_check: "true"
+        condition: ""
+        on_failure: "continue"
+      
+      - name: "optimize_storage"
+        type: "compress"
+        parameters:
+          compression_method: "zstd"
+          compression_level: "3"
+          preserve_metadata: "true"
+        condition: "large_model"
+        on_failure: "continue"
+    
+    postprocessing:
+      - name: "update_registry"
+        type: "registry"
+        parameters:
+          register_model: "true"
+          update_lineage: "true"
+          create_deployment_manifest: "true"
+        condition: "validation_passed"
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 15
+      part_size: "128MB"
+      retry_attempts: 5
+      timeout: "8h"
+      checksum: true
+      custom_parameters:
+        model_registry_mode: "true"
+        enable_delta_uploads: "true"
+
+  - name: "sync_preprocessing_cache"
+    description: "Sync preprocessing cache with lifecycle management"
+    source: "preprocessing_cache"
+    destination: "cache_storage"
+    engine: "rclone"
+    triggers: ["schedule"]
+    schedule: "0 2 * * *"  # Daily at 2 AM
+    enabled: true
+    
+    preprocessing:
+      - name: "cache_cleanup"
+        type: "cleanup"
+        parameters:
+          age_threshold: "7_days"
+          size_threshold: "100GB"
+          usage_based_cleanup: "true"
+        condition: ""
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 20
+      part_size: "64MB"
+      retry_attempts: 2
+      timeout: "6h"
+      bandwidth_limit: "200MB/s"
+      custom_parameters:
+        cache_mode: "true"
+        sync_deletions: "true"
+
+settings:
+  default_region: "us-east-1"
+  default_engine: "auto"
+  working_directory: "/tmp/ml-wizard"
+  log_level: "info"
+  max_concurrent_workflows: 3
+  
+  # ML-specific settings
+  ml_settings:
+    enable_gpu_optimization: true
+    model_format_validation: true
+    dataset_integrity_checks: true
+    experiment_tracking_integration: "mlflow"
+
+optimization:
+  enable_auto_optimization: true
+  
+  cost_optimization:
+    enabled: true
+    budget_limit: "$1500/month"
+    auto_bundle_small_files: true
+    auto_compression: true
+    auto_storage_class_optimization: true
+    intelligent_tiering: true
+    cost_alerts: ["70%", "85%", "95%"]
+  
+  performance_optimization:
+    enabled: true
+    auto_concurrency_tuning: true
+    auto_part_size_tuning: true
+    auto_engine_selection: true
+    network_optimization: true
+    max_transfer_speed: "1Gbps"
+    # ML-specific optimizations
+    data_loader_optimization: true
+    batch_processing: true
+  
+  reliability_optimization:
+    enabled: true
+    auto_retry: true
+    auto_verification: true
+    auto_versioning: true
+    max_retry_attempts: 5
+    retry_delay: "45s"
+
+monitoring:
+  enabled: true
+  dashboard_enabled: true
+  
+  notification_channels:
+    - name: "ml_team_slack"
+      type: "slack"
+      endpoint: "https://hooks.slack.com/services/ML_TEAM_WEBHOOK"
+      enabled: true
+      settings:
+        channel: "#ml-infrastructure"
+    
+    - name: "ml_ops_email"
+      type: "email"
+      endpoint: "ml-ops@university.edu"
+      enabled: true
+  
+  metrics:
+    collection_interval: "30s"
+    retention_period: "90d"
+    export_to_cloudwatch: true
+    custom_metrics:
+      - "training_data_throughput"
+      - "model_upload_frequency"
+      - "cache_hit_ratio"
+      - "dataset_validation_errors"
+      - "model_registry_size"
+  
+  alerts:
+    transfer_failure: true
+    high_cost: true
+    slow_performance: true
+    dataset_corruption: true
+    model_validation_failure: true
+    cache_miss_rate_high: true
+    cost_threshold: "$150/day"
+    performance_threshold: "200MB/s"
+
+# ML-specific compliance and governance
+compliance:
+  data_governance:
+    enable_data_lineage: true
+    enable_model_lineage: true
+    privacy_compliance: "GDPR"
+    audit_logging: true
+  
+  security:
+    encryption_at_rest: true
+    encryption_in_transit: true
+    access_control: "RBAC"
+    model_signing: true
+    vulnerability_scanning: true

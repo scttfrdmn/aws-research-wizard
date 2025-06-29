@@ -1,0 +1,441 @@
+project:
+  name: "geospatial-mapping-project"
+  description: "Large-scale geospatial data processing and map generation"
+  domain: "geospatial"
+  owner: "gis-team@university.edu"
+  budget: "$1200/month"
+  tags:
+    project: "urban-planning-analysis"
+    grant: "NSF-GEO-2024"
+    department: "geography"
+    coverage: "continental_us"
+  created_at: "2024-01-15T10:00:00Z"
+  updated_at: "2024-01-15T10:00:00Z"
+
+data_profiles:
+  satellite_imagery:
+    name: "Satellite Imagery"
+    description: "High-resolution satellite imagery in various bands"
+    path: "/data/geospatial/imagery"
+    file_count: 250000
+    total_size: "40TB"
+    avg_file_size: "160MB"
+    file_types: [".tif", ".tiff", ".jp2", ".img"]
+    access_pattern: "spatial_access"
+    priority: "high"
+    retention: "10_years"
+    metadata:
+      resolution: "30cm"
+      spectral_bands: ["RGB", "NIR", "SWIR"]
+      coordinate_system: "EPSG:4326"
+      temporal_coverage: "2020-2024"
+      cloud_cover_max: "10%"
+
+  lidar_data:
+    name: "LiDAR Point Clouds"
+    description: "3D point cloud data from aerial LiDAR surveys"
+    path: "/data/geospatial/lidar"
+    file_count: 50000
+    total_size: "100TB"
+    avg_file_size: "2GB"
+    file_types: [".las", ".laz", ".ply", ".xyz"]
+    access_pattern: "tile_based_access"
+    priority: "high"
+    metadata:
+      point_density: "8_points_per_sqm"
+      vertical_accuracy: "15cm"
+      horizontal_accuracy: "30cm"
+      classification: "ground_vegetation_buildings"
+
+  vector_data:
+    name: "Vector Datasets"
+    description: "Administrative boundaries, roads, and infrastructure"
+    path: "/data/geospatial/vector"
+    file_count: 100000
+    total_size: "500GB"
+    avg_file_size: "5MB"
+    file_types: [".shp", ".gpkg", ".geojson", ".kml"]
+    access_pattern: "query_based_access"
+    priority: "medium"
+    metadata:
+      feature_types: ["boundaries", "transportation", "landuse"]
+      topology_validated: "true"
+      coordinate_system: "EPSG:4326"
+
+  processed_maps:
+    name: "Processed Map Products"
+    description: "Generated maps, analyses, and derived products"
+    path: "/data/geospatial/products"
+    file_count: 25000
+    total_size: "15TB"
+    avg_file_size: "600MB"
+    file_types: [".tif", ".pdf", ".png", ".mbtiles"]
+    access_pattern: "occasional_access"
+    priority: "medium"
+    metadata:
+      product_type: "classified_maps"
+      scale: "1:25000"
+      projection: "Web_Mercator"
+
+destinations:
+  geospatial_storage:
+    name: "Geospatial Data Storage"
+    uri: "s3://geospatial-research-data/primary/"
+    storage_class: "STANDARD"
+    goals: ["spatial_indexing", "fast_access"]
+    region: "us-west-2"
+    encryption:
+      enabled: true
+      type: "SSE-S3"
+    lifecycle:
+      transition_ia: "60_days"
+      transition_glacier: "365_days"
+    metadata:
+      spatial_indexing: "enabled"
+      coordinate_system: "EPSG:4326"
+
+  map_tiles_storage:
+    name: "Map Tile Cache Storage"
+    uri: "s3://geospatial-map-tiles/cache/"
+    storage_class: "STANDARD"
+    goals: ["fast_delivery", "cdn_integration"]
+    region: "us-west-2"
+    encryption:
+      enabled: false  # Public map tiles
+    lifecycle:
+      transition_ia: "30_days"
+    metadata:
+      public_access: "true"
+      cdn_enabled: "true"
+
+  archive_storage:
+    name: "Geospatial Data Archive"
+    uri: "s3://geospatial-archive/historical/"
+    storage_class: "GLACIER"
+    goals: ["minimum_cost", "long_term_storage"]
+    region: "us-west-2"
+    encryption:
+      enabled: true
+      type: "SSE-S3"
+    metadata:
+      retention_policy: "10_years"
+
+workflows:
+  - name: "ingest_satellite_imagery"
+    description: "Ingest and process satellite imagery with spatial indexing"
+    source: "satellite_imagery"
+    destination: "geospatial_storage"
+    engine: "auto"
+    triggers: ["manual", "schedule"]
+    schedule: "0 3 * * *"  # Daily at 3 AM
+    enabled: true
+    
+    preprocessing:
+      - name: "validate_geotiff"
+        type: "validate"
+        parameters:
+          geotiff_validation: "true"
+          coordinate_system_check: "true"
+          projection_validation: "true"
+          nodata_value_check: "true"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "generate_overviews"
+        type: "process"
+        parameters:
+          create_pyramids: "true"
+          overview_levels: [2, 4, 8, 16, 32]
+          resampling_method: "average"
+        condition: ""
+        on_failure: "continue"
+      
+      - name: "extract_spatial_metadata"
+        type: "metadata"
+        parameters:
+          extract_bounds: "true"
+          calculate_statistics: "true"
+          generate_spatial_index: "true"
+        condition: ""
+        on_failure: "continue"
+      
+      - name: "cloud_detection"
+        type: "analyze"
+        parameters:
+          cloud_mask_generation: "true"
+          quality_assessment: "true"
+          usability_scoring: "true"
+        condition: ""
+        on_failure: "continue"
+    
+    postprocessing:
+      - name: "update_spatial_catalog"
+        type: "catalog"
+        parameters:
+          update_postgis_database: "true"
+          create_wms_service: "true"
+          generate_metadata_xml: "true"
+        condition: "processing_successful"
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 25
+      part_size: "64MB"
+      retry_attempts: 3
+      timeout: "6h"
+      checksum: true
+      custom_parameters:
+        geospatial_mode: "true"
+        preserve_coordinate_precision: "true"
+        enable_spatial_indexing: "true"
+
+  - name: "upload_lidar_data"
+    description: "Upload LiDAR point clouds with compression and tiling"
+    source: "lidar_data"
+    destination: "geospatial_storage"
+    engine: "s5cmd"
+    triggers: ["manual"]
+    enabled: true
+    
+    preprocessing:
+      - name: "validate_las_files"
+        type: "validate"
+        parameters:
+          las_format_validation: "true"
+          point_classification_check: "true"
+          coordinate_system_validation: "true"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "compress_point_clouds"
+        type: "compress"
+        parameters:
+          compression_method: "laz"
+          preserve_classification: "true"
+          optimize_for_streaming: "true"
+        condition: ""
+        on_failure: "continue"
+      
+      - name: "generate_tiles"
+        type: "process"
+        parameters:
+          create_spatial_tiles: "true"
+          tile_size: "1km_x_1km"
+          create_lod_pyramid: "true"
+        condition: ""
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 10
+      part_size: "256MB"
+      retry_attempts: 3
+      timeout: "24h"
+      bandwidth_limit: "300MB/s"
+      custom_parameters:
+        lidar_mode: "true"
+        preserve_point_precision: "true"
+
+  - name: "sync_vector_data"
+    description: "Synchronize vector datasets with topology validation"
+    source: "vector_data"
+    destination: "geospatial_storage"
+    engine: "rclone"
+    triggers: ["manual", "file_watcher"]
+    enabled: true
+    
+    preprocessing:
+      - name: "validate_topology"
+        type: "validate"
+        parameters:
+          topology_check: "true"
+          geometry_validation: "true"
+          attribute_validation: "true"
+        condition: ""
+        on_failure: "continue"
+      
+      - name: "reproject_data"
+        type: "transform"
+        parameters:
+          target_projection: "EPSG:4326"
+          preserve_accuracy: "true"
+          validate_transformation: "true"
+        condition: "projection_mismatch"
+        on_failure: "stop"
+      
+      - name: "optimize_storage"
+        type: "optimize"
+        parameters:
+          spatial_indexing: "true"
+          attribute_indexing: "true"
+          compression: "true"
+        condition: ""
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 20
+      part_size: "32MB"
+      retry_attempts: 2
+      timeout: "4h"
+      custom_parameters:
+        vector_mode: "true"
+        preserve_attributes: "true"
+
+  - name: "generate_map_tiles"
+    description: "Generate map tiles for web services and caching"
+    source: "processed_maps"
+    destination: "map_tiles_storage"
+    engine: "auto"
+    triggers: ["manual"]
+    enabled: true
+    
+    preprocessing:
+      - name: "validate_map_products"
+        type: "validate"
+        parameters:
+          cartographic_validation: "true"
+          color_profile_check: "true"
+          resolution_validation: "true"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "generate_tiles"
+        type: "process"
+        parameters:
+          tile_format: "png"
+          zoom_levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+          tile_size: "256x256"
+          coordinate_system: "EPSG:3857"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "optimize_tiles"
+        type: "optimize"
+        parameters:
+          compression_optimization: "true"
+          cache_headers: "true"
+          generate_metadata: "true"
+        condition: ""
+        on_failure: "continue"
+    
+    postprocessing:
+      - name: "update_tile_index"
+        type: "catalog"
+        parameters:
+          update_tile_matrix_set: "true"
+          generate_capabilities_document: "true"
+          update_cache_configuration: "true"
+        condition: "tiling_successful"
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 30
+      part_size: "16MB"
+      retry_attempts: 2
+      timeout: "8h"
+      custom_parameters:
+        tile_generation_mode: "true"
+        optimize_for_web: "true"
+
+settings:
+  default_region: "us-west-2"
+  default_engine: "auto"
+  working_directory: "/tmp/geospatial-wizard"
+  log_level: "info"
+  max_concurrent_workflows: 4
+  
+  # Geospatial-specific settings
+  geospatial_settings:
+    default_projection: "EPSG:4326"
+    spatial_indexing: true
+    coordinate_precision: "double"
+    topology_validation: true
+
+optimization:
+  enable_auto_optimization: true
+  
+  cost_optimization:
+    enabled: true
+    budget_limit: "$1200/month"
+    auto_bundle_small_files: true
+    auto_compression: true
+    auto_storage_class_optimization: true
+    intelligent_tiering: true
+    cost_alerts: ["75%", "90%"]
+  
+  performance_optimization:
+    enabled: true
+    auto_concurrency_tuning: true
+    auto_part_size_tuning: true
+    auto_engine_selection: true
+    network_optimization: true
+    max_transfer_speed: "1Gbps"
+    # Geospatial-specific optimizations
+    spatial_indexing_optimization: true
+    tile_caching: true
+    pyramid_generation: true
+  
+  reliability_optimization:
+    enabled: true
+    auto_retry: true
+    auto_verification: true
+    max_retry_attempts: 3
+    retry_delay: "60s"
+    spatial_integrity_checks: true
+
+monitoring:
+  enabled: true
+  dashboard_enabled: true
+  
+  notification_channels:
+    - name: "gis_team"
+      type: "email"
+      endpoint: "gis-ops@university.edu"
+      enabled: true
+    
+    - name: "geospatial_slack"
+      type: "slack"
+      endpoint: "https://hooks.slack.com/services/GIS_WEBHOOK"
+      enabled: true
+      settings:
+        channel: "#geospatial-ops"
+  
+  metrics:
+    collection_interval: "1m"
+    retention_period: "180d"
+    export_to_cloudwatch: true
+    custom_metrics:
+      - "spatial_data_volume"
+      - "tile_generation_rate"
+      - "coordinate_transformation_errors"
+      - "spatial_query_performance"
+      - "map_service_requests"
+  
+  alerts:
+    transfer_failure: true
+    high_cost: true
+    slow_performance: true
+    coordinate_system_errors: true
+    spatial_index_corruption: true
+    tile_generation_failure: true
+    cost_threshold: "$120/day"
+    performance_threshold: "100MB/s"
+
+# Geospatial-specific compliance and standards
+compliance:
+  spatial_standards:
+    coordinate_systems: ["EPSG:4326", "EPSG:3857", "EPSG:32633"]
+    data_formats: ["GeoTIFF", "Shapefile", "GeoPackage", "GeoJSON"]
+    metadata_standards: ["ISO 19115", "FGDC", "Dublin Core"]
+    service_standards: ["WMS", "WFS", "WCS", "WMTS"]
+  
+  data_quality:
+    positional_accuracy: "required"
+    attribute_completeness: "90%"
+    logical_consistency: "required"
+    temporal_validity: "required"
+  
+  accessibility:
+    public_data_availability: true
+    open_data_compliance: "OGC_standards"
+    web_service_endpoints: true
+    api_documentation: "required"

@@ -1,0 +1,399 @@
+project:
+  name: "astronomy-survey-data"
+  description: "Large-scale astronomical survey data management and processing"
+  domain: "astronomy"
+  owner: "astronomy-team@observatory.edu"
+  budget: "$3000/month"
+  tags:
+    project: "deep-sky-survey"
+    grant: "NSF-AST-2024"
+    department: "astronomy"
+    telescope: "VLT"
+  created_at: "2024-01-15T10:00:00Z"
+  updated_at: "2024-01-15T10:00:00Z"
+
+data_profiles:
+  raw_observations:
+    name: "Raw Telescope Observations"
+    description: "Raw FITS files from telescope observations"
+    path: "/data/astronomy/raw"
+    file_count: 100000
+    total_size: "75TB"
+    avg_file_size: "750MB"
+    file_types: [".fits", ".fit", ".fts"]
+    access_pattern: "write_once_read_occasionally"
+    priority: "high"
+    retention: "permanent"
+    metadata:
+      telescope: "VLT"
+      instrument: "MUSE"
+      observation_mode: "imaging"
+      filter_bands: ["B", "V", "R", "I", "z"]
+      seeing_limit: "1.2_arcsec"
+
+  calibrated_data:
+    name: "Calibrated Observations"
+    description: "Calibrated and reduced FITS files ready for analysis"
+    path: "/data/astronomy/calibrated"
+    file_count: 80000
+    total_size: "60TB"
+    avg_file_size: "750MB"
+    file_types: [".fits", ".cal.fits"]
+    access_pattern: "frequent_access"
+    priority: "high"
+    metadata:
+      calibration_level: "L2"
+      pipeline_version: "v2.4.1"
+      astrometry_calibrated: "true"
+      photometry_calibrated: "true"
+
+  catalog_data:
+    name: "Source Catalogs"
+    description: "Extracted source catalogs and photometry tables"
+    path: "/data/astronomy/catalogs"
+    file_count: 500000
+    total_size: "2TB"
+    avg_file_size: "4MB"
+    file_types: [".fits", ".csv", ".parquet", ".votable"]
+    access_pattern: "frequent_read"
+    priority: "medium"
+    metadata:
+      catalog_type: "source_extraction"
+      magnitude_limit: "25_mag"
+      completeness_limit: "22_mag"
+
+  processed_images:
+    name: "Processed Image Mosaics"
+    description: "Co-added and processed image mosaics"
+    path: "/data/astronomy/mosaics"
+    file_count: 5000
+    total_size: "25TB"
+    avg_file_size: "5GB"
+    file_types: [".fits", ".tiff"]
+    access_pattern: "occasional_access"
+    priority: "medium"
+    metadata:
+      mosaic_type: "co_added"
+      pixel_scale: "0.2_arcsec_per_pixel"
+      coverage_area: "100_square_degrees"
+
+destinations:
+  observatory_storage:
+    name: "Observatory Primary Storage"
+    uri: "s3://astronomy-survey-data/primary/"
+    storage_class: "STANDARD"
+    goals: ["fast_access", "high_availability"]
+    region: "us-west-1"
+    encryption:
+      enabled: true
+      type: "SSE-S3"
+    lifecycle:
+      transition_ia: "90_days"
+      transition_glacier: "365_days"
+    metadata:
+      data_classification: "scientific_data"
+      public_release_date: "2026-01-01"
+
+  public_archive:
+    name: "Public Data Archive"
+    uri: "s3://astronomy-public-archive/survey/"
+    storage_class: "STANDARD"
+    goals: ["public_access", "cost_optimize"]
+    region: "us-west-1"
+    encryption:
+      enabled: false  # Public data
+    lifecycle:
+      transition_ia: "30_days"
+    metadata:
+      access_policy: "public"
+      data_rights: "CC0"
+
+  long_term_archive:
+    name: "Long-term Preservation Archive"
+    uri: "s3://astronomy-preservation/permanent/"
+    storage_class: "GLACIER"
+    goals: ["minimum_cost", "permanent_preservation"]
+    region: "us-west-1"
+    encryption:
+      enabled: true
+      type: "SSE-S3"
+    lifecycle:
+      transition_da: "immediate"
+    metadata:
+      preservation_policy: "permanent"
+      backup_copy: "true"
+
+workflows:
+  - name: "ingest_raw_observations"
+    description: "Ingest raw telescope observations with metadata validation"
+    source: "raw_observations"
+    destination: "observatory_storage"
+    engine: "s5cmd"
+    triggers: ["manual", "file_watcher"]
+    enabled: true
+    
+    preprocessing:
+      - name: "validate_fits"
+        type: "validate"
+        parameters:
+          fits_header_validation: "true"
+          wcs_validation: "true"
+          data_integrity_check: "true"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "extract_metadata"
+        type: "metadata"
+        parameters:
+          extract_observation_metadata: "true"
+          generate_preview_images: "true"
+          calculate_statistics: "true"
+        condition: ""
+        on_failure: "continue"
+      
+      - name: "quality_assessment"
+        type: "analyze"
+        parameters:
+          seeing_measurement: "true"
+          background_estimation: "true"
+          saturation_check: "true"
+        condition: ""
+        on_failure: "continue"
+    
+    postprocessing:
+      - name: "update_observation_log"
+        type: "catalog"
+        parameters:
+          update_database: "true"
+          observation_status: "ingested"
+        condition: "ingestion_successful"
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 20
+      part_size: "256MB"
+      retry_attempts: 3
+      timeout: "8h"
+      checksum: true
+      overwrite_policy: "never"
+      custom_parameters:
+        astronomy_mode: "true"
+        preserve_fits_headers: "true"
+        generate_quicklook: "true"
+
+  - name: "upload_calibrated_data"
+    description: "Upload calibrated data with pipeline provenance tracking"
+    source: "calibrated_data"
+    destination: "observatory_storage"
+    engine: "auto"
+    triggers: ["manual"]
+    enabled: true
+    
+    preprocessing:
+      - name: "validate_calibration"
+        type: "validate"
+        parameters:
+          calibration_quality_check: "true"
+          astrometric_accuracy: "0.1_arcsec"
+          photometric_accuracy: "0.02_mag"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "provenance_tracking"
+        type: "metadata"
+        parameters:
+          track_pipeline_version: "true"
+          link_raw_data: "true"
+          record_processing_steps: "true"
+        condition: ""
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 15
+      part_size: "128MB"
+      retry_attempts: 3
+      timeout: "12h"
+      checksum: true
+      custom_parameters:
+        preserve_calibration_metadata: "true"
+        link_to_raw_data: "true"
+
+  - name: "create_public_release"
+    description: "Prepare and upload data for public release"
+    source: "calibrated_data"
+    destination: "public_archive"
+    engine: "rclone"
+    triggers: ["manual"]
+    enabled: false  # Enable when ready for public release
+    
+    preprocessing:
+      - name: "anonymize_data"
+        type: "transform"
+        parameters:
+          remove_proprietary_headers: "true"
+          standardize_format: "true"
+          add_public_metadata: "true"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "generate_documentation"
+        type: "documentation"
+        parameters:
+          create_readme: "true"
+          generate_data_description: "true"
+          include_citation_info: "true"
+        condition: ""
+        on_failure: "continue"
+      
+      - name: "quality_control"
+        type: "validate"
+        parameters:
+          final_quality_check: "true"
+          completeness_check: "true"
+          format_compliance: "true"
+        condition: ""
+        on_failure: "stop"
+    
+    configuration:
+      concurrency: 10
+      part_size: "64MB"
+      retry_attempts: 5
+      timeout: "24h"
+      checksum: true
+
+  - name: "archive_raw_data"
+    description: "Long-term archival of raw observations"
+    source: "raw_observations"
+    destination: "long_term_archive"
+    engine: "rclone"
+    triggers: ["schedule"]
+    schedule: "0 1 1 * *"  # Monthly on 1st at 1 AM
+    enabled: true
+    
+    preprocessing:
+      - name: "compress_fits"
+        type: "compress"
+        parameters:
+          compression_method: "fpack"
+          compression_level: "rice"
+          preserve_headers: "true"
+        condition: "age_greater_than_1_year"
+        on_failure: "continue"
+      
+      - name: "verify_completeness"
+        type: "validate"
+        parameters:
+          check_observation_completeness: "true"
+          verify_archive_integrity: "true"
+        condition: ""
+        on_failure: "stop"
+    
+    configuration:
+      concurrency: 5
+      part_size: "128MB"
+      retry_attempts: 3
+      timeout: "48h"
+      bandwidth_limit: "100MB/s"
+
+settings:
+  default_region: "us-west-1"
+  default_engine: "auto"
+  working_directory: "/tmp/astronomy-wizard"
+  log_level: "info"
+  max_concurrent_workflows: 4
+  
+  # Astronomy-specific settings
+  astronomy_settings:
+    fits_processing: true
+    coordinate_system_validation: true
+    astrometry_precision: "0.1_arcsec"
+    photometry_precision: "0.02_mag"
+
+optimization:
+  enable_auto_optimization: true
+  
+  cost_optimization:
+    enabled: true
+    budget_limit: "$3000/month"
+    auto_bundle_small_files: false  # FITS files are large
+    auto_compression: true
+    auto_storage_class_optimization: true
+    intelligent_tiering: true
+    cost_alerts: ["70%", "85%", "95%"]
+  
+  performance_optimization:
+    enabled: true
+    auto_concurrency_tuning: true
+    auto_part_size_tuning: true
+    auto_engine_selection: true
+    network_optimization: true
+    max_transfer_speed: "2Gbps"
+    # Astronomy-specific optimizations
+    fits_compression: true
+    preview_generation: true
+  
+  reliability_optimization:
+    enabled: true
+    auto_retry: true
+    auto_verification: true
+    auto_backup: true
+    max_retry_attempts: 5
+    retry_delay: "120s"
+    checksum_verification: "SHA256"
+
+monitoring:
+  enabled: true
+  dashboard_enabled: true
+  
+  notification_channels:
+    - name: "observatory_ops"
+      type: "email"
+      endpoint: "obs-ops@observatory.edu"
+      enabled: true
+    
+    - name: "astronomy_slack"
+      type: "slack"
+      endpoint: "https://hooks.slack.com/services/ASTRONOMY_WEBHOOK"
+      enabled: true
+      settings:
+        channel: "#data-operations"
+  
+  metrics:
+    collection_interval: "2m"
+    retention_period: "365d"
+    export_to_cloudwatch: true
+    custom_metrics:
+      - "observation_ingestion_rate"
+      - "data_quality_score"
+      - "calibration_success_rate"
+      - "archive_completeness"
+      - "public_access_requests"
+  
+  alerts:
+    transfer_failure: true
+    high_cost: true
+    slow_performance: true
+    data_quality_degradation: true
+    calibration_pipeline_failure: true
+    archive_integrity_issues: true
+    cost_threshold: "$300/day"
+    performance_threshold: "150MB/s"
+
+# Astronomy-specific compliance and standards
+compliance:
+  data_standards:
+    fits_compliance: "FITS 4.0"
+    coordinate_systems: ["ICRS", "FK5"]
+    metadata_standards: ["ObsCore", "IVOA"]
+    data_model_compliance: "VO-DML"
+  
+  observatory_requirements:
+    data_preservation: "permanent"
+    public_release_timeline: "2_years"
+    metadata_completeness: "100%"
+    quality_assurance: "required"
+    
+  international_coordination:
+    data_sharing_agreements: ["IVOA", "IAU"]
+    archive_interoperability: true
+    virtual_observatory_compliance: true
