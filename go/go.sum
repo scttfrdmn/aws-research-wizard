@@ -22,8 +22,8 @@ github.com/aws/aws-sdk-go-v2/service/cloudformation v1.40.0 h1:8fT2zWyD1ELk77Izx
 github.com/aws/aws-sdk-go-v2/service/cloudformation v1.40.0/go.mod h1:NtPc2z+l8sxXmxz0eJebaBY1k1wwZCkXX/UurRbHqV8=
 github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.32.0 h1:f426fLs4hcrLuczLBqWf1Ob6FKJhISaR4e9Iw3Scr5A=
 github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.32.0/go.mod h1:G63GKqSBLpBmO3tN1/PwM2NC65XvSd00zJWTZk202bc=
-github.com/aws/aws-sdk-go-v2/service/costexplorer v1.33.0 h1:qhDIJFh7nJKAy4JMPrB0VxBIk6LCp4mhUjv8RbTdM1w=
-github.com/aws/aws-sdk-go-v2/service/costexplorer v1.33.0/go.mod h1:pF005CGd52ld68gvJLTN7f8j93CfXpqaHVa9Zwde+1I=
+github.com/aws/aws-sdk-go-v2/service/costexplorer v1.51.2 h1:7zSsOpcOaTximKcYWlpbhgKSn22fzx3ZkkankTEBHpQ=
+github.com/aws/aws-sdk-go-v2/service/costexplorer v1.51.2/go.mod h1:xbfTJfT0GwWB6ONGltxdQixqzk/5fD/J/KEeQjUUNI8=
 github.com/aws/aws-sdk-go-v2/service/ec2 v1.140.0 h1:joMAX3jOjpbgIYzXgyMLAYly0kzbTJ7DrfAB3PNwobA=
 github.com/aws/aws-sdk-go-v2/service/ec2 v1.140.0/go.mod h1:d1hAqgLDOPaSO1Piy/0bBmj6oAplFwv6p0cquHntNHM=
 github.com/aws/aws-sdk-go-v2/service/iam v1.28.0 h1:3yfe3OA+ZEZTS3ccvdiQBcrOUG3VPyfmklOXLAzL/Ps=
