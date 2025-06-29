@@ -69,7 +69,7 @@ var (
 	configFile     string
 	workflowName   string
 	executionID    string
-	outputFormat   string
+	workflowOutputFormat   string
 	followProgress bool
 	dryRun         bool
 )
@@ -98,7 +98,7 @@ func init() {
 	cancelWorkflowCmd.MarkFlagRequired("id")
 
 	// Global flags
-	workflowCmd.PersistentFlags().StringVarP(&outputFormat, "output", "o", "table", "Output format (table, json, yaml)")
+	workflowCmd.PersistentFlags().StringVarP(&workflowOutputFormat, "output", "o", "table", "Output format (table, json, yaml)")
 }
 
 func runWorkflow(cmd *cobra.Command, args []string) error {
@@ -155,7 +155,7 @@ func listWorkflows(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	switch outputFormat {
+	switch workflowOutputFormat {
 	case "json":
 		return json.NewEncoder(os.Stdout).Encode(activeWorkflows)
 	case "yaml":
@@ -173,7 +173,7 @@ func statusWorkflow(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to get workflow status: %w", err)
 	}
 
-	switch outputFormat {
+	switch workflowOutputFormat {
 	case "json":
 		return json.NewEncoder(os.Stdout).Encode(execution)
 	case "yaml":
@@ -255,53 +255,195 @@ func createWorkflowEngine() *data.WorkflowEngine {
 }
 
 func showWorkflowPlan(projectConfig *data.ProjectConfig, workflow *data.Workflow) error {
-	fmt.Printf("🔍 Workflow Plan: %s\n", workflow.Name)
-	fmt.Printf("Description: %s\n", workflow.Description)
-	fmt.Printf("Source: %s\n", workflow.Source)
-	fmt.Printf("Destination: %s\n", workflow.Destination)
-	fmt.Printf("Engine: %s\n", workflow.Engine)
-	fmt.Println()
-
-	fmt.Println("📋 Execution Steps:")
+	fmt.Printf("🔍 Workflow Dry-Run Validation: %s\n", workflow.Name)
+	fmt.Printf("==========================================\n\n")
 	
+	// Basic workflow information
+	fmt.Printf("📋 Workflow Configuration:\n")
+	fmt.Printf("  Name: %s\n", workflow.Name)
+	fmt.Printf("  Description: %s\n", workflow.Description)
+	fmt.Printf("  Source: %s\n", workflow.Source)
+	fmt.Printf("  Destination: %s\n", workflow.Destination)
+	fmt.Printf("  Engine: %s\n", workflow.Engine)
+	fmt.Printf("  Enabled: %t\n", workflow.Enabled)
+	fmt.Println()
+	
+	// Validation results
+	validationErrors := []string{}
+	validationWarnings := []string{}
+	
+	// Validate source data profile
+	sourceProfile, sourceExists := projectConfig.DataProfiles[workflow.Source]
+	if !sourceExists {
+		validationErrors = append(validationErrors, fmt.Sprintf("Source data profile '%s' not found", workflow.Source))
+	}
+	
+	// Validate destination
+	destination, destExists := projectConfig.Destinations[workflow.Destination]
+	if !destExists {
+		validationErrors = append(validationErrors, fmt.Sprintf("Destination '%s' not found", workflow.Destination))
+	}
+	
+	// Validate engine
+	if workflow.Engine == "" || workflow.Engine == "auto" {
+		validationWarnings = append(validationWarnings, "Engine set to 'auto' - will be selected based on data pattern analysis")
+	}
+	
+	// Validate workflow is enabled
+	if !workflow.Enabled {
+		validationWarnings = append(validationWarnings, "Workflow is disabled and will not execute")
+	}
+	
+	// Validate source path exists (if available)
+	if sourceExists {
+		if sourceProfile.Path != "" {
+			if _, err := os.Stat(sourceProfile.Path); os.IsNotExist(err) {
+				validationErrors = append(validationErrors, fmt.Sprintf("Source path does not exist: %s", sourceProfile.Path))
+			}
+		}
+	}
+	
+	// Display validation results
+	if len(validationErrors) > 0 {
+		fmt.Printf("❌ Validation Errors:\n")
+		for _, err := range validationErrors {
+			fmt.Printf("  • %s\n", err)
+		}
+		fmt.Println()
+	}
+	
+	if len(validationWarnings) > 0 {
+		fmt.Printf("⚠️  Validation Warnings:\n")
+		for _, warning := range validationWarnings {
+			fmt.Printf("  • %s\n", warning)
+		}
+		fmt.Println()
+	}
+	
+	if len(validationErrors) == 0 && len(validationWarnings) == 0 {
+		fmt.Printf("✅ Validation passed - no issues found\n\n")
+	}
+	
+	// Only continue with execution plan if validation passes
+	if len(validationErrors) > 0 {
+		return fmt.Errorf("workflow validation failed with %d errors", len(validationErrors))
+	}
+	
+	// Perform data analysis to get realistic estimates
+	if sourceExists && sourceProfile.Path != "" {
+		fmt.Printf("🔍 Data Analysis Preview:\n")
+		analyzer := data.NewPatternAnalyzer()
+		pattern, err := analyzer.AnalyzePattern(context.Background(), sourceProfile.Path)
+		if err != nil {
+			fmt.Printf("  ⚠️  Could not analyze data: %v\n", err)
+		} else {
+			fmt.Printf("  Files to transfer: %d\n", pattern.TotalFiles)
+			fmt.Printf("  Total data size: %s\n", pattern.TotalSizeHuman)
+			if pattern.FileSizes.SmallFiles.CountUnder1MB > 0 {
+				fmt.Printf("  Small files (<1MB): %d (%.1f%%)\n", 
+					pattern.FileSizes.SmallFiles.CountUnder1MB,
+					pattern.FileSizes.SmallFiles.PercentageSmall)
+			}
+			
+			// Show domain detection
+			if len(pattern.DomainHints.DetectedDomains) > 0 {
+				fmt.Printf("  Detected domains: ")
+				for i, domain := range pattern.DomainHints.DetectedDomains {
+					if i > 0 {
+						fmt.Printf(", ")
+					}
+					confidence := pattern.DomainHints.Confidence[domain] * 100
+					fmt.Printf("%s (%.1f%%)", domain, confidence)
+				}
+				fmt.Println()
+			}
+		}
+		fmt.Println()
+	}
+	
+	// Show estimated execution plan
+	fmt.Printf("📋 Estimated Execution Plan:\n")
 	stepNum := 1
 	
 	// Analysis step
-	fmt.Printf("  %d. Analyze Data Pattern\n", stepNum)
-	fmt.Printf("     - Scan files and directories\n")
-	fmt.Printf("     - Detect small file patterns\n")
-	fmt.Printf("     - Generate domain-specific recommendations\n")
+	fmt.Printf("  %d. 🔍 Data Pattern Analysis\n", stepNum)
+	fmt.Printf("     • Scan source directory structure\n")
+	fmt.Printf("     • Analyze file types and sizes\n")
+	fmt.Printf("     • Detect research domain patterns\n")
+	fmt.Printf("     • Generate optimization recommendations\n")
 	stepNum++
-
+	
 	// Preprocessing steps
-	for _, step := range workflow.PreProcessing {
-		fmt.Printf("  %d. %s (%s)\n", stepNum, step.Name, step.Type)
-		if step.Type == "bundle" {
-			fmt.Printf("     - Bundle small files for S3 efficiency\n")
-			fmt.Printf("     - Estimate cost savings\n")
+	if len(workflow.PreProcessing) > 0 {
+		for _, step := range workflow.PreProcessing {
+			fmt.Printf("  %d. 🔧 %s (%s)\n", stepNum, step.Name, step.Type)
+			switch step.Type {
+			case "bundle":
+				fmt.Printf("     • Identify small files for bundling\n")
+				fmt.Printf("     • Create optimized bundles\n")
+				fmt.Printf("     • Estimate cost savings\n")
+			case "compress":
+				fmt.Printf("     • Compress files for transfer\n")
+				fmt.Printf("     • Estimate space savings\n")
+			case "validate":
+				fmt.Printf("     • Validate file integrity\n")
+				fmt.Printf("     • Check permissions\n")
+			default:
+				fmt.Printf("     • Execute %s processing\n", step.Type)
+			}
+			stepNum++
 		}
-		stepNum++
 	}
-
-	// Main transfer
-	fmt.Printf("  %d. Primary Transfer\n", stepNum)
-	fmt.Printf("     - Use %s engine\n", workflow.Engine)
-	fmt.Printf("     - Transfer from %s to %s\n", workflow.Source, workflow.Destination)
-	fmt.Printf("     - Concurrency: %d\n", workflow.Configuration.Concurrency)
+	
+	// Main transfer step
+	fmt.Printf("  %d. 🚀 Primary Data Transfer\n", stepNum)
+	fmt.Printf("     • Engine: %s\n", workflow.Engine)
+	if destExists {
+		fmt.Printf("     • Destination: %s\n", destination.URI)
+		fmt.Printf("     • Storage class: %s\n", destination.StorageClass)
+	}
+	if workflow.Configuration.Concurrency > 0 {
+		fmt.Printf("     • Concurrency: %d parallel transfers\n", workflow.Configuration.Concurrency)
+	}
+	if workflow.Configuration.PartSize != "" {
+		fmt.Printf("     • Part size: %s\n", workflow.Configuration.PartSize)
+	}
+	if workflow.Configuration.Checksum {
+		fmt.Printf("     • Checksums: enabled\n")
+	}
 	stepNum++
-
+	
 	// Postprocessing steps
-	for _, step := range workflow.PostProcessing {
-		fmt.Printf("  %d. %s (%s)\n", stepNum, step.Name, step.Type)
-		stepNum++
+	if len(workflow.PostProcessing) > 0 {
+		for _, step := range workflow.PostProcessing {
+			fmt.Printf("  %d. ✅ %s (%s)\n", stepNum, step.Name, step.Type)
+			switch step.Type {
+			case "verify":
+				fmt.Printf("     • Verify transfer completeness\n")
+				fmt.Printf("     • Validate checksums\n")
+			case "cleanup":
+				fmt.Printf("     • Clean up temporary files\n")
+				fmt.Printf("     • Remove intermediate bundles\n")
+			case "report":
+				fmt.Printf("     • Generate transfer report\n")
+				fmt.Printf("     • Calculate metrics\n")
+			default:
+				fmt.Printf("     • Execute %s processing\n", step.Type)
+			}
+			stepNum++
+		}
 	}
-
-	// Final report
-	fmt.Printf("  %d. Generate Report\n", stepNum)
-	fmt.Printf("     - Cost savings summary\n")
-	fmt.Printf("     - Performance metrics\n")
-	fmt.Printf("     - Recommendations for future\n")
-
+	
+	// Final reporting
+	fmt.Printf("  %d. 📊 Final Report Generation\n", stepNum)
+	fmt.Printf("     • Cost analysis and savings summary\n")
+	fmt.Printf("     • Transfer performance metrics\n")
+	fmt.Printf("     • Recommendations for optimization\n")
+	fmt.Printf("     • Workflow execution summary\n")
+	
+	fmt.Printf("\n🎯 Dry-run completed successfully!\n")
+	fmt.Printf("💡 To execute this workflow: aws-research-wizard data workflow run --workflow=%s\n", workflow.Name)
+	
 	return nil
 }
 
