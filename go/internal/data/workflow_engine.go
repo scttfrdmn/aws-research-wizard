@@ -16,6 +16,7 @@ type WorkflowEngine struct {
 	transferEngines    map[string]TransferEngine
 	warningSystem      *WarningSystem
 	domainProfileManager *ResearchDomainProfileManager
+	errorRecoveryManager *ErrorRecoveryManager
 	
 	// Execution state
 	activeWorkflows    map[string]*WorkflowExecution
@@ -205,6 +206,26 @@ type WorkflowEventBus struct {
 	mu          sync.RWMutex
 }
 
+// WorkflowStepError provides enhanced error information with recovery suggestions
+type WorkflowStepError struct {
+	StepName        string        `json:"step_name"`
+	OriginalError   error         `json:"original_error"`
+	AttemptCount    int           `json:"attempt_count"`
+	TotalDuration   time.Duration `json:"total_duration"`
+	RecoveryActions []string      `json:"recovery_actions"`
+	Suggestions     []string      `json:"suggestions"`
+}
+
+// Error implements the error interface
+func (e *WorkflowStepError) Error() string {
+	return fmt.Sprintf("step '%s' failed after %d attempts: %v", e.StepName, e.AttemptCount, e.OriginalError)
+}
+
+// Unwrap returns the original error for error unwrapping
+func (e *WorkflowStepError) Unwrap() error {
+	return e.OriginalError
+}
+
 // NewWorkflowEngine creates a new workflow engine
 func NewWorkflowEngine(config *WorkflowEngineConfig) *WorkflowEngine {
 	if config == nil {
@@ -225,6 +246,7 @@ func NewWorkflowEngine(config *WorkflowEngineConfig) *WorkflowEngine {
 		transferEngines:   make(map[string]TransferEngine),
 		progressCallbacks: make(map[string][]WorkflowProgressCallback),
 		domainProfileManager: NewResearchDomainProfileManager(),
+		errorRecoveryManager: NewErrorRecoveryManager(),
 		config:           config,
 		shutdownChan:     make(chan struct{}),
 		eventBus:         &WorkflowEventBus{
@@ -547,40 +569,70 @@ func (we *WorkflowEngine) executeWorkflowSteps(execution *WorkflowExecution) {
 
 // executeStepWithRetry executes a single step with retry logic
 func (we *WorkflowEngine) executeStepWithRetry(execution *WorkflowExecution, step *WorkflowStep) error {
-	maxRetries := we.config.RetryAttempts
+	step.StartTime = time.Now()
+	step.Status = StepStatusRunning
 	
-	for attempt := 0; attempt <= maxRetries; attempt++ {
-		step.RetryCount = attempt
-		step.StartTime = time.Now()
-		step.Status = StepStatusRunning
-		
-		// Execute the step
-		err := we.executeStep(execution, step)
-		
-		step.EndTime = time.Now()
-		step.Duration = step.EndTime.Sub(step.StartTime)
-		execution.Metrics.StepExecutionTimes[step.Name] = step.Duration
-		
-		if err == nil {
-			step.Status = StepStatusCompleted
-			we.emitEvent(execution, "step_completed", fmt.Sprintf("Step '%s' completed successfully", step.Name), "info", nil)
-			return nil
-		}
-		
-		step.Error = err
-		execution.Metrics.RetryAttempts[step.Name] = attempt + 1
-		
-		if attempt < maxRetries {
-			we.emitEvent(execution, "step_retry", fmt.Sprintf("Step '%s' failed, retrying (attempt %d/%d): %v", step.Name, attempt+1, maxRetries, err), "warning", nil)
-			time.Sleep(we.config.RetryDelay)
-			continue
-		}
-		
-		step.Status = StepStatusFailed
-		return fmt.Errorf("step '%s' failed after %d attempts: %w", step.Name, maxRetries+1, err)
+	// Create operation name for recovery tracking
+	operationName := fmt.Sprintf("%s_%s", execution.WorkflowName, step.Name)
+	
+	// Use comprehensive error recovery
+	result := we.errorRecoveryManager.ExecuteWithRecovery(
+		execution.Context,
+		operationName,
+		func() error {
+			step.RetryCount++
+			we.emitEvent(execution, "step_attempt", 
+				fmt.Sprintf("Executing step '%s' (attempt %d)", step.Name, step.RetryCount), 
+				"info", nil)
+			
+			return we.executeStep(execution, step)
+		},
+	)
+	
+	step.EndTime = time.Now()
+	step.Duration = step.EndTime.Sub(step.StartTime)
+	execution.Metrics.StepExecutionTimes[step.Name] = step.Duration
+	execution.Metrics.RetryAttempts[step.Name] = result.AttemptCount
+	
+	if result.Success {
+		step.Status = StepStatusCompleted
+		step.RetryCount = result.AttemptCount
+		we.emitEvent(execution, "step_completed", 
+			fmt.Sprintf("Step '%s' completed successfully after %d attempts", step.Name, result.AttemptCount), 
+			"info", nil)
+		return nil
 	}
 	
-	return nil
+	// Step failed - record error and recovery information
+	step.Status = StepStatusFailed
+	step.Error = result.LastError
+	step.RetryCount = result.AttemptCount
+	
+	// Emit detailed error event with recovery suggestions
+	errorDetails := map[string]interface{}{
+		"attempt_count":    result.AttemptCount,
+		"total_duration":   result.TotalDuration.String(),
+		"recovery_actions": result.RecoveryActions,
+		"suggestions":      result.Suggestions,
+		"last_error":       result.LastError.Error(),
+	}
+	
+	we.emitEvent(execution, "step_failed", 
+		fmt.Sprintf("Step '%s' failed after %d attempts and %v: %v", 
+			step.Name, result.AttemptCount, result.TotalDuration, result.LastError), 
+		"error", errorDetails)
+	
+	// Create enhanced error with recovery suggestions
+	enhancedError := &WorkflowStepError{
+		StepName:        step.Name,
+		OriginalError:   result.LastError,
+		AttemptCount:    result.AttemptCount,
+		TotalDuration:   result.TotalDuration,
+		RecoveryActions: result.RecoveryActions,
+		Suggestions:     result.Suggestions,
+	}
+	
+	return enhancedError
 }
 
 // executeStep executes a single workflow step
