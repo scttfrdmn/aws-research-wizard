@@ -54,6 +54,7 @@ func init() {
 	DataCmd.AddCommand(monitorCmd)
 	DataCmd.AddCommand(listCmd)
 	DataCmd.AddCommand(infoCmd)
+	DataCmd.AddCommand(GetWorkflowCmd())
 
 	// Global flags
 	DataCmd.PersistentFlags().String("region", "us-east-1", "AWS region")

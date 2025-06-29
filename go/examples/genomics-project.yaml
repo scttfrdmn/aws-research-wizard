@@ -1,0 +1,267 @@
+project:
+  name: "genomics-data-upload"
+  description: "Intelligent upload of genomics research data with small file optimization"
+  domain: "genomics"
+  owner: "research-team@university.edu"
+  budget: "$500/month"
+  tags:
+    project: "whole-genome-sequencing"
+    grant: "NIH-2024-001"
+    department: "computational-biology"
+  created_at: "2024-01-15T10:00:00Z"
+  updated_at: "2024-01-15T10:00:00Z"
+
+data_profiles:
+  raw_sequencing_data:
+    name: "Raw Sequencing Data"
+    description: "FASTQ files from whole genome sequencing"
+    path: "/data/genomics/raw_sequencing"
+    file_count: 25000
+    total_size: "2.5TB"
+    avg_file_size: "100MB"
+    file_types: [".fastq", ".fastq.gz"]
+    access_pattern: "write_once_read_many"
+    priority: "high"
+    retention: "7_years"
+    metadata:
+      sequencing_platform: "illumina_novaseq"
+      read_length: "150bp"
+      coverage: "30x"
+  
+  alignment_results:
+    name: "Alignment Results"
+    description: "BAM files and indices from alignment pipeline"
+    path: "/data/genomics/alignments"
+    file_count: 500
+    total_size: "1.8TB"
+    avg_file_size: "3.6GB"
+    file_types: [".bam", ".bai"]
+    access_pattern: "frequent_access"
+    priority: "high"
+    metadata:
+      aligner: "bwa-mem2"
+      reference_genome: "GRCh38"
+
+  variant_calls:
+    name: "Variant Calls"
+    description: "VCF files from variant calling pipeline"
+    path: "/data/genomics/variants"
+    file_count: 15000
+    total_size: "500GB"
+    avg_file_size: "33MB"
+    file_types: [".vcf", ".vcf.gz", ".tbi"]
+    access_pattern: "write_once_read_many"
+    priority: "medium"
+    metadata:
+      variant_caller: "gatk4"
+      filtering: "VQSR"
+
+destinations:
+  primary_storage:
+    name: "Primary S3 Storage"
+    uri: "s3://genomics-research-data/primary/"
+    storage_class: "STANDARD"
+    goals: ["fast_access", "cost_optimize"]
+    region: "us-east-1"
+    encryption:
+      enabled: true
+      type: "SSE-S3"
+    lifecycle:
+      transition_ia: "30_days"
+      transition_glacier: "90_days"
+      incomplete_uploads: "7_days"
+    metadata:
+      data_classification: "research"
+      compliance: "NIH"
+
+  archive_storage:
+    name: "Long-term Archive"
+    uri: "s3://genomics-research-archive/long-term/"
+    storage_class: "GLACIER"
+    goals: ["minimum_cost", "long_term_storage"]
+    region: "us-east-1"
+    encryption:
+      enabled: true
+      type: "SSE-S3"
+    lifecycle:
+      transition_da: "365_days"
+    metadata:
+      retention_policy: "7_years"
+
+workflows:
+  - name: "upload_raw_sequencing"
+    description: "Intelligent upload of raw FASTQ files with bundling optimization"
+    source: "raw_sequencing_data"
+    destination: "primary_storage"
+    engine: "auto"
+    triggers: ["manual"]
+    enabled: true
+    
+    preprocessing:
+      - name: "analyze_small_files"
+        type: "analyze"
+        parameters:
+          deep_analysis: "true"
+          domain_hints: "genomics"
+        condition: ""
+        on_failure: "stop"
+      
+      - name: "bundle_small_fastq"
+        type: "bundle"
+        parameters:
+          tool: "suitcase"
+          target_size: "500MB"
+          preserve_metadata: "true"
+          group_by_sample: "true"
+        condition: "small_files_detected"
+        on_failure: "continue"
+    
+    configuration:
+      concurrency: 20
+      part_size: "64MB"
+      retry_attempts: 3
+      timeout: "6h"
+      bandwidth_limit: ""
+      checksum: true
+      overwrite_policy: "if_newer"
+      failure_policy: "stop"
+      custom_parameters:
+        genomics_mode: "true"
+        preserve_fastq_pairs: "true"
+
+  - name: "upload_alignments"
+    description: "Upload large BAM files with high-performance settings"
+    source: "alignment_results"
+    destination: "primary_storage"
+    engine: "s5cmd"
+    triggers: ["manual"]
+    enabled: true
+    
+    configuration:
+      concurrency: 15
+      part_size: "128MB"
+      retry_attempts: 3
+      timeout: "12h"
+      checksum: true
+      overwrite_policy: "never"
+      failure_policy: "stop"
+
+  - name: "archive_old_variants"
+    description: "Move old variant calls to archival storage"
+    source: "variant_calls"
+    destination: "archive_storage"
+    engine: "rclone"
+    triggers: ["schedule"]
+    schedule: "0 2 * * 0"  # Weekly on Sunday at 2 AM
+    enabled: true
+    
+    preprocessing:
+      - name: "filter_old_files"
+        type: "filter"
+        parameters:
+          age_threshold: "90_days"
+          include_patterns: ["*.vcf.gz"]
+        condition: ""
+        on_failure: "stop"
+    
+    postprocessing:
+      - name: "verify_archive"
+        type: "validate"
+        parameters:
+          verification_method: "checksum"
+        condition: "transfer_successful"
+        on_failure: "stop"
+      
+      - name: "cleanup_local"
+        type: "cleanup"
+        parameters:
+          action: "delete"
+          backup: "false"
+        condition: "archive_verified"
+        on_failure: "continue"
+
+settings:
+  default_region: "us-east-1"
+  default_engine: "auto"
+  working_directory: "/tmp/aws-research-wizard"
+  log_level: "info"
+  config_directory: "~/.aws-research-wizard/config"
+  cache_directory: "~/.aws-research-wizard/cache"
+  temp_directory: "/tmp"
+  max_concurrent_workflows: 3
+  global_tags:
+    managed_by: "aws-research-wizard"
+    project: "genomics-research"
+    cost_center: "computational-biology"
+
+optimization:
+  enable_auto_optimization: true
+  
+  cost_optimization:
+    enabled: true
+    budget_limit: "$500/month"
+    auto_bundle_small_files: true
+    auto_compression: true
+    auto_storage_class_optimization: true
+    auto_lifecycle_policies: true
+    cost_alerts: ["80%", "100%"]
+  
+  performance_optimization:
+    enabled: true
+    auto_concurrency_tuning: true
+    auto_part_size_tuning: true
+    auto_engine_selection: true
+    prefetch_data: false
+    network_optimization: true
+    max_transfer_speed: "1Gbps"
+  
+  reliability_optimization:
+    enabled: true
+    auto_retry: true
+    auto_verification: true
+    auto_backup: false
+    auto_versioning: false
+    auto_replication: false
+    max_retry_attempts: 3
+    retry_delay: "30s"
+    health_check_interval: "5m"
+
+monitoring:
+  enabled: true
+  dashboard_enabled: true
+  metrics_collection: true
+  log_collection: true
+  alerts_enabled: true
+  
+  notification_channels:
+    - name: "team_email"
+      type: "email"
+      endpoint: "genomics-team@university.edu"
+      enabled: true
+    
+    - name: "slack_alerts"
+      type: "slack"
+      endpoint: "https://hooks.slack.com/services/..."
+      enabled: true
+      settings:
+        channel: "#genomics-data"
+  
+  metrics:
+    collection_interval: "1m"
+    retention_period: "90d"
+    export_to_cloudwatch: true
+    export_to_prometheus: false
+    custom_metrics:
+      - "genomics_files_processed"
+      - "sequencing_data_throughput"
+      - "variant_calling_efficiency"
+  
+  alerts:
+    transfer_failure: true
+    high_cost: true
+    slow_performance: true
+    large_queue_size: true
+    disk_space_low: true
+    cost_threshold: "$100/day"
+    performance_threshold: "50MB/s"
+    queue_size_threshold: 1000

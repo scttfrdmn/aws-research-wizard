@@ -11,6 +11,10 @@ The Go implementation provides a lightweight, fast alternative to the Python ver
 - **Fast Startup**: Sub-second response times for all operations
 - **Shared Configuration**: Uses the same YAML configs as the Python version
 
+## Development Guidelines
+
+**⚠️ CRITICAL DEVELOPMENT RULE**: When working on this codebase, **never work around or fake solutions to problems**. Always fix them properly. See [CLAUDE.md](go/CLAUDE.md) for detailed development guidelines and architecture documentation.
+
 ## Quick Start
 
 ### Download and Install
