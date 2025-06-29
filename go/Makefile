@@ -9,6 +9,7 @@ GOGET=$(GOCMD) get
 GOMOD=$(GOCMD) mod
 
 # Binary names
+BINARY_UNIFIED=aws-research-wizard
 BINARY_CONFIG=aws-research-wizard-config
 BINARY_DEPLOY=aws-research-wizard-deploy
 BINARY_MONITOR=aws-research-wizard-monitor
@@ -35,51 +36,69 @@ deps:
 	$(GOMOD) download
 	$(GOMOD) tidy
 
-# Build all binaries
+# Build unified binary (default)
 build: deps
-	@echo "Building AWS Research Wizard Go binaries..."
+	@echo "Building AWS Research Wizard unified binary..."
+	@mkdir -p $(BUILD_DIR)
+	$(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_UNIFIED) ./cmd
+	@echo "Built $(BUILD_DIR)/$(BINARY_UNIFIED)"
+
+# Build legacy binaries (for compatibility)
+build-legacy: deps
+	@echo "Building AWS Research Wizard legacy binaries..."
 	@mkdir -p $(BUILD_DIR)
 	$(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_CONFIG) ./cmd/config
 	@echo "Built $(BUILD_DIR)/$(BINARY_CONFIG)"
 	$(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_DEPLOY) ./cmd/deploy
 	@echo "Built $(BUILD_DIR)/$(BINARY_DEPLOY)"
+	$(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_MONITOR) ./cmd/monitor
+	@echo "Built $(BUILD_DIR)/$(BINARY_MONITOR)"
 
 # Build for multiple platforms
 build-all: deps
-	@echo "Building for multiple platforms..."
+	@echo "Building unified binary for multiple platforms..."
 	@mkdir -p $(BUILD_DIR)
 	
 	# Linux AMD64
-	GOOS=linux GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_CONFIG)-linux-amd64 ./cmd/config
-	GOOS=linux GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_DEPLOY)-linux-amd64 ./cmd/deploy
+	GOOS=linux GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_UNIFIED)-linux-amd64 ./cmd
 	
 	# Linux ARM64
-	GOOS=linux GOARCH=arm64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_CONFIG)-linux-arm64 ./cmd/config
-	GOOS=linux GOARCH=arm64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_DEPLOY)-linux-arm64 ./cmd/deploy
+	GOOS=linux GOARCH=arm64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_UNIFIED)-linux-arm64 ./cmd
 	
 	# macOS AMD64
-	GOOS=darwin GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_CONFIG)-darwin-amd64 ./cmd/config
-	GOOS=darwin GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_DEPLOY)-darwin-amd64 ./cmd/deploy
+	GOOS=darwin GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_UNIFIED)-darwin-amd64 ./cmd
 	
 	# macOS ARM64 (Apple Silicon)
-	GOOS=darwin GOARCH=arm64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_CONFIG)-darwin-arm64 ./cmd/config
-	GOOS=darwin GOARCH=arm64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_DEPLOY)-darwin-arm64 ./cmd/deploy
+	GOOS=darwin GOARCH=arm64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_UNIFIED)-darwin-arm64 ./cmd
 	
 	# Windows AMD64
-	GOOS=windows GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_CONFIG)-windows-amd64.exe ./cmd/config
-	GOOS=windows GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_DEPLOY)-windows-amd64.exe ./cmd/deploy
+	GOOS=windows GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_UNIFIED)-windows-amd64.exe ./cmd
 	
-	@echo "Built binaries for multiple platforms in $(BUILD_DIR)/"
+	@echo "Built unified binaries for multiple platforms in $(BUILD_DIR)/"
 
 # Install to local bin
 install: build
 	@echo "Installing to ~/bin..."
 	@mkdir -p ~/bin
+	cp $(BUILD_DIR)/$(BINARY_UNIFIED) ~/bin/aws-research-wizard
+	@echo "Installed unified binary to ~/bin/:"
+	@echo "  aws-research-wizard (unified tool)"
+	@echo "  - aws-research-wizard config (configuration tool)"
+	@echo "  - aws-research-wizard deploy (deployment tool)" 
+	@echo "  - aws-research-wizard monitor (monitoring dashboard)"
+	@echo "Add ~/bin to your PATH if not already included"
+
+# Install legacy binaries
+install-legacy: build-legacy
+	@echo "Installing legacy binaries to ~/bin..."
+	@mkdir -p ~/bin
 	cp $(BUILD_DIR)/$(BINARY_CONFIG) ~/bin/aws-research-wizard-config
 	cp $(BUILD_DIR)/$(BINARY_DEPLOY) ~/bin/aws-research-wizard-deploy
-	@echo "Installed binaries to ~/bin/:"
+	cp $(BUILD_DIR)/$(BINARY_MONITOR) ~/bin/aws-research-wizard-monitor
+	@echo "Installed legacy binaries to ~/bin/:"
 	@echo "  aws-research-wizard-config (configuration tool)"
 	@echo "  aws-research-wizard-deploy (deployment tool)"
+	@echo "  aws-research-wizard-monitor (monitoring dashboard)"
 	@echo "Add ~/bin to your PATH if not already included"
 
 # Run tests
@@ -101,13 +120,13 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -f coverage.out coverage.html
 
-# Run the config tool
+# Run the unified tool
 run: build
-	./$(BUILD_DIR)/$(BINARY_CONFIG)
+	./$(BUILD_DIR)/$(BINARY_UNIFIED)
 
 # Run with example domain
 run-example: build
-	./$(BUILD_DIR)/$(BINARY_CONFIG) info genomics
+	./$(BUILD_DIR)/$(BINARY_UNIFIED) config info genomics
 
 # Format code
 fmt:
