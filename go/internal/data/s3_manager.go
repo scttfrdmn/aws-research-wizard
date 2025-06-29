@@ -118,10 +118,9 @@ func (sm *S3Manager) UploadFile(ctx context.Context, bucket, key, filePath strin
 
 	// Create progress reader wrapper
 	progressReader := &progressReader{
-		reader:     file,
-		progress:   progress,
-		callback:   callback,
-		progressMu: &sm.progressMu,
+		reader:   file,
+		progress: progress,
+		callback: callback,
 	}
 
 	_, err = sm.uploader.Upload(ctx, &s3.PutObjectInput{
@@ -178,10 +177,9 @@ func (sm *S3Manager) DownloadFile(ctx context.Context, bucket, key, filePath str
 
 	// Create progress writer wrapper
 	progressWriter := &progressWriterAt{
-		writerAt:   file,
-		progress:   progress,
-		callback:   callback,
-		progressMu: &sm.progressMu,
+		writerAt: file,
+		progress: progress,
+		callback: callback,
 	}
 
 	_, err = sm.downloader.Download(ctx, progressWriter, &s3.GetObjectInput{
@@ -271,26 +269,27 @@ func (sm *S3Manager) GetActiveTransfers() map[string]TransferProgress {
 
 // progressReader wraps an io.Reader to track upload progress
 type progressReader struct {
-	reader     io.Reader
-	progress   *TransferProgress
-	callback   ProgressCallback
-	progressMu *sync.RWMutex
+	reader   io.Reader
+	progress *TransferProgress
+	callback ProgressCallback
+	mu       sync.Mutex  // Use separate mutex for this progress reader
 }
 
 func (pr *progressReader) Read(p []byte) (int, error) {
 	n, err := pr.reader.Read(p)
 	
 	if n > 0 {
-		pr.progressMu.Lock()
+		pr.mu.Lock()
 		pr.progress.BytesTransferred += int64(n)
 		pr.updateProgress()
-		pr.progressMu.Unlock()
+		pr.mu.Unlock()
 	}
 	
 	return n, err
 }
 
 func (pr *progressReader) updateProgress() {
+	// This method is called with pr.mu already held, so no additional locking needed
 	now := time.Now()
 	elapsed := now.Sub(pr.progress.StartTime)
 	
@@ -299,37 +298,53 @@ func (pr *progressReader) updateProgress() {
 	}
 	
 	if elapsed.Seconds() > 0 {
-		pr.progress.Speed = pr.progress.BytesTransferred / int64(elapsed.Seconds())
-		
-		if pr.progress.Speed > 0 && pr.progress.TotalBytes > pr.progress.BytesTransferred {
-			remaining := pr.progress.TotalBytes - pr.progress.BytesTransferred
-			pr.progress.ETA = time.Duration(remaining/pr.progress.Speed) * time.Second
+		elapsedSeconds := elapsed.Seconds()
+		if elapsedSeconds >= 1.0 {
+			pr.progress.Speed = pr.progress.BytesTransferred / int64(elapsedSeconds)
+			
+			if pr.progress.Speed > 0 && pr.progress.TotalBytes > pr.progress.BytesTransferred {
+				remaining := pr.progress.TotalBytes - pr.progress.BytesTransferred
+				pr.progress.ETA = time.Duration(remaining/pr.progress.Speed) * time.Second
+			}
+		} else {
+			// For transfers under 1 second, estimate speed differently
+			pr.progress.Speed = int64(float64(pr.progress.BytesTransferred) / elapsedSeconds)
+			
+			if pr.progress.Speed > 0 && pr.progress.TotalBytes > pr.progress.BytesTransferred {
+				remaining := pr.progress.TotalBytes - pr.progress.BytesTransferred
+				pr.progress.ETA = time.Duration(float64(remaining)/float64(pr.progress.Speed)) * time.Second
+			}
 		}
 	}
 	
 	pr.progress.LastUpdate = now
 	
+	// Call the callback without holding any locks to avoid deadlocks
 	if pr.callback != nil {
-		pr.callback(*pr.progress)
+		// Make a copy of the progress to avoid race conditions
+		progressCopy := *pr.progress
+		go func() {
+			pr.callback(progressCopy)
+		}()
 	}
 }
 
 // progressWriterAt wraps an io.WriterAt to track download progress
 type progressWriterAt struct {
-	writerAt   io.WriterAt
-	progress   *TransferProgress
-	callback   ProgressCallback
-	progressMu *sync.RWMutex
+	writerAt io.WriterAt
+	progress *TransferProgress
+	callback ProgressCallback
+	mu       sync.Mutex  // Use separate mutex for this progress writer
 }
 
 func (pw *progressWriterAt) WriteAt(p []byte, off int64) (int, error) {
 	n, err := pw.writerAt.WriteAt(p, off)
 	
 	if n > 0 {
-		pw.progressMu.Lock()
+		pw.mu.Lock()
 		pw.progress.BytesTransferred += int64(n)
 		pw.updateProgress()
-		pw.progressMu.Unlock()
+		pw.mu.Unlock()
 	}
 	
 	return n, err
@@ -341,6 +356,7 @@ func (pw *progressWriterAt) Write(p []byte) (int, error) {
 }
 
 func (pw *progressWriterAt) updateProgress() {
+	// This method is called with pw.mu already held, so no additional locking needed
 	now := time.Now()
 	elapsed := now.Sub(pw.progress.StartTime)
 	
@@ -349,17 +365,33 @@ func (pw *progressWriterAt) updateProgress() {
 	}
 	
 	if elapsed.Seconds() > 0 {
-		pw.progress.Speed = pw.progress.BytesTransferred / int64(elapsed.Seconds())
-		
-		if pw.progress.Speed > 0 && pw.progress.TotalBytes > pw.progress.BytesTransferred {
-			remaining := pw.progress.TotalBytes - pw.progress.BytesTransferred
-			pw.progress.ETA = time.Duration(remaining/pw.progress.Speed) * time.Second
+		elapsedSeconds := elapsed.Seconds()
+		if elapsedSeconds >= 1.0 {
+			pw.progress.Speed = pw.progress.BytesTransferred / int64(elapsedSeconds)
+			
+			if pw.progress.Speed > 0 && pw.progress.TotalBytes > pw.progress.BytesTransferred {
+				remaining := pw.progress.TotalBytes - pw.progress.BytesTransferred
+				pw.progress.ETA = time.Duration(remaining/pw.progress.Speed) * time.Second
+			}
+		} else {
+			// For transfers under 1 second, estimate speed differently
+			pw.progress.Speed = int64(float64(pw.progress.BytesTransferred) / elapsedSeconds)
+			
+			if pw.progress.Speed > 0 && pw.progress.TotalBytes > pw.progress.BytesTransferred {
+				remaining := pw.progress.TotalBytes - pw.progress.BytesTransferred
+				pw.progress.ETA = time.Duration(float64(remaining)/float64(pw.progress.Speed)) * time.Second
+			}
 		}
 	}
 	
 	pw.progress.LastUpdate = now
 	
+	// Call the callback without holding any locks to avoid deadlocks
 	if pw.callback != nil {
-		pw.callback(*pw.progress)
+		// Make a copy of the progress to avoid race conditions
+		progressCopy := *pw.progress
+		go func() {
+			pw.callback(progressCopy)
+		}()
 	}
 }
