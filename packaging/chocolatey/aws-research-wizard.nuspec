@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>aws-research-wizard</id>
+    <version>1.0.0</version>
+    <packageSourceUrl>https://github.com/aws-research-wizard/aws-research-wizard/tree/main/packaging/chocolatey</packageSourceUrl>
+    <owners>aws-research-wizard</owners>
+    <title>AWS Research Wizard</title>
+    <authors>AWS Research Wizard Team</authors>
+    <projectUrl>https://github.com/aws-research-wizard/aws-research-wizard</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/aws-research-wizard/aws-research-wizard/main/docs/assets/logo.png</iconUrl>
+    <copyright>2024 AWS Research Wizard Team</copyright>
+    <licenseUrl>https://github.com/aws-research-wizard/aws-research-wizard/blob/main/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/aws-research-wizard/aws-research-wizard</projectSourceUrl>
+    <docsUrl>https://github.com/aws-research-wizard/aws-research-wizard/blob/main/README.md</docsUrl>
+    <bugTrackerUrl>https://github.com/aws-research-wizard/aws-research-wizard/issues</bugTrackerUrl>
+    <tags>aws research cli infrastructure deployment monitoring scientific computing hpc</tags>
+    <summary>Complete research environment management for AWS</summary>
+    <description><![CDATA[
+# AWS Research Wizard
+
+AWS Research Wizard provides comprehensive tools for configuring, deploying, and monitoring optimized AWS research environments across multiple scientific domains.
+
+## Key Features
+
+- **Interactive Domain Configuration**: 18+ pre-configured research packs including genomics, climate modeling, machine learning, and more
+- **Infrastructure Deployment**: CloudFormation automation with EC2 instance provisioning and security group configuration  
+- **Real-time Monitoring**: Live metrics, cost tracking, and alert management through interactive terminal dashboards
+- **Single Binary Distribution**: Zero dependencies, cross-platform support
+- **Cost Optimization**: Spot instance recommendations and real-time cost analysis
+
+## Perfect For
+
+- Research computing environments
+- HPC workload deployment  
+- Scientific computing on AWS
+- Cost-optimized research infrastructure
+
+## Quick Start
+
+After installation, configure AWS credentials and start with:
+
+```
+aws-research-wizard config                   # Interactive domain configuration
+aws-research-wizard deploy --domain genomics # Deploy a genomics environment
+aws-research-wizard monitor                  # Launch monitoring dashboard
+```
+
+## Requirements
+
+- AWS CLI configured with valid credentials
+- Windows 10+ (64-bit)
+
+## Documentation
+
+Full documentation and examples available at: https://github.com/aws-research-wizard/aws-research-wizard
+]]></description>
+    <releaseNotes>https://github.com/aws-research-wizard/aws-research-wizard/releases/tag/v1.0.0</releaseNotes>
+    <dependencies>
+      <dependency id="aws-cli" version="2.0.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
