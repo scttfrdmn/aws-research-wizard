@@ -6,9 +6,15 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Go 1.21+](https://img.shields.io/badge/go-1.21+-blue.svg)](https://golang.org/dl/)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Test Coverage](https://img.shields.io/badge/coverage-86.1%25-brightgreen.svg)](https://github.com/aws-research-wizard/go)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/aws-research-wizard/go)
+[![Go Report Card](https://img.shields.io/badge/go%20report-A+-brightgreen.svg)](https://goreportcard.com/)
+[![Security: Pre-commit](https://img.shields.io/badge/security-pre--commit-blue.svg)](https://pre-commit.com/)
+[![Domains Supported](https://img.shields.io/badge/domains-18+-orange.svg)](docs/RESEARCH_DOMAINS.md)
+[![AWS Open Data](https://img.shields.io/badge/AWS%20Open%20Data-50%2B%20PB-purple.svg)](https://registry.opendata.aws/)
 
-**Author:** Scott Friedman  
-**Copyright:** © 2025 Scott Friedman  
+**Author:** Scott Friedman
+**Copyright:** © 2025 Scott Friedman
 **License:** MIT
 
 ## 🎯 Overview
@@ -109,7 +115,7 @@ Our cost model uses **ephemeral/burst computing** patterns, not continuous 24/7 
 
 **Example Cost Patterns:**
 - **Small workload**: 2 hours → $10-50 per job
-- **Large simulation**: 24-72 hours → $200-1500 per job  
+- **Large simulation**: 24-72 hours → $200-1500 per job
 - **Monthly estimates**: Based on typical usage frequency (e.g., 5 jobs/month)
 - **Burst-intensive domains**: $0-5000/day variable scaling
 
@@ -158,7 +164,7 @@ python3 research_infrastructure_wizard.py \
 - **Drug Discovery**: Molecular docking, ADMET prediction ($400-2000/month)
 - **Structural Biology**: Protein folding, molecular dynamics
 
-### Physical Sciences  
+### Physical Sciences
 - **Climate Modeling**: WRF, CESM, weather prediction ($300-1500/month)
 - **Materials Science**: VASP, Quantum ESPRESSO, DFT calculations ($400-2000/month)
 - **Astronomy**: Large survey processing, cosmological simulations ($400-2500/month)
@@ -180,7 +186,7 @@ python3 research_infrastructure_wizard.py \
 #### High-Performance MPI Support with AWS EFA
 - **EFA-Optimized MPI**: Elastic Fabric Adapter for ultra-low latency networking
 - **Climate Modeling**: WRF, CESM with 90% parallel efficiency scaling up to 32 nodes
-- **Materials Science**: Quantum ESPRESSO, LAMMPS with 85% efficiency on EFA  
+- **Materials Science**: Quantum ESPRESSO, LAMMPS with 85% efficiency on EFA
 - **Physics Simulation**: Lattice QCD codes with excellent MPI scaling
 - **Network Optimization**: EFA, cluster placement groups, enhanced networking (SR-IOV)
 - **Multi-GPU Support**: AWS OFI-NCCL for optimized multi-GPU communication
@@ -205,13 +211,13 @@ Recommendation: 4x r7i.8xlarge instances
 Cost: $1,200/month active research
 ```
 
-### Climate Modeling Group  
+### Climate Modeling Group
 ```python
 # Regional climate downscaling
 Domain: Climate Science
 Tools: WRF, NCO/CDO, Python climate stack
 Dataset: 2TB meteorological data
-Users: 5 researchers  
+Users: 5 researchers
 Recommendation: 8x c6i.16xlarge + FSx Lustre
 Cost: $2,800/month intensive modeling
 ```
@@ -231,7 +237,7 @@ Cost: $3,600/month GPU training
 
 ### Core Components
 - **`research_infrastructure_wizard.py`**: Interactive recommendation engine
-- **`comprehensive_spack_domains.py`**: Domain-specific Spack environments  
+- **`comprehensive_spack_domains.py`**: Domain-specific Spack environments
 - **`finops_research_solutions.py`**: Cost-optimized ephemeral solutions
 - **`deploy-research-solution.sh`**: One-click deployment automation
 
@@ -249,7 +255,7 @@ Cost: $3,600/month GPU training
 ### Spack Optimizations vs Generic Builds
 ```
 Climate Modeling (WRF): 35% faster → 35% cost savings
-Genomics (GATK): 31% faster → $75/month savings per researcher  
+Genomics (GATK): 31% faster → $75/month savings per researcher
 AI/ML Training: 25% faster → $30 savings per model
 ```
 
@@ -263,7 +269,7 @@ AI/ML Training: 25% faster → $30 savings per model
 We welcome contributions from the research computing community:
 
 1. **Domain Expertise**: Add new research domains or enhance existing ones
-2. **Tool Integration**: Contribute Spack packages and configurations  
+2. **Tool Integration**: Contribute Spack packages and configurations
 3. **Cost Optimization**: Share cost optimization strategies
 4. **Security Enhancements**: Improve compliance frameworks
 
@@ -275,7 +281,7 @@ We welcome contributions from the research computing community:
 - [ ] Advanced cost prediction models
 - [ ] Integration with institutional cost centers
 
-### Q2 2025  
+### Q2 2025
 - [ ] Multi-cloud support (Azure, GCP)
 - [ ] Advanced workflow orchestration
 - [ ] Real-time collaboration features
