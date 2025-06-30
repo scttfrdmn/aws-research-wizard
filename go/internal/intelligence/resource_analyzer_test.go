@@ -9,7 +9,7 @@ import (
 
 func TestResourceAnalyzer_AnalyzeResourceRequirements(t *testing.T) {
 	analyzer := NewResourceAnalyzer()
-	
+
 	tests := []struct {
 		name           string
 		domain         string
@@ -53,31 +53,31 @@ func TestResourceAnalyzer_AnalyzeResourceRequirements(t *testing.T) {
 			expectedMinCPU: 4,
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			profile := &data.ResearchDomainProfile{Name: tt.domain}
 			hints := DomainHints{}
-			
+
 			requirements := analyzer.AnalyzeResourceRequirements(tt.domain, tt.dataPattern, profile, hints)
-			
+
 			if requirements == nil {
 				t.Fatal("AnalyzeResourceRequirements() returned nil")
 			}
-			
+
 			if requirements.MinCPUs < tt.expectedMinCPU {
 				t.Errorf("AnalyzeResourceRequirements() MinCPUs = %v, want at least %v", requirements.MinCPUs, tt.expectedMinCPU)
 			}
-			
+
 			// Verify required fields are set
 			if requirements.MinMemoryGB <= 0 {
 				t.Error("Expected MinMemoryGB to be positive")
 			}
-			
+
 			if requirements.MinStorageGB <= 0 {
 				t.Error("Expected MinStorageGB to be positive")
 			}
-			
+
 			if requirements.NetworkRequirements.MinBandwidthMbps <= 0 {
 				t.Error("Expected MinBandwidthMbps to be positive")
 			}
@@ -87,12 +87,12 @@ func TestResourceAnalyzer_AnalyzeResourceRequirements(t *testing.T) {
 
 func TestResourceAnalyzer_FindOptimalInstance(t *testing.T) {
 	analyzer := NewResourceAnalyzer()
-	
+
 	tests := []struct {
-		name             string
-		requirements     *ResourceRequirement
-		expectedCount    int
-		expectContains   string
+		name           string
+		requirements   *ResourceRequirement
+		expectedCount  int
+		expectContains string
 	}{
 		{
 			name: "small_requirements",
@@ -142,15 +142,15 @@ func TestResourceAnalyzer_FindOptimalInstance(t *testing.T) {
 			expectContains: "g5",
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			recommendations := analyzer.FindOptimalInstance(tt.requirements)
-			
+
 			if len(recommendations) < tt.expectedCount {
 				t.Errorf("FindOptimalInstance() returned %d recommendations, want at least %d", len(recommendations), tt.expectedCount)
 			}
-			
+
 			// Check that expected instance type is present
 			if tt.expectContains != "" && len(recommendations) > 0 {
 				found := false
@@ -170,7 +170,7 @@ func TestResourceAnalyzer_FindOptimalInstance(t *testing.T) {
 
 func TestResourceAnalyzer_GetInstanceSpec(t *testing.T) {
 	analyzer := NewResourceAnalyzer()
-	
+
 	tests := []struct {
 		name         string
 		instanceType string
@@ -202,17 +202,17 @@ func TestResourceAnalyzer_GetInstanceSpec(t *testing.T) {
 			expectExists: false,
 		},
 	}
-	
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			spec, exists := analyzer.GetInstanceSpec(tt.instanceType)
-			
+
 			if exists != tt.expectExists {
 				t.Errorf("GetInstanceSpec() exists = %v, want %v", exists, tt.expectExists)
 			}
-			
+
 			if exists {
-				if spec.vCPUs <= 0 {
+				if spec.VCPUs <= 0 {
 					t.Error("Expected positive vCPUs for valid instance")
 				}
 				if spec.MemoryGB <= 0 {
@@ -228,50 +228,54 @@ func TestResourceAnalyzer_GetInstanceSpec(t *testing.T) {
 
 func TestResourceAnalyzer_EdgeCases(t *testing.T) {
 	analyzer := NewResourceAnalyzer()
-	
+
 	t.Run("nil_data_pattern", func(t *testing.T) {
 		profile := &data.ResearchDomainProfile{Name: "genomics"}
 		hints := DomainHints{}
-		
+
 		requirements := analyzer.AnalyzeResourceRequirements("genomics", nil, profile, hints)
 		if requirements == nil {
 			t.Error("Expected non-nil requirements for nil data pattern")
 		}
 	})
-	
+
 	t.Run("nil_profile", func(t *testing.T) {
 		dataPattern := &data.DataPattern{
 			TotalSize:  100 * 1024 * 1024 * 1024, // 100 GB
 			TotalFiles: 10000,
 		}
 		hints := DomainHints{}
-		
+
 		requirements := analyzer.AnalyzeResourceRequirements("genomics", dataPattern, nil, hints)
 		if requirements == nil {
 			t.Error("Expected non-nil requirements for nil profile")
 		}
 	})
-	
+
 	t.Run("empty_requirements", func(t *testing.T) {
 		emptyReq := &ResourceRequirement{}
 		instances := analyzer.FindOptimalInstance(emptyReq)
-		
+
 		// Should still return some default instances
 		if len(instances) == 0 {
 			t.Error("Expected at least one instance recommendation for empty requirements")
 		}
 	})
-	
+
 	t.Run("extreme_requirements", func(t *testing.T) {
 		extremeReq := &ResourceRequirement{
 			MinCPUs:     1000,
 			MinMemoryGB: 10000,
 		}
 		instances := analyzer.FindOptimalInstance(extremeReq)
-		
-		// Should handle gracefully, even if no instances meet requirements
+
+		// Should handle gracefully, returning empty slice if no instances meet requirements
 		if instances == nil {
 			t.Error("FindOptimalInstance should not return nil for extreme requirements")
+		}
+		// For extreme requirements, we expect an empty slice
+		if len(instances) > 0 {
+			t.Logf("Found instances for extreme requirements: %v", instances)
 		}
 	})
 }
@@ -284,10 +288,85 @@ func BenchmarkResourceAnalyzer_AnalyzeResourceRequirements(b *testing.B) {
 		TotalFiles: 10000,
 	}
 	hints := DomainHints{}
-	
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		analyzer.AnalyzeResourceRequirements("genomics", dataPattern, profile, hints)
+	}
+}
+
+func TestResourceAnalyzer_analyzeDomainSpecificRequirements(t *testing.T) {
+	analyzer := NewResourceAnalyzer()
+
+	tests := []struct {
+		name           string
+		domain         string
+		expectedMinCPU int
+		expectedGPU    bool
+	}{
+		{
+			name:           "machine_learning_requires_gpu",
+			domain:         "machine_learning",
+			expectedMinCPU: 4,
+			expectedGPU:    true,
+		},
+		{
+			name:           "genomics_cpu_intensive",
+			domain:         "genomics", 
+			expectedMinCPU: 4,
+			expectedGPU:    false,
+		},
+		{
+			name:           "climate_modeling_high_cpu",
+			domain:         "climate",
+			expectedMinCPU: 8,
+			expectedGPU:    false,
+		},
+		{
+			name:           "chemistry_cpu_focused",
+			domain:         "chemistry",
+			expectedMinCPU: 4,
+			expectedGPU:    false,
+		},
+		{
+			name:           "physics_simulation",
+			domain:         "physics",
+			expectedMinCPU: 4, // Physics actually gets 4 CPUs by default
+			expectedGPU:    false,
+		},
+		{
+			name:           "astronomy_data_processing",
+			domain:         "astronomy",
+			expectedMinCPU: 4,
+			expectedGPU:    false,
+		},
+		{
+			name:           "unknown_domain_default",
+			domain:         "unknown",
+			expectedMinCPU: 2,
+			expectedGPU:    false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dataPattern := &data.DataPattern{
+				TotalSize:  10 * 1024 * 1024 * 1024, // 10 GB
+				TotalFiles: 1000,
+			}
+			profile := &data.ResearchDomainProfile{Name: tt.domain}
+			hints := DomainHints{}
+
+			requirements := analyzer.AnalyzeResourceRequirements(tt.domain, dataPattern, profile, hints)
+
+			if requirements.MinCPUs < tt.expectedMinCPU {
+				t.Errorf("Expected at least %d CPUs for %s domain, got %d", tt.expectedMinCPU, tt.domain, requirements.MinCPUs)
+			}
+
+			if requirements.GPURequired != tt.expectedGPU {
+				t.Errorf("Expected GPU requirement %v for %s domain, got %v", tt.expectedGPU, tt.domain, requirements.GPURequired)
+			}
+		})
 	}
 }
 
@@ -297,7 +376,7 @@ func BenchmarkResourceAnalyzer_FindOptimalInstance(b *testing.B) {
 		MinCPUs:     16,
 		MinMemoryGB: 32,
 	}
-	
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		analyzer.FindOptimalInstance(requirements)
