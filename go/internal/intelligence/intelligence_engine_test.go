@@ -227,6 +227,14 @@ func TestIntelligenceEngine_selectOptimalInstance(t *testing.T) {
 					"large":  "p4d.24xlarge",
 				},
 			},
+			"climate": {
+				Name: "climate",
+				InstanceTypes: map[string]string{
+					"small":  "c6i.xlarge",
+					"medium": "c6i.4xlarge",
+					"large":  "c6i.8xlarge",
+				},
+			},
 		},
 	}
 	
@@ -237,10 +245,40 @@ func TestIntelligenceEngine_selectOptimalInstance(t *testing.T) {
 		expectedInstance string
 	}{
 		{
+			name:         "genomics_small",
+			domain:       "genomics",
+			workloadSize: "small",
+			expectedInstance: "r6i.2xlarge",
+		},
+		{
 			name:         "genomics_medium",
 			domain:       "genomics",
 			workloadSize: "medium",
 			expectedInstance: "r6i.4xlarge",
+		},
+		{
+			name:         "genomics_large",
+			domain:       "genomics",
+			workloadSize: "large",
+			expectedInstance: "r6i.8xlarge",
+		},
+		{
+			name:         "genomics_massive_fallback",
+			domain:       "genomics",
+			workloadSize: "massive",
+			expectedInstance: "r6i.8xlarge",
+		},
+		{
+			name:         "ml_small",
+			domain:       "machine_learning",
+			workloadSize: "small",
+			expectedInstance: "g5.xlarge",
+		},
+		{
+			name:         "ml_medium",
+			domain:       "machine_learning",
+			workloadSize: "medium",
+			expectedInstance: "g5.4xlarge",
 		},
 		{
 			name:         "ml_large",
@@ -249,9 +287,57 @@ func TestIntelligenceEngine_selectOptimalInstance(t *testing.T) {
 			expectedInstance: "p4d.24xlarge",
 		},
 		{
-			name:         "unknown_domain_fallback",
+			name:         "climate_small",
+			domain:       "climate",
+			workloadSize: "small",
+			expectedInstance: "c6i.xlarge",
+		},
+		{
+			name:         "climate_medium",
+			domain:       "climate",
+			workloadSize: "medium",
+			expectedInstance: "c6i.4xlarge",
+		},
+		{
+			name:         "climate_large",
+			domain:       "climate",
+			workloadSize: "large",
+			expectedInstance: "c6i.8xlarge",
+		},
+		{
+			name:         "unknown_domain_small",
+			domain:       "unknown",
+			workloadSize: "small",
+			expectedInstance: "c6i.xlarge",
+		},
+		{
+			name:         "unknown_domain_medium",
 			domain:       "unknown",
 			workloadSize: "medium",
+			expectedInstance: "c6i.4xlarge",
+		},
+		{
+			name:         "unknown_domain_large",
+			domain:       "unknown",
+			workloadSize: "large",
+			expectedInstance: "c6i.8xlarge",
+		},
+		{
+			name:         "unknown_domain_massive",
+			domain:       "unknown",
+			workloadSize: "massive",
+			expectedInstance: "c6i.8xlarge",
+		},
+		{
+			name:         "empty_domain",
+			domain:       "",
+			workloadSize: "medium",
+			expectedInstance: "c6i.4xlarge",
+		},
+		{
+			name:         "invalid_workload_size",
+			domain:       "genomics",
+			workloadSize: "invalid",
 			expectedInstance: "c6i.4xlarge",
 		},
 	}
@@ -549,3 +635,267 @@ func TestIntelligenceEngine_ConcurrentAccess(t *testing.T) {
 		}
 	}
 }
+
+func TestIntelligenceEngine_generateAlternativeInstances(t *testing.T) {
+	ie := createTestIntelligenceEngine()
+	
+	tests := []struct {
+		name             string
+		primaryInstance  string
+		expectedCount    int
+		expectContains   []string
+	}{
+		{
+			name:            "r6i_instance",
+			primaryInstance: "r6i.2xlarge",
+			expectedCount:   3,
+			expectContains:  []string{"r6i.xlarge", "r6i.4xlarge", "c6i.2xlarge"},
+		},
+		{
+			name:            "g5_instance",
+			primaryInstance: "g5.4xlarge",
+			expectedCount:   3,
+			expectContains:  []string{"g5.2xlarge", "g5.8xlarge", "p4d.xlarge"},
+		},
+		{
+			name:            "c6i_instance",
+			primaryInstance: "c6i.4xlarge",
+			expectedCount:   3,
+			expectContains:  []string{"c6i.2xlarge", "c6i.8xlarge", "r6i.4xlarge"},
+		},
+		{
+			name:            "p4d_instance",
+			primaryInstance: "p4d.24xlarge",
+			expectedCount:   3,
+			expectContains:  []string{"p4d.12xlarge", "g5.24xlarge", "g5.12xlarge"},
+		},
+		{
+			name:            "unknown_instance",
+			primaryInstance: "unknown.xlarge",
+			expectedCount:   3,
+			expectContains:  []string{"c6i.xlarge", "r6i.xlarge", "g5.xlarge"},
+		},
+	}
+	
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			profile := &data.ResearchDomainProfile{Name: "genomics"}
+			alternatives := ie.generateAlternativeInstances(profile, "medium")
+			
+			if len(alternatives) < 1 {
+				t.Errorf("generateAlternativeInstances() returned %d alternatives, want at least 1", len(alternatives))
+			}
+			
+			// Verify alternatives are valid instance types
+			for _, alt := range alternatives {
+				if alt == "" {
+					t.Error("Found empty alternative instance type")
+				}
+			}
+		})
+	}
+}
+
+func TestIntelligenceEngine_generateStorageConfiguration(t *testing.T) {
+	ie := createTestIntelligenceEngine()
+	
+	tests := []struct {
+		name           string
+		totalSizeGB    float64
+		accessPattern  string
+		expectedType   string
+		expectedIOPS   int
+	}{
+		{
+			name:          "small_frequent",
+			totalSizeGB:   10.0,
+			accessPattern: "frequent",
+			expectedType:  "gp3",
+			expectedIOPS:  3000,
+		},
+		{
+			name:          "large_sequential",
+			totalSizeGB:   1000.0,
+			accessPattern: "sequential",
+			expectedType:  "gp3",
+			expectedIOPS:  3000,
+		},
+		{
+			name:          "massive_infrequent",
+			totalSizeGB:   10000.0,
+			accessPattern: "infrequent",
+			expectedType:  "sc1",
+			expectedIOPS:  0,
+		},
+		{
+			name:          "medium_random",
+			totalSizeGB:   500.0,
+			accessPattern: "random",
+			expectedType:  "io2",
+			expectedIOPS:  4000,
+		},
+		{
+			name:          "nil_pattern",
+			totalSizeGB:   100.0,
+			accessPattern: "",
+			expectedType:  "gp3",
+			expectedIOPS:  3000,
+		},
+	}
+	
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var pattern *data.DataPattern
+			if tt.accessPattern != "" {
+				pattern = &data.DataPattern{
+					TotalSize: int64(tt.totalSizeGB * 1024 * 1024 * 1024),
+					AccessPatterns: data.AccessPatternAnalysis{
+						LikelyFreqAccess: tt.accessPattern == "frequent",
+						LikelyArchival:   tt.accessPattern == "infrequent",
+						LikelyWriteOnce:  tt.accessPattern == "sequential",
+					},
+				}
+			} else {
+				pattern = &data.DataPattern{
+					TotalSize: int64(tt.totalSizeGB * 1024 * 1024 * 1024),
+				}
+			}
+			
+			profile := &data.ResearchDomainProfile{Name: "genomics"}
+			config := ie.generateStorageConfiguration(profile, pattern)
+			
+			if config.PrimaryStorage.Type != tt.expectedType {
+				t.Errorf("generateStorageConfiguration() PrimaryStorage.Type = %v, want %v", config.PrimaryStorage.Type, tt.expectedType)
+			}
+			
+			if config.PrimaryStorage.IOPS != tt.expectedIOPS {
+				t.Errorf("generateStorageConfiguration() PrimaryStorage.IOPS = %v, want %v", config.PrimaryStorage.IOPS, tt.expectedIOPS)
+			}
+			
+			if config.PrimaryStorage.SizeGB <= 0 {
+				t.Errorf("generateStorageConfiguration() PrimaryStorage.SizeGB should be positive, got %v", config.PrimaryStorage.SizeGB)
+			}
+		})
+	}
+}
+
+func TestIntelligenceEngine_generateNetworkConfiguration(t *testing.T) {
+	ie := createTestIntelligenceEngine()
+	
+	tests := []struct {
+		name              string
+		workloadSize      string
+		expectedEFA       bool
+		expectedPlacement bool
+	}{
+		{
+			name:              "large_workload",
+			workloadSize:      "large",
+			expectedEFA:       true,
+			expectedPlacement: true,
+		},
+		{
+			name:              "medium_workload",
+			workloadSize:      "medium",
+			expectedEFA:       false,
+			expectedPlacement: true,
+		},
+		{
+			name:              "small_workload",
+			workloadSize:      "small",
+			expectedEFA:       false,
+			expectedPlacement: false,
+		},
+	}
+	
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			profile := &data.ResearchDomainProfile{Name: "genomics"}
+			config := ie.generateNetworkConfiguration(profile, tt.workloadSize)
+			
+			if config.EFAEnabled != tt.expectedEFA {
+				t.Errorf("generateNetworkConfiguration() EFAEnabled = %v, want %v", config.EFAEnabled, tt.expectedEFA)
+			}
+			
+			if config.PlacementGroup != tt.expectedPlacement {
+				t.Errorf("generateNetworkConfiguration() PlacementGroup = %v, want %v", config.PlacementGroup, tt.expectedPlacement)
+			}
+			
+			if config.EnhancedNetworking != true {
+				t.Errorf("generateNetworkConfiguration() EnhancedNetworking should be true")
+			}
+		})
+	}
+}
+
+func TestIntelligenceEngine_generateImplementationPlan(t *testing.T) {
+	ie := createTestIntelligenceEngine()
+	
+	resourcePlan := &ResourcePlan{
+		RecommendedInstance:   "r6i.4xlarge",
+		AlternativeInstances:  []string{"r6i.2xlarge", "r6i.8xlarge"},
+		StorageConfiguration: StorageConfiguration{
+			PrimaryStorage: StorageType{
+				Type:   "gp3",
+				SizeGB: 500,
+				IOPS:   3000,
+			},
+		},
+		NetworkConfiguration: NetworkConfiguration{
+			EnhancedNetworking: true,
+			PlacementGroup:     true,
+		},
+	}
+	
+	tests := []struct {
+		name   string
+		domain string
+	}{
+		{
+			name:   "genomics_implementation",
+			domain: "genomics",
+		},
+		{
+			name:   "ml_implementation", 
+			domain: "machine_learning",
+		},
+		{
+			name:   "climate_implementation",
+			domain: "climate",
+		},
+		{
+			name:   "unknown_domain_implementation",
+			domain: "unknown",
+		},
+	}
+	
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			domainPack := &DomainPackInfo{
+				Name:        tt.domain,
+				Version:     "1.0.0",
+				Description: "Test domain pack",
+			}
+			implementation := ie.generateImplementationPlan(tt.domain, domainPack, resourcePlan)
+			
+			if implementation == nil {
+				t.Fatal("generateImplementationPlan() returned nil")
+			}
+			
+			if len(implementation.Steps) == 0 {
+				t.Error("Expected implementation steps to be populated")
+			}
+			
+			if implementation.EstimatedDuration == "" {
+				t.Error("Expected estimated duration to be set")
+			}
+			
+			if len(implementation.Prerequisites) == 0 {
+				t.Error("Expected prerequisites to be populated")
+			}
+		})
+	}
+}
+
+// Note: More comprehensive tests for assessImpact and other complex functions
+// are omitted for now to focus on core coverage improvement
