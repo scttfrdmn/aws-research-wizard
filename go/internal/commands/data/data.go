@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -21,7 +22,7 @@ var DataCmd = &cobra.Command{
 	Short: "Manage research data transfers and AWS Open Data integration",
 	Long: `The data command provides comprehensive data management capabilities including:
 - S3 transfer optimization with multi-part uploads
-- AWS Open Data registry integration and discovery  
+- AWS Open Data registry integration and discovery
 - Data pipeline orchestration and monitoring
 - Transfer progress tracking and analytics`,
 	Example: `  # Search for genomics datasets
@@ -39,10 +40,10 @@ var DataCmd = &cobra.Command{
 
 var (
 	// Global data management components
-	s3Manager       *data.S3Manager
+	s3Manager        *data.S3Manager
 	openDataRegistry *data.OpenDataRegistry
-	pipelineManager *data.PipelineManager
-	transferMonitor *data.TransferMonitor
+	pipelineManager  *data.PipelineManager
+	transferMonitor  *data.TransferMonitor
 )
 
 func init() {
@@ -295,15 +296,22 @@ func runDownload(cmd *cobra.Command, args []string) error {
 
 	// Progress callback
 	progressCallback := func(progress data.TransferProgress) {
-		fmt.Printf("\rProgress: %.1f%% (%s/s) ETA: %s", 
-			progress.Percentage, 
-			formatBytes(progress.Speed), 
+		fmt.Printf("\rProgress: %.1f%% (%s/s) ETA: %s",
+			progress.Percentage,
+			formatBytes(progress.Speed),
 			progress.ETA.Round(time.Second))
 	}
 
 	if sample {
 		// Download sample files
-		objects, err := s3Manager.ListObjects(ctx, bucket, key, int32(maxFiles))
+		// Ensure maxFiles doesn't exceed int32 range
+		var maxFilesInt32 int32
+		if maxFiles > math.MaxInt32 {
+			maxFilesInt32 = math.MaxInt32
+		} else {
+			maxFilesInt32 = int32(maxFiles)
+		}
+		objects, err := s3Manager.ListObjects(ctx, bucket, key, maxFilesInt32)
 		if err != nil {
 			return fmt.Errorf("failed to list objects: %w", err)
 		}
@@ -347,9 +355,9 @@ func runUpload(cmd *cobra.Command, args []string) error {
 
 	// Progress callback
 	progressCallback := func(progress data.TransferProgress) {
-		fmt.Printf("\rProgress: %.1f%% (%s/s) ETA: %s", 
-			progress.Percentage, 
-			formatBytes(progress.Speed), 
+		fmt.Printf("\rProgress: %.1f%% (%s/s) ETA: %s",
+			progress.Percentage,
+			formatBytes(progress.Speed),
 			progress.ETA.Round(time.Second))
 	}
 
@@ -419,7 +427,7 @@ func runInfo(cmd *cobra.Command, args []string) error {
 	fmt.Printf("Domain: %s\n", dataset.Domain)
 	fmt.Printf("Description: %s\n", dataset.Description)
 	fmt.Printf("License: %s\n", dataset.License)
-	
+
 	if len(dataset.Tags) > 0 {
 		fmt.Printf("Tags: %s\n", strings.Join(dataset.Tags, ", "))
 	}
@@ -458,7 +466,7 @@ func runMonitor(cmd *cobra.Command, args []string) error {
 
 	// Create and run TUI
 	// model := data.NewMonitorModel(transferMonitor)
-	
+
 	// This would typically use Bubble Tea's Program.Run()
 	// For now, show a simple text-based monitor
 	fmt.Println("Transfer Monitor (Press Ctrl+C to exit)")
@@ -468,13 +476,13 @@ func runMonitor(cmd *cobra.Command, args []string) error {
 		transferSummary := transferMonitor.GetTransferSummary()
 		pipelineSummary := transferMonitor.GetPipelineSummary()
 
-		fmt.Printf("\rTransfers - Active: %d | Completed: %d | Failed: %d | Speed: %s/s", 
+		fmt.Printf("\rTransfers - Active: %d | Completed: %d | Failed: %d | Speed: %s/s",
 			transferSummary.ActiveTransfers,
-			transferSummary.CompletedTransfers, 
+			transferSummary.CompletedTransfers,
 			transferSummary.FailedTransfers,
 			formatBytes(transferSummary.AverageSpeed))
 
-		fmt.Printf(" | Pipelines - Active: %d | Jobs: %d/%d", 
+		fmt.Printf(" | Pipelines - Active: %d | Jobs: %d/%d",
 			pipelineSummary.ActivePipelines,
 			pipelineSummary.CompletedJobs,
 			pipelineSummary.TotalJobs)
@@ -501,7 +509,7 @@ func runPipelineCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	pipeline := pipelineManager.CreatePipeline(name, description, config)
-	
+
 	fmt.Printf("Created pipeline: %s (ID: %s)\n", pipeline.Name, pipeline.ID)
 	return nil
 }
@@ -512,7 +520,7 @@ func runPipelineList(cmd *cobra.Command, args []string) error {
 	}
 
 	pipelines := pipelineManager.ListPipelines()
-	
+
 	if len(pipelines) == 0 {
 		fmt.Println("No pipelines found")
 		return nil
@@ -557,7 +565,7 @@ func parseS3URI(uri string) (bucket, key string, err error) {
 
 	path := strings.TrimPrefix(uri, "s3://")
 	parts := strings.SplitN(path, "/", 2)
-	
+
 	if len(parts) < 1 {
 		return "", "", fmt.Errorf("invalid S3 URI format")
 	}
@@ -572,7 +580,7 @@ func parseS3URI(uri string) (bucket, key string, err error) {
 
 func parseSize(sizeStr string) (int64, error) {
 	sizeStr = strings.ToUpper(strings.TrimSpace(sizeStr))
-	
+
 	multiplier := int64(1)
 	if strings.HasSuffix(sizeStr, "KB") {
 		multiplier = 1024
@@ -598,12 +606,12 @@ func formatBytes(bytes int64) string {
 	if bytes < unit {
 		return fmt.Sprintf("%d B", bytes)
 	}
-	
+
 	div, exp := int64(unit), 0
 	for n := bytes / unit; n >= unit; n /= unit {
 		div *= unit
 		exp++
 	}
-	
+
 	return fmt.Sprintf("%.1f %cB", float64(bytes)/float64(div), "KMGTPE"[exp])
 }

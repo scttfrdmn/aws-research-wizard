@@ -47,12 +47,12 @@ func NewPricingCalculator(region string) (*PricingCalculator, error) {
 // GetInstanceTypes retrieves available instance types
 func (pc *PricingCalculator) GetInstanceTypes(ctx context.Context) ([]types.InstanceTypeInfo, error) {
 	input := &ec2.DescribeInstanceTypesInput{}
-	
+
 	result, err := pc.ec2Client.DescribeInstanceTypes(ctx, input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to describe instance types: %w", err)
 	}
-	
+
 	return result.InstanceTypes, nil
 }
 
@@ -60,16 +60,16 @@ func (pc *PricingCalculator) GetInstanceTypes(ctx context.Context) ([]types.Inst
 func (pc *PricingCalculator) CalculateCost(instanceType string) (*CostEstimate, error) {
 	// This is a simplified cost calculation using approximate pricing
 	// In production, you'd use the AWS Pricing API or maintain a pricing table
-	
+
 	baseCosts := map[string]float64{
 		// General Purpose
-		"t3.micro":    0.0104,
-		"t3.small":    0.0208,
-		"t3.medium":   0.0416,
-		"t3.large":    0.0832,
-		"t3.xlarge":   0.1664,
-		"t3.2xlarge":  0.3328,
-		
+		"t3.micro":   0.0104,
+		"t3.small":   0.0208,
+		"t3.medium":  0.0416,
+		"t3.large":   0.0832,
+		"t3.xlarge":  0.1664,
+		"t3.2xlarge": 0.3328,
+
 		// Compute Optimized
 		"c6i.large":    0.085,
 		"c6i.xlarge":   0.17,
@@ -79,7 +79,7 @@ func (pc *PricingCalculator) CalculateCost(instanceType string) (*CostEstimate, 
 		"c6i.12xlarge": 2.04,
 		"c6i.16xlarge": 2.72,
 		"c6i.24xlarge": 4.08,
-		
+
 		// Memory Optimized
 		"r6i.large":    0.126,
 		"r6i.xlarge":   0.252,
@@ -89,35 +89,35 @@ func (pc *PricingCalculator) CalculateCost(instanceType string) (*CostEstimate, 
 		"r6i.12xlarge": 3.024,
 		"r6i.16xlarge": 4.032,
 		"r6i.24xlarge": 6.048,
-		
+
 		// GPU Instances
 		"p4d.24xlarge": 32.7726,
 		"p3.2xlarge":   3.06,
 		"p3.8xlarge":   12.24,
 		"p3.16xlarge":  24.48,
-		
+
 		// High Performance Computing
-		"hpc6a.48xlarge": 2.88,
+		"hpc6a.48xlarge":  2.88,
 		"hpc6id.32xlarge": 3.456,
 	}
-	
+
 	hourlyCost, exists := baseCosts[instanceType]
 	if !exists {
 		// Fallback estimation based on instance size
 		hourlyCost = pc.estimateCostFromInstanceType(instanceType)
 	}
-	
+
 	// Calculate monthly and annual costs
 	monthlyCost := hourlyCost * 24 * 30.44 // Average days per month
 	annualCost := hourlyCost * 24 * 365
-	
+
 	// Estimate savings
-	spotSavings := hourlyCost * 0.7      // ~70% savings
-	reservedSavings := hourlyCost * 0.4  // ~40% savings
-	
+	spotSavings := hourlyCost * 0.7     // ~70% savings
+	reservedSavings := hourlyCost * 0.4 // ~40% savings
+
 	// Extract vCPUs and memory from instance type (simplified)
 	vcpus, memory := pc.parseInstanceSpecs(instanceType)
-	
+
 	return &CostEstimate{
 		InstanceType:    instanceType,
 		VCPUs:           vcpus,
@@ -137,22 +137,22 @@ func (pc *PricingCalculator) estimateCostFromInstanceType(instanceType string) f
 	if len(parts) != 2 {
 		return 0.10 // Default fallback
 	}
-	
+
 	family := parts[0]
 	size := parts[1]
-	
+
 	// Base cost multipliers by family
 	familyMultipliers := map[string]float64{
-		"t3":   0.02,
-		"t4g":  0.018,
-		"m6i":  0.08,
-		"c6i":  0.085,
-		"r6i":  0.126,
-		"p4d":  15.0,
-		"p3":   1.5,
+		"t3":    0.02,
+		"t4g":   0.018,
+		"m6i":   0.08,
+		"c6i":   0.085,
+		"r6i":   0.126,
+		"p4d":   15.0,
+		"p3":    1.5,
 		"hpc6a": 0.06,
 	}
-	
+
 	// Size multipliers
 	sizeMultipliers := map[string]float64{
 		"nano":     0.25,
@@ -170,17 +170,17 @@ func (pc *PricingCalculator) estimateCostFromInstanceType(instanceType string) f
 		"32xlarge": 256.0,
 		"48xlarge": 384.0,
 	}
-	
+
 	familyBase := familyMultipliers[family]
 	if familyBase == 0 {
 		familyBase = 0.08 // Default
 	}
-	
+
 	sizeMultiplier := sizeMultipliers[size]
 	if sizeMultiplier == 0 {
 		sizeMultiplier = 4.0 // Default to large
 	}
-	
+
 	return familyBase * sizeMultiplier
 }
 
@@ -219,11 +219,11 @@ func (pc *PricingCalculator) parseInstanceSpecs(instanceType string) (int32, str
 		"p3.16xlarge":    {64, "488 GiB"},
 		"hpc6a.48xlarge": {96, "384 GiB"},
 	}
-	
+
 	if spec, exists := specs[instanceType]; exists {
 		return spec.vcpus, spec.memory
 	}
-	
+
 	// Fallback parsing from instance type name
 	parts := strings.Split(instanceType, ".")
 	if len(parts) == 2 {
@@ -251,11 +251,16 @@ func (pc *PricingCalculator) parseInstanceSpecs(instanceType string) (int32, str
 			if strings.Contains(size, "xlarge") {
 				multiplierStr := strings.Replace(size, "xlarge", "", 1)
 				if multiplier, err := strconv.Atoi(multiplierStr); err == nil {
-					return int32(multiplier * 4), fmt.Sprintf("%d GiB", multiplier*16)
+					// Check for overflow before conversion
+					result := multiplier * 4
+					if result > 2147483647 {
+						return 2147483647, fmt.Sprintf("%d GiB", multiplier*16)
+					}
+					return int32(result), fmt.Sprintf("%d GiB", multiplier*16)
 				}
 			}
 		}
 	}
-	
+
 	return 2, "4 GiB" // Default fallback
 }
