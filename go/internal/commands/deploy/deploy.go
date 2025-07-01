@@ -8,11 +8,12 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/spack-go/spack-manager/pkg/manager"
+	"github.com/spack-go/spack-manager/pkg/tui"
 	"github.com/spf13/cobra"
 
 	"github.com/aws-research-wizard/go/internal/aws"
 	"github.com/aws-research-wizard/go/internal/config"
-	"github.com/aws-research-wizard/go/internal/data"
 	"github.com/aws-research-wizard/go/internal/intelligence"
 )
 
@@ -344,15 +345,24 @@ func setupSpackEnvironment(ctx context.Context, awsClient *aws.Client, domain *c
 	}
 
 	// Create Spack environment configuration
-	spackEnv := &data.SpackEnvironment{
+	spackEnv := manager.Environment{
 		Name:     domain.Name,
 		Packages: domainPackInfo.SpackPackages,
-		View:     true,
 	}
 
 	// Initialize Spack manager (for configuration generation)
 	// Note: This generates configs locally, actual installation happens on remote instance
-	spackManager := data.NewSpackManager(spackRoot, "https://cache.spack.io/aws-ahug-east/", "us-east-1", nil)
+	config := manager.Config{
+		SpackRoot:   spackRoot,
+		BinaryCache: "https://cache.spack.io/aws-ahug-east/",
+		WorkDir:     "/tmp/spack-manager",
+		LogLevel:    "info",
+	}
+
+	spackManager, err := manager.New(config)
+	if err != nil {
+		return fmt.Errorf("failed to create Spack manager: %w", err)
+	}
 
 	// Validate environment configuration
 	if err := spackManager.ValidateEnvironment(spackEnv); err != nil {
@@ -638,7 +648,6 @@ func createSpackInstallCommand(configRoot, domainName, spackRoot *string) *cobra
 				log.Fatal("Domain name is required. Use --domain flag.")
 			}
 
-			ctx := context.Background()
 			if *configRoot == "" {
 				*configRoot = findConfigRoot()
 			}
@@ -653,14 +662,23 @@ func createSpackInstallCommand(configRoot, domainName, spackRoot *string) *cobra
 			}
 
 			// Create Spack environment
-			spackEnv := &data.SpackEnvironment{
+			spackEnv := manager.Environment{
 				Name:     *domainName,
 				Packages: domainPackInfo.SpackPackages,
-				View:     true,
 			}
 
 			// Initialize Spack manager
-			spackManager := data.NewSpackManager(*spackRoot, "https://cache.spack.io/aws-ahug-east/", "us-east-1", nil)
+			config := manager.Config{
+				SpackRoot:   *spackRoot,
+				BinaryCache: "https://cache.spack.io/aws-ahug-east/",
+				WorkDir:     "/tmp/spack-manager",
+				LogLevel:    "info",
+			}
+
+			spackManager, err := manager.New(config)
+			if err != nil {
+				log.Fatalf("Failed to create Spack manager: %v", err)
+			}
 
 			// Validate environment
 			if err := spackManager.ValidateEnvironment(spackEnv); err != nil {
@@ -672,20 +690,24 @@ func createSpackInstallCommand(configRoot, domainName, spackRoot *string) *cobra
 
 			if progressMonitor {
 				// Install with progress monitoring
-				progressChan, err := spackManager.InstallEnvironment(ctx, spackEnv)
-				if err != nil {
-					log.Fatalf("Failed to start installation: %v", err)
-				}
+				progressChan := make(chan manager.ProgressUpdate, 100)
 
-				// Monitor progress
-				for update := range *progressChan {
-					if update.IsError {
-						fmt.Printf("❌ %s: %s\n", update.Package, update.Message)
-					} else if update.IsComplete {
-						fmt.Printf("✅ %s: %s\n", update.Package, update.Message)
-					} else {
-						fmt.Printf("🔄 %s [%.1f%%]: %s\n", update.Package, update.Progress, update.Message)
+				// Monitor progress in a goroutine
+				go func() {
+					for update := range progressChan {
+						if update.IsError {
+							fmt.Printf("❌ %s: %s\n", update.Package, update.Message)
+						} else if update.IsComplete {
+							fmt.Printf("✅ %s: %s\n", update.Package, update.Message)
+						} else {
+							fmt.Printf("🔄 %s [%.1f%%]: %s\n", update.Package, update.Progress*100, update.Message)
+						}
 					}
+				}()
+
+				// Start installation
+				if err := spackManager.InstallEnvironment(spackEnv.Name, progressChan); err != nil {
+					log.Fatalf("Failed to install environment: %v", err)
 				}
 			} else {
 				fmt.Printf("⚠️  Progress monitoring disabled. Use --progress for real-time updates.\n")
@@ -707,21 +729,31 @@ func createSpackStatusCommand(configRoot, domainName, spackRoot *string) *cobra.
 				log.Fatal("Domain name is required. Use --domain flag.")
 			}
 
-			spackManager := data.NewSpackManager(*spackRoot, "", "", nil)
-
-			status, err := spackManager.GetEnvironmentStatus(*domainName)
-			if err != nil {
-				log.Fatalf("Failed to get environment status: %v", err)
+			config := manager.Config{
+				SpackRoot:   *spackRoot,
+				BinaryCache: "",
+				WorkDir:     "/tmp/spack-manager",
+				LogLevel:    "info",
 			}
 
-			fmt.Printf("📊 Spack Environment Status: %s\n\n", status.Name)
-			fmt.Printf("Packages: %d\n", len(status.Packages))
-			fmt.Printf("View enabled: %v\n", status.View)
-			fmt.Printf("Concretized: %v\n", status.Concretized)
+			spackManager, err := manager.New(config)
+			if err != nil {
+				log.Fatalf("Failed to create Spack manager: %v", err)
+			}
 
-			if len(status.Packages) > 0 {
+			envInfo, err := spackManager.GetEnvironmentInfo(*domainName)
+			if err != nil {
+				log.Fatalf("Failed to get environment info: %v", err)
+			}
+
+			fmt.Printf("📊 Spack Environment Status: %s\n\n", envInfo.Name)
+			fmt.Printf("Packages: %d\n", len(envInfo.Packages))
+			fmt.Printf("View enabled: %v\n", envInfo.View)
+			fmt.Printf("Concretized: %v\n", envInfo.Concretized)
+
+			if len(envInfo.Packages) > 0 {
 				fmt.Printf("\nPackages:\n")
-				for _, pkg := range status.Packages {
+				for _, pkg := range envInfo.Packages {
 					fmt.Printf("  - %s\n", pkg)
 				}
 			}
@@ -752,14 +784,24 @@ func createSpackValidateCommand(configRoot, domainName, spackRoot *string) *cobr
 			}
 
 			// Create Spack environment
-			spackEnv := &data.SpackEnvironment{
+			spackEnv := manager.Environment{
 				Name:     *domainName,
 				Packages: domainPackInfo.SpackPackages,
 				View:     true,
 			}
 
 			// Initialize Spack manager and validate
-			spackManager := data.NewSpackManager(*spackRoot, "", "", nil)
+			config := manager.Config{
+				SpackRoot:   *spackRoot,
+				BinaryCache: "",
+				WorkDir:     "/tmp/spack-manager",
+				LogLevel:    "info",
+			}
+
+			spackManager, err := manager.New(config)
+			if err != nil {
+				log.Fatalf("Failed to create Spack manager: %v", err)
+			}
 
 			if err := spackManager.ValidateEnvironment(spackEnv); err != nil {
 				fmt.Printf("❌ Validation failed: %v\n", err)
@@ -793,38 +835,20 @@ Features:
 			fmt.Printf("🚀 Launching Spack Manager TUI...\n")
 
 			// Initialize Spack manager
-			spackManager := data.NewSpackManager(*spackRoot, "https://cache.spack.io/aws-ahug-east/", "us-east-1", nil)
-
-			// Load available environments (from domain packs)
-			domainPackLoader := intelligence.NewDomainPackLoader()
-			availableDomains, err := domainPackLoader.GetAvailableDomains()
-			if err != nil {
-				log.Fatalf("Failed to load domains: %v", err)
+			config := manager.Config{
+				SpackRoot:   *spackRoot,
+				BinaryCache: "https://cache.spack.io/aws-ahug-east/",
+				WorkDir:     "/tmp/spack-manager",
+				LogLevel:    "info",
 			}
 
-			var environments []data.SpackEnvironment
-			for _, domainName := range availableDomains {
-				domainPackInfo, err := domainPackLoader.LoadDomainPack(domainName)
-				if err != nil {
-					continue // Skip invalid domains
-				}
-
-				env := data.SpackEnvironment{
-					Name:     domainName,
-					Packages: domainPackInfo.SpackPackages,
-					View:     true,
-				}
-
-				// Check if environment exists and is concretized
-				if status, err := spackManager.GetEnvironmentStatus(domainName); err == nil {
-					env.Concretized = status.Concretized
-				}
-
-				environments = append(environments, env)
+			spackManager, err := manager.New(config)
+			if err != nil {
+				log.Fatalf("Failed to create Spack manager: %v", err)
 			}
 
 			// Launch TUI
-			if err := data.RunSpackTUI(spackManager, environments); err != nil {
+			if err := tui.Run(spackManager); err != nil {
 				log.Fatalf("TUI error: %v", err)
 			}
 		},

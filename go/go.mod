@@ -1,11 +1,8 @@
 module github.com/aws-research-wizard/go
 
-go 1.23.0
-
-toolchain go1.24.4
+go 1.24.4
 
 require (
-	github.com/aws/aws-sdk-go v1.55.7
 	github.com/aws/aws-sdk-go-v2 v1.36.5
 	github.com/aws/aws-sdk-go-v2/config v1.29.17
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.82
@@ -18,6 +15,7 @@ require (
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.5
 	github.com/charmbracelet/lipgloss v1.1.0
+	github.com/spack-go/spack-manager v0.0.0-00010101000000-000000000000
 	github.com/spf13/cobra v1.8.0
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -64,3 +62,5 @@ require (
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/text v0.3.8 // indirect
 )
+
+replace github.com/spack-go/spack-manager => ../spack-manager-go

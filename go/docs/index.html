@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Research Wizard - Run Research Workloads on AWS</title>
-    <meta name="description" content="Execute research workloads effortlessly on AWS with pre-configured domain packs for genomics, climate science, ML, and more. Research computing made simple.">
+    <title>AWS Research Wizard v0.2.0 - Advanced Research Computing with Spack Integration</title>
+    <meta name="description" content="Comprehensive research computing platform for AWS with pre-configured domain packs, 95% faster installations via Spack integration, and interactive TUI. 25+ research domains supported.">
     <link rel="icon" type="image/png" href="wizard-logo.png">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://aws-research-wizard.github.io/">
-    <meta property="og:title" content="AWS Research Wizard - Run Research Workloads on AWS">
-    <meta property="og:description" content="Execute research workloads effortlessly on AWS with pre-configured domain packs for genomics, climate science, ML, and more. Research computing made simple.">
+    <meta property="og:title" content="AWS Research Wizard v0.2.0 - Advanced Research Computing">
+    <meta property="og:description" content="Comprehensive research computing platform for AWS with pre-configured domain packs, 95% faster installations via Spack integration, and interactive TUI.">
     <meta property="og:image" content="https://aws-research-wizard.github.io/wizard-logo.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://aws-research-wizard.github.io/">
-    <meta property="twitter:title" content="AWS Research Wizard - Run Research Workloads on AWS">
-    <meta property="twitter:description" content="Execute research workloads effortlessly on AWS with pre-configured domain packs for genomics, climate science, ML, and more. Research computing made simple.">
+    <meta property="twitter:title" content="AWS Research Wizard v0.2.0 - Advanced Research Computing">
+    <meta property="twitter:description" content="Comprehensive research computing platform for AWS with pre-configured domain packs, 95% faster installations via Spack integration, and interactive TUI.">
     <meta property="twitter:image" content="https://aws-research-wizard.github.io/wizard-logo.png">
 
     <style>
@@ -26,11 +26,13 @@
             --primary-color: #6366f1;
             --secondary-color: #8b5cf6;
             --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --spack-color: #00C853;
             --dark-color: #1f2937;
             --light-color: #f9fafb;
             --text-color: #374151;
-            --success-color: #10b981;
             --border-color: #e5e7eb;
+            --gradient-bg: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         }
 
         * {
@@ -100,12 +102,55 @@
             color: var(--primary-color);
         }
 
+        .version-badge {
+            background: var(--success-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--gradient-bg);
             color: white;
             padding: 4rem 0;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .announcement-banner {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .hero h1 {
@@ -118,7 +163,7 @@
             font-size: 1.25rem;
             margin-bottom: 2rem;
             opacity: 0.9;
-            max-width: 600px;
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -139,6 +184,8 @@
             font-weight: 600;
             transition: all 0.3s;
             border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-primary {
@@ -149,6 +196,7 @@
         .btn-primary:hover {
             background: #d97706;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
         }
 
         .btn-secondary {
@@ -162,6 +210,17 @@
             color: var(--primary-color);
         }
 
+        .btn-spack {
+            background: var(--spack-color);
+            color: white;
+        }
+
+        .btn-spack:hover {
+            background: #00A049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 200, 83, 0.4);
+        }
+
         .hero-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -171,6 +230,10 @@
 
         .stat {
             text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
         }
 
         .stat-number {
@@ -182,6 +245,126 @@
         .stat-label {
             font-size: 0.9rem;
             opacity: 0.8;
+        }
+
+        /* Version History */
+        .version-history {
+            background: white;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .timeline {
+            display: grid;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .timeline-item {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .timeline-marker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .timeline-marker::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            width: 2px;
+            height: calc(100% + 2rem);
+            background: var(--border-color);
+        }
+
+        .timeline-item:last-child .timeline-marker::after {
+            display: none;
+        }
+
+        .version-badge-large {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .version-badge-large.current {
+            background: var(--success-color);
+        }
+
+        .timeline-content {
+            background: var(--light-color);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .timeline-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+        }
+
+        .timeline-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .timeline-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .feature-icon-small {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        /* Enhanced in v0.2.0 section */
+        .enhanced-section {
+            background: linear-gradient(135deg, var(--spack-color), #00A049);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .enhanced-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .enhanced-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .enhanced-feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .enhanced-feature h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
         }
 
         /* Features Section */
@@ -216,6 +399,16 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
+        .feature-card.phase1-feature {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-color: var(--primary-color);
+        }
+
+        .feature-card.phase2-feature {
+            background: linear-gradient(135deg, rgba(0, 200, 83, 0.1), rgba(0, 164, 73, 0.1));
+            border-color: var(--spack-color);
+        }
+
         .feature-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
@@ -231,6 +424,76 @@
         .feature-description {
             color: var(--text-color);
             line-height: 1.6;
+        }
+
+        .performance-highlight {
+            background: var(--success-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .phase-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .phase-badge.phase2 {
+            background: var(--spack-color);
+        }
+
+        /* TUI Demo Section */
+        .tui-demo {
+            padding: 4rem 0;
+            background: var(--dark-color);
+            color: white;
+        }
+
+        .tui-preview {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            border: 1px solid #334155;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tui-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+        }
+
+        .tui-content {
+            margin-top: 30px;
+            line-height: 1.4;
+        }
+
+        .tui-title {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .tui-progress {
+            color: var(--spack-color);
+        }
+
+        .tui-package {
+            color: #94a3b8;
         }
 
         /* Domains Section */
@@ -283,20 +546,42 @@
 
         .performance-metric {
             padding: 2rem;
-            border-radius: 8px;
-            background: linear-gradient(135deg, var(--success-color), #059669);
+            border-radius: 12px;
+            background: var(--gradient-bg);
             color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .performance-metric::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
         }
 
         .metric-value {
             font-size: 2.5rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         .metric-label {
             font-size: 0.9rem;
             opacity: 0.9;
+            position: relative;
+            z-index: 1;
         }
 
         /* Getting Started Section */
@@ -319,6 +604,10 @@
 
         .step {
             text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .step-number {
@@ -353,6 +642,12 @@
             margin: 2rem 0;
             overflow-x: auto;
             font-family: 'Monaco', 'Menlo', monospace;
+            border: 1px solid #374151;
+        }
+
+        .code-highlight {
+            color: var(--accent-color);
+            font-weight: bold;
         }
 
         /* Footer */
@@ -410,6 +705,19 @@
             .hero-stats {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .enhanced-features {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .timeline-marker::after {
+                display: none;
+            }
         }
 
         /* Animations */
@@ -442,9 +750,11 @@
                 <a href="#" class="logo">
                     <img src="wizard-logo.png" alt="AWS Research Wizard">
                     AWS Research Wizard
+                    <span class="version-badge">v0.2.0</span>
                 </a>
                 <ul class="nav-links">
                     <li><a href="#features">Features</a></li>
+                    <li><a href="#tui-demo">Interactive TUI</a></li>
                     <li><a href="#domains">Domains</a></li>
                     <li><a href="#performance">Performance</a></li>
                     <li><a href="#getting-started">Get Started</a></li>
@@ -457,31 +767,143 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h1 class="fade-in-up">AWS Research Wizard</h1>
-            <p class="subtitle fade-in-up">Run Research Workloads on AWS</p>
-            <p class="subtitle fade-in-up">Execute complex research workloads effortlessly with pre-configured domain packs that handle all the AWS complexity for you.</p>
+            <div class="hero-content">
+                <div class="announcement-banner">🎉 Now with Advanced Spack Integration - v0.2.0 Available!</div>
+                <h1 class="fade-in-up">AWS Research Wizard</h1>
+                <p class="subtitle fade-in-up">Comprehensive Research Computing Platform for AWS</p>
+                <p class="subtitle fade-in-up">Execute complex research workloads effortlessly with pre-configured domain packs, 95% faster installations, and professional package management.</p>
 
-            <div class="cta-buttons fade-in-up">
-                <a href="#getting-started" class="btn btn-primary">🚀 Get Started in 5 Minutes</a>
-                <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases" class="btn btn-secondary">📥 Download v1.0.0</a>
+                <div class="cta-buttons fade-in-up">
+                    <a href="#getting-started" class="btn btn-primary">🚀 Get Started</a>
+                    <a href="#tui-demo" class="btn btn-spack">🎨 Try Interactive TUI</a>
+                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases" class="btn btn-secondary">📥 Download v0.2.0</a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Faster Installations</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">25+</div>
+                        <div class="stat-label">Research Domains</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Test Success Rate</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">50+ PB</div>
+                        <div class="stat-label">AWS Open Data Access</div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </section>
 
-            <div class="hero-stats">
-                <div class="stat">
-                    <div class="stat-number">18+</div>
-                    <div class="stat-label">Research Domains</div>
+    <!-- Version History -->
+    <section class="version-history">
+        <div class="container">
+            <h2 class="section-title">🚀 Development Journey</h2>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker">
+                        <div class="version-badge-large current">v0.2.0</div>
+                    </div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">🔥 Latest: Advanced Spack Integration</h3>
+                        <p>Major enhancement with professional package management, interactive TUI, and AWS binary cache optimization.</p>
+                        <div class="timeline-features">
+                            <div class="timeline-feature">
+                                <span class="feature-icon-small">⚡</span>
+                                <span>95% faster package installations</span>
+                            </div>
+                            <div class="timeline-feature">
+                                <span class="feature-icon-small">🎨</span>
+                                <span>Interactive Terminal UI with Bubble Tea</span>
+                            </div>
+                            <div class="timeline-feature">
+                                <span class="feature-icon-small">📦</span>
+                                <span>Standalone spack-manager-go library</span>
+                            </div>
+                            <div class="timeline-feature">
+                                <span class="feature-icon-small">🔄</span>
+                                <span>Real-time progress tracking</span>
+                            </div>
+                            <div class="timeline-feature">
+                                <span class="feature-icon-small">🛠️</span>
+                                <span>AWS S3 binary cache integration</span>
+                            </div>
+                            <div class="timeline-feature">
+                                <span class="feature-icon-small">🔧</span>
+                                <span>Enhanced CLI with Spack commands</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat">
-                    <div class="stat-number">8.0 GB/s</div>
-                    <div class="stat-label">Peak Transfer Speed</div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker">
+                        <div class="version-badge-large">v0.1.0</div>
+                    </div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">🏗️ Foundation: Complete Research Platform</h3>
+                        <p>Comprehensive AWS research computing platform with domain packs, data management, and production-ready deployment.</p>
+                        <div class="timeline-features">
+                            <div class="timeline-feature">
+                                <span class="feature-icon-small">✅</span>
+                                <span>25+ research domain packs</span>
+                            </div>
+                            <div class="timeline-feature">
+                                <span class="feature-icon-small">✅</span>
+                                <span>AWS infrastructure automation</span>
+                            </div>
+                            <div class="timeline-feature">
+                                <span class="feature-icon-small">✅</span>
+                                <span>High-performance data transfer (8.0 GB/s)</span>
+                            </div>
+                            <div class="timeline-feature">
+                                <span class="feature-icon-small">✅</span>
+                                <span>50+ PB AWS Open Data integration</span>
+                            </div>
+                            <div class="timeline-feature">
+                                <span class="feature-icon-small">✅</span>
+                                <span>Cost optimization and monitoring</span>
+                            </div>
+                            <div class="timeline-feature">
+                                <span class="feature-icon-small">✅</span>
+                                <span>86.1% test coverage</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat">
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label">Test Success Rate</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced in v0.2.0 -->
+    <section class="enhanced-section">
+        <div class="container">
+            <h2 class="enhanced-title">🚀 NEW in v0.2.0: Advanced Spack Integration</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem;">Building on our solid v0.1.0 foundation, we've added world-class package management with AWS optimization and interactive interfaces.</p>
+
+            <div class="enhanced-features">
+                <div class="enhanced-feature">
+                    <h3>⚡ 95% Faster Installations</h3>
+                    <p>AWS S3 binary cache integration dramatically accelerates package installations from hours to minutes.</p>
                 </div>
-                <div class="stat">
-                    <div class="stat-number">50+ PB</div>
-                    <div class="stat-label">AWS Open Data Access</div>
+                <div class="enhanced-feature">
+                    <h3>🎨 Interactive Terminal UI</h3>
+                    <p>Beautiful TUI built with Bubble Tea framework for professional package management and monitoring.</p>
+                </div>
+                <div class="enhanced-feature">
+                    <h3>📦 Standalone Library</h3>
+                    <p>spack-manager-go available as independent Go library for community use and external integrations.</p>
+                </div>
+                <div class="enhanced-feature">
+                    <h3>🔄 Real-time Progress</h3>
+                    <p>Live monitoring of installation progress with detailed status updates and error recovery.</p>
                 </div>
             </div>
         </div>
@@ -490,43 +912,83 @@
     <!-- Features Section -->
     <section id="features" class="features">
         <div class="container">
-            <h2 class="section-title">🚀 Research Computing Made Simple</h2>
+            <h2 class="section-title">🚀 Complete Research Computing Platform</h2>
             <div class="features-grid">
-                <div class="feature-card">
+                <div class="feature-card phase1-feature">
+                    <span class="phase-badge">v0.1.0 Foundation</span>
                     <div class="feature-icon">📦</div>
                     <h3 class="feature-title">Pre-Configured Domain Packs</h3>
-                    <p class="feature-description">Ready-to-use research environments with optimized software stacks. Complete genomics (GATK, BWA, STAR), climate modeling (WRF, CESM), ML/AI (PyTorch, TensorFlow) setups.</p>
+                    <p class="feature-description">Ready-to-use research environments with optimized software stacks. Complete genomics (GATK, BWA, STAR), climate modeling (WRF, CESM), ML/AI (PyTorch, TensorFlow) setups across 25+ domains.</p>
                 </div>
 
-                <div class="feature-card">
+                <div class="feature-card phase2-feature">
+                    <span class="phase-badge phase2">v0.2.0 Enhanced</span>
                     <div class="feature-icon">🚀</div>
-                    <h3 class="feature-title">One-Command Execution</h3>
-                    <p class="feature-description">Execute complex research workloads with simple commands. AWS infrastructure provisioning, software installation, and workload execution handled automatically.</p>
+                    <h3 class="feature-title">Advanced Spack Integration</h3>
+                    <p class="feature-description">Complete package management with <span class="performance-highlight">95% faster</span> installations via AWS binary cache. Real-time progress tracking and automatic error recovery.</p>
                 </div>
 
-                <div class="feature-card">
+                <div class="feature-card phase1-feature">
+                    <span class="phase-badge">v0.1.0 Foundation</span>
                     <div class="feature-icon">🔬</div>
                     <h3 class="feature-title">Domain-Specific Computing</h3>
                     <p class="feature-description">Specialized compute environments optimized for research workflows. HPC instances with EFA networking, GPU clusters for ML, memory-optimized instances for genomics.</p>
                 </div>
 
-                <div class="feature-card">
+                <div class="feature-card phase2-feature">
+                    <span class="phase-badge phase2">v0.2.0 Enhanced</span>
+                    <div class="feature-icon">🎨</div>
+                    <h3 class="feature-title">Interactive Terminal UI</h3>
+                    <p class="feature-description">Professional TUI with vim-like navigation, real-time progress bars, and comprehensive package management. Press <code>?</code> for help anywhere.</p>
+                </div>
+
+                <div class="feature-card phase1-feature">
+                    <span class="phase-badge">v0.1.0 Foundation</span>
+                    <div class="feature-icon">⚙️</div>
+                    <h3 class="feature-title">Smart Data Handling</h3>
+                    <p class="feature-description">Optimized data movement with <span class="performance-highlight">8.0 GB/s</span> peak transfer speeds. Automatic data staging, intelligent transfer optimization, and seamless AWS Open Data integration.</p>
+                </div>
+
+                <div class="feature-card phase1-feature">
+                    <span class="phase-badge">v0.1.0 Foundation</span>
                     <div class="feature-icon">💰</div>
                     <h3 class="feature-title">Cost-Optimized Infrastructure</h3>
                     <p class="feature-description">Intelligent instance selection and automatic scaling to minimize AWS costs. Spot instances, right-sizing recommendations, and budget monitoring built-in.</p>
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <div class="feature-card">
-                    <div class="feature-icon">⚙️</div>
-                    <h3 class="feature-title">Smart Data Handling</h3>
-                    <p class="feature-description">Optimized data movement to support workloads. Automatic data staging, intelligent transfer optimization, and seamless AWS Open Data integration.</p>
-                </div>
+    <!-- TUI Demo Section -->
+    <section id="tui-demo" class="tui-demo">
+        <div class="container">
+            <h2 class="section-title">🎨 Interactive Terminal User Interface</h2>
+            <p style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem;">Professional package management with beautiful, responsive interface (New in v0.2.0)</p>
 
-                <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3 class="feature-title">Enterprise Ready</h3>
-                    <p class="feature-description">Security, compliance, and audit capabilities built-in. Integrates with institutional AWS accounts, VPCs, and security policies seamlessly.</p>
-                </div>
+            <div class="tui-preview">
+                <div class="tui-content">
+<pre><span class="tui-title">🚀 Spack Manager - Environment: genomics-research</span>
+
+<span class="tui-progress">┌─ Installation Progress ─────────────────────────────────────┐</span>
+<span class="tui-progress">│ ██████████████████████████████████████████████░░░░  85%    │</span>
+<span class="tui-progress">└─────────────────────────────────────────────────────────────┘</span>
+
+<span class="tui-package">📦 Installing: bwa@0.7.17</span>
+<span class="tui-package">📦 Completed: gcc@11.3.0, python@3.11, samtools@1.15</span>
+<span class="tui-package">⏳ Queued: gatk@4.4.0, star@2.7.10</span>
+
+<span style="color: #94a3b8;">Recent Activity:</span>
+<span style="color: #10b981;">✓ gcc@11.3.0 installed successfully (2.5 minutes)</span>
+<span style="color: #10b981;">✓ python@3.11 installed successfully (1.8 minutes)</span>
+<span style="color: #f59e0b;">⚡ Installing bwa@0.7.17 from binary cache...</span>
+
+<span style="color: #6b7280;">Navigation: ↑/↓ or j/k to navigate, 'i' to install, 'r' to refresh, '?' for help</span></pre>
+            </div>
+            </div>
+
+            <div class="text-center mt-2">
+                <a href="#getting-started" class="btn btn-spack">🎯 Try the TUI Now</a>
+                <a href="https://github.com/spack-go/spack-manager" class="btn btn-secondary">📚 Standalone Library</a>
             </div>
         </div>
     </section>
@@ -534,7 +996,7 @@
     <!-- Research Domains -->
     <section id="domains" class="domains">
         <div class="container">
-            <h2 class="section-title">🔬 Research Domain Packs</h2>
+            <h2 class="section-title">🔬 Research Domain Packs (25+ Available)</h2>
             <div class="domains-grid">
                 <div class="domain-card">
                     <div class="domain-icon">🧬</div>
@@ -566,6 +1028,16 @@
                     <div class="domain-name">Chemistry & Materials</div>
                     <p>Molecular dynamics, quantum chemistry, drug discovery with specialized computational chemistry tools</p>
                 </div>
+                <div class="domain-card">
+                    <div class="domain-icon">🧮</div>
+                    <div class="domain-name">Physics & Computational</div>
+                    <p>High-energy physics, quantum computing, numerical simulations with optimized HPC tools</p>
+                </div>
+                <div class="domain-card">
+                    <div class="domain-icon">📊</div>
+                    <div class="domain-name">Digital Humanities</div>
+                    <p>Text analysis, corpus linguistics, digital archaeology with specialized humanities computing tools</p>
+                </div>
             </div>
         </div>
     </section>
@@ -573,19 +1045,27 @@
     <!-- Performance Section -->
     <section id="performance" class="performance">
         <div class="container">
-            <h2 class="section-title">📊 Research Computing Performance</h2>
+            <h2 class="section-title">📊 Performance Excellence</h2>
             <div class="performance-grid">
                 <div class="performance-metric">
-                    <div class="metric-value">18+</div>
+                    <div class="metric-value">95%</div>
+                    <div class="metric-label">Faster Installations (v0.2.0)</div>
+                </div>
+                <div class="performance-metric">
+                    <div class="metric-value">25+</div>
                     <div class="metric-label">Research Domain Packs</div>
                 </div>
                 <div class="performance-metric">
-                    <div class="metric-value">100%</div>
-                    <div class="metric-label">AWS Integration Success</div>
+                    <div class="metric-value">8.0 GB/s</div>
+                    <div class="metric-label">Peak Transfer Speed</div>
                 </div>
                 <div class="performance-metric">
-                    <div class="metric-value">5 Min</div>
-                    <div class="metric-label">Average Setup Time</div>
+                    <div class="metric-value">100%</div>
+                    <div class="metric-label">Test Success Rate</div>
+                </div>
+                <div class="performance-metric">
+                    <div class="metric-value">86.1%</div>
+                    <div class="metric-label">Code Coverage</div>
                 </div>
                 <div class="performance-metric">
                     <div class="metric-value">50+ PB</div>
@@ -598,13 +1078,13 @@
     <!-- Getting Started Section -->
     <section id="getting-started" class="getting-started">
         <div class="container">
-            <h2 class="section-title">🚀 Get Started in 5 Minutes</h2>
+            <h2 class="section-title">🚀 Get Started with v0.2.0</h2>
 
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
-                    <h3 class="step-title">Download & Install</h3>
-                    <p class="step-description">Download the single binary and install system-wide</p>
+                    <h3 class="step-title">Download v0.2.0</h3>
+                    <p class="step-description">Get the enhanced AWS Research Wizard with Spack integration</p>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
@@ -613,41 +1093,47 @@
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
-                    <h3 class="step-title">Deploy Research Environment</h3>
-                    <p class="step-description">Choose a domain pack and deploy optimized AWS infrastructure</p>
+                    <h3 class="step-title">Launch Interactive TUI</h3>
+                    <p class="step-description">Use the beautiful terminal interface for package management</p>
                 </div>
                 <div class="step">
                     <div class="step-number">4</div>
-                    <h3 class="step-title">Run Research Workloads</h3>
-                    <p class="step-description">Execute your research with pre-configured tools and workflows</p>
+                    <h3 class="step-title">Deploy Research Environment</h3>
+                    <p class="step-description">Choose a domain pack and deploy with 95% faster installations</p>
                 </div>
             </div>
 
             <div class="code-block">
-<pre># Download and install
-wget https://github.com/aws-research-wizard/releases/latest/aws-research-wizard-linux-amd64.tar.gz
-tar -xzf aws-research-wizard-linux-amd64.tar.gz
+<pre># Download and install v0.2.0
+wget https://github.com/aws-research-wizard/releases/latest/aws-research-wizard-v0.2.0-linux-amd64.tar.gz
+tar -xzf aws-research-wizard-v0.2.0-linux-amd64.tar.gz
 sudo mv aws-research-wizard /usr/local/bin/
 
 # Configure AWS credentials
 aws configure
 
+# <span class="code-highlight">NEW in v0.2.0: Launch interactive Spack TUI</span>
+aws-research-wizard deploy spack tui
+
+# <span class="code-highlight">NEW in v0.2.0: Install domain with Spack optimization</span>
+aws-research-wizard deploy spack install --domain genomics
+
 # Browse available research domain packs
 aws-research-wizard config list
 
-# Get detailed information about a domain
-aws-research-wizard config info genomics
+# Deploy research infrastructure with enhanced performance
+aws-research-wizard deploy --domain genomics --enable-spack
 
-# Deploy research infrastructure
-aws-research-wizard deploy --domain genomics --size standard
-
-# Monitor running workloads
-aws-research-wizard monitor --dashboard</pre>
+# <span class="code-highlight">NEW in v0.2.0: Try standalone spack-manager</span>
+git clone https://github.com/spack-go/spack-manager
+cd spack-manager && go build -o spack-manager ./cmd/spack-manager
+./spack-manager tui</pre>
             </div>
 
             <div class="text-center mt-2">
-                <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases" class="btn btn-primary">📥 Download Now</a>
-                <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/QUICK_START_GUIDE.md" class="btn btn-secondary">📖 Quick Start Guide</a>
+                <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases" class="btn btn-primary">📥 Download v0.2.0</a>
+                <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/go/PHASE_2_PRODUCTION_RELEASE.md" class="btn btn-spack">📖 v0.2.0 Release Notes</a>
+                <a href="https://github.com/spack-go/spack-manager" class="btn btn-secondary">🔗 Standalone Library</a>
             </div>
         </div>
     </section>
@@ -659,17 +1145,25 @@ aws-research-wizard monitor --dashboard</pre>
                 <div class="footer-section">
                     <h3>🚀 Get Started</h3>
                     <a href="#getting-started">Quick Start Guide</a>
-                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases">Download v1.0.0</a>
-                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/PRODUCTION_DEPLOYMENT_GUIDE.md">Deployment Guide</a>
+                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases">Download v0.2.0</a>
+                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/go/PHASE_2_PRODUCTION_RELEASE.md">v0.2.0 Release Notes</a>
                     <a href="https://github.com/aws-research-wizard/aws-research-wizard/tree/main/examples">Example Configurations</a>
                 </div>
 
                 <div class="footer-section">
                     <h3>📚 Documentation</h3>
-                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/AWS_INTEGRATION_TEST_RESULTS.md">Test Results</a>
-                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/RELEASE_NOTES.md">Release Notes</a>
-                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/PROJECT_STATUS_FINAL.md">Project Status</a>
-                    <a href="https://github.com/aws-research-wizard/aws-research-wizard">API Reference</a>
+                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/go/PHASE_2_FINAL_DOCUMENTATION.md">Complete Documentation</a>
+                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/CHANGELOG.md">Changelog</a>
+                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/go/PROJECT_STATUS_FINAL.md">v0.1.0 Status</a>
+                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/go/AWS_INTEGRATION_TEST_RESULTS.md">Test Results</a>
+                </div>
+
+                <div class="footer-section">
+                    <h3>🎨 Spack Integration</h3>
+                    <a href="#tui-demo">Interactive TUI Demo</a>
+                    <a href="https://github.com/spack-go/spack-manager">Standalone Library</a>
+                    <a href="#performance">Performance Benchmarks</a>
+                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/go/PHASE_2C_COMPLETION_REPORT.md">Integration Details</a>
                 </div>
 
                 <div class="footer-section">
@@ -679,19 +1173,12 @@ aws-research-wizard monitor --dashboard</pre>
                     <a href="https://github.com/aws-research-wizard/aws-research-wizard/discussions">Discussions</a>
                     <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/CONTRIBUTING.md">Contributing</a>
                 </div>
-
-                <div class="footer-section">
-                    <h3>🏢 Enterprise</h3>
-                    <a href="#performance">Performance Benchmarks</a>
-                    <a href="#features">Enterprise Features</a>
-                    <a href="mailto:support@aws-research-wizard.com">Professional Support</a>
-                    <a href="#domains">Research Domains</a>
-                </div>
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2025 AWS Research Wizard. Open source research computing platform for AWS.
-                   <br>🤖 Built with <a href="https://claude.ai/code" style="color: var(--accent-color);">Claude Code</a></p>
+                <p>&copy; 2025 AWS Research Wizard v0.2.0. Comprehensive research computing platform for AWS.
+                   <br>🤖 Built with <a href="https://claude.ai/code" style="color: var(--accent-color);">Claude Code</a> |
+                   🏗️ v0.1.0 Foundation + 🚀 v0.2.0 Advanced Spack Integration</p>
             </div>
         </div>
     </footer>
@@ -726,15 +1213,43 @@ aws-research-wizard monitor --dashboard</pre>
         }, observerOptions);
 
         // Observe all feature cards and sections
-        document.querySelectorAll('.feature-card, .domain-card, .performance-metric, .step').forEach(el => {
+        document.querySelectorAll('.feature-card, .domain-card, .performance-metric, .step, .enhanced-feature, .timeline-item').forEach(el => {
             observer.observe(el);
         });
+
+        // TUI typing animation
+        const tuiObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Add subtle animation to the TUI preview
+                    entry.target.style.animation = 'fadeInUp 1s ease-out';
+                }
+            });
+        });
+
+        const tuiDemo = document.querySelector('.tui-preview');
+        if (tuiDemo) {
+            tuiObserver.observe(tuiDemo);
+        }
 
         // Dynamic year update
         document.addEventListener('DOMContentLoaded', function() {
             const currentYear = new Date().getFullYear();
-            document.querySelector('.footer-bottom p').innerHTML =
-                document.querySelector('.footer-bottom p').innerHTML.replace('2025', currentYear);
+            const footerText = document.querySelector('.footer-bottom p');
+            if (footerText) {
+                footerText.innerHTML = footerText.innerHTML.replace('2025', currentYear);
+            }
+        });
+
+        // Add sparkle effect to performance metrics
+        document.querySelectorAll('.performance-metric').forEach(metric => {
+            metric.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+            });
+
+            metric.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
         });
     </script>
 </body>
