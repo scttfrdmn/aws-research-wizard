@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Research Wizard v0.2.0 - Advanced Research Computing with Spack Integration</title>
-    <meta name="description" content="Comprehensive research computing platform for AWS with pre-configured domain packs, 95% faster installations via Spack integration, and interactive TUI. 25+ research domains supported.">
+    <title>AWS Research Wizard - Comprehensive Research Computing Platform for AWS</title>
+    <meta name="description" content="Deploy complete research environments on AWS in minutes. 25+ pre-configured research domains, 95% faster package installations, interactive management tools. From genomics to climate science.">
     <link rel="icon" type="image/png" href="wizard-logo.png">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://aws-research-wizard.github.io/">
-    <meta property="og:title" content="AWS Research Wizard v0.2.0 - Advanced Research Computing">
-    <meta property="og:description" content="Comprehensive research computing platform for AWS with pre-configured domain packs, 95% faster installations via Spack integration, and interactive TUI.">
+    <meta property="og:title" content="AWS Research Wizard - Research Computing Platform">
+    <meta property="og:description" content="Deploy complete research environments on AWS in minutes. 25+ pre-configured research domains, 95% faster package installations, interactive management tools.">
     <meta property="og:image" content="https://aws-research-wizard.github.io/wizard-logo.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://aws-research-wizard.github.io/">
-    <meta property="twitter:title" content="AWS Research Wizard v0.2.0 - Advanced Research Computing">
-    <meta property="twitter:description" content="Comprehensive research computing platform for AWS with pre-configured domain packs, 95% faster installations via Spack integration, and interactive TUI.">
+    <meta property="twitter:title" content="AWS Research Wizard - Research Computing Platform">
+    <meta property="twitter:description" content="Deploy complete research environments on AWS in minutes. 25+ pre-configured research domains, 95% faster package installations, interactive management tools.">
     <meta property="twitter:image" content="https://aws-research-wizard.github.io/wizard-logo.png">
 
     <style>
@@ -399,15 +399,6 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
-        .feature-card.phase1-feature {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-            border-color: var(--primary-color);
-        }
-
-        .feature-card.phase2-feature {
-            background: linear-gradient(135deg, rgba(0, 200, 83, 0.1), rgba(0, 164, 73, 0.1));
-            border-color: var(--spack-color);
-        }
 
         .feature-icon {
             font-size: 3rem;
@@ -435,19 +426,6 @@
             font-size: 0.9rem;
         }
 
-        .phase-badge {
-            background: var(--primary-color);
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            margin-bottom: 0.5rem;
-            display: inline-block;
-        }
-
-        .phase-badge.phase2 {
-            background: var(--spack-color);
-        }
 
         /* TUI Demo Section */
         .tui-demo {
@@ -768,15 +746,14 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <div class="announcement-banner">🎉 Now with Advanced Spack Integration - v0.2.0 Available!</div>
                 <h1 class="fade-in-up">AWS Research Wizard</h1>
-                <p class="subtitle fade-in-up">Comprehensive Research Computing Platform for AWS</p>
-                <p class="subtitle fade-in-up">Execute complex research workloads effortlessly with pre-configured domain packs, 95% faster installations, and professional package management.</p>
+                <p class="subtitle fade-in-up">Complete Research Computing Platform for AWS</p>
+                <p class="subtitle fade-in-up">Deploy ready-to-use research environments with 25+ pre-configured domains, 95% faster installations, and seamless AWS integration. From genomics to climate science - start computing in minutes, not hours.</p>
 
                 <div class="cta-buttons fade-in-up">
-                    <a href="#getting-started" class="btn btn-primary">🚀 Get Started</a>
-                    <a href="#tui-demo" class="btn btn-spack">🎨 Try Interactive TUI</a>
-                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases" class="btn btn-secondary">📥 Download v0.2.0</a>
+                    <a href="#getting-started" class="btn btn-primary">🚀 Start Computing</a>
+                    <a href="#domains" class="btn btn-secondary">🔬 Browse Domains</a>
+                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases" class="btn btn-secondary">📥 Download</a>
                 </div>
 
                 <div class="hero-stats">
@@ -801,159 +778,46 @@
         </div>
     </section>
 
-    <!-- Version History -->
-    <section class="version-history">
-        <div class="container">
-            <h2 class="section-title">🚀 Development Journey</h2>
-
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-marker">
-                        <div class="version-badge-large current">v0.2.0</div>
-                    </div>
-                    <div class="timeline-content">
-                        <h3 class="timeline-title">🔥 Latest: Advanced Spack Integration</h3>
-                        <p>Major enhancement with professional package management, interactive TUI, and AWS binary cache optimization.</p>
-                        <div class="timeline-features">
-                            <div class="timeline-feature">
-                                <span class="feature-icon-small">⚡</span>
-                                <span>95% faster package installations</span>
-                            </div>
-                            <div class="timeline-feature">
-                                <span class="feature-icon-small">🎨</span>
-                                <span>Interactive Terminal UI with Bubble Tea</span>
-                            </div>
-                            <div class="timeline-feature">
-                                <span class="feature-icon-small">📦</span>
-                                <span>Standalone spack-manager-go library</span>
-                            </div>
-                            <div class="timeline-feature">
-                                <span class="feature-icon-small">🔄</span>
-                                <span>Real-time progress tracking</span>
-                            </div>
-                            <div class="timeline-feature">
-                                <span class="feature-icon-small">🛠️</span>
-                                <span>AWS S3 binary cache integration</span>
-                            </div>
-                            <div class="timeline-feature">
-                                <span class="feature-icon-small">🔧</span>
-                                <span>Enhanced CLI with Spack commands</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="timeline-item">
-                    <div class="timeline-marker">
-                        <div class="version-badge-large">v0.1.0</div>
-                    </div>
-                    <div class="timeline-content">
-                        <h3 class="timeline-title">🏗️ Foundation: Complete Research Platform</h3>
-                        <p>Comprehensive AWS research computing platform with domain packs, data management, and production-ready deployment.</p>
-                        <div class="timeline-features">
-                            <div class="timeline-feature">
-                                <span class="feature-icon-small">✅</span>
-                                <span>25+ research domain packs</span>
-                            </div>
-                            <div class="timeline-feature">
-                                <span class="feature-icon-small">✅</span>
-                                <span>AWS infrastructure automation</span>
-                            </div>
-                            <div class="timeline-feature">
-                                <span class="feature-icon-small">✅</span>
-                                <span>High-performance data transfer (8.0 GB/s)</span>
-                            </div>
-                            <div class="timeline-feature">
-                                <span class="feature-icon-small">✅</span>
-                                <span>50+ PB AWS Open Data integration</span>
-                            </div>
-                            <div class="timeline-feature">
-                                <span class="feature-icon-small">✅</span>
-                                <span>Cost optimization and monitoring</span>
-                            </div>
-                            <div class="timeline-feature">
-                                <span class="feature-icon-small">✅</span>
-                                <span>86.1% test coverage</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Enhanced in v0.2.0 -->
-    <section class="enhanced-section">
-        <div class="container">
-            <h2 class="enhanced-title">🚀 NEW in v0.2.0: Advanced Spack Integration</h2>
-            <p style="font-size: 1.2rem; margin-bottom: 2rem;">Building on our solid v0.1.0 foundation, we've added world-class package management with AWS optimization and interactive interfaces.</p>
-
-            <div class="enhanced-features">
-                <div class="enhanced-feature">
-                    <h3>⚡ 95% Faster Installations</h3>
-                    <p>AWS S3 binary cache integration dramatically accelerates package installations from hours to minutes.</p>
-                </div>
-                <div class="enhanced-feature">
-                    <h3>🎨 Interactive Terminal UI</h3>
-                    <p>Beautiful TUI built with Bubble Tea framework for professional package management and monitoring.</p>
-                </div>
-                <div class="enhanced-feature">
-                    <h3>📦 Standalone Library</h3>
-                    <p>spack-manager-go available as independent Go library for community use and external integrations.</p>
-                </div>
-                <div class="enhanced-feature">
-                    <h3>🔄 Real-time Progress</h3>
-                    <p>Live monitoring of installation progress with detailed status updates and error recovery.</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Features Section -->
     <section id="features" class="features">
         <div class="container">
             <h2 class="section-title">🚀 Complete Research Computing Platform</h2>
             <div class="features-grid">
-                <div class="feature-card phase1-feature">
-                    <span class="phase-badge">v0.1.0 Foundation</span>
+                <div class="feature-card">
                     <div class="feature-icon">📦</div>
-                    <h3 class="feature-title">Pre-Configured Domain Packs</h3>
-                    <p class="feature-description">Ready-to-use research environments with optimized software stacks. Complete genomics (GATK, BWA, STAR), climate modeling (WRF, CESM), ML/AI (PyTorch, TensorFlow) setups across 25+ domains.</p>
+                    <h3 class="feature-title">Ready-to-Use Research Environments</h3>
+                    <p class="feature-description">Deploy complete genomics (GATK, BWA, STAR), climate modeling (WRF, CESM), or ML/AI (PyTorch, TensorFlow) environments in minutes. Choose from 25+ optimized research domain packs.</p>
                 </div>
 
-                <div class="feature-card phase2-feature">
-                    <span class="phase-badge phase2">v0.2.0 Enhanced</span>
-                    <div class="feature-icon">🚀</div>
-                    <h3 class="feature-title">Advanced Spack Integration</h3>
-                    <p class="feature-description">Complete package management with <span class="performance-highlight">95% faster</span> installations via AWS binary cache. Real-time progress tracking and automatic error recovery.</p>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">Lightning-Fast Package Management</h3>
+                    <p class="feature-description">Install research software <span class="performance-highlight">95% faster</span> with AWS binary cache integration. Professional package management with real-time progress tracking.</p>
                 </div>
 
-                <div class="feature-card phase1-feature">
-                    <span class="phase-badge">v0.1.0 Foundation</span>
+                <div class="feature-card">
                     <div class="feature-icon">🔬</div>
-                    <h3 class="feature-title">Domain-Specific Computing</h3>
-                    <p class="feature-description">Specialized compute environments optimized for research workflows. HPC instances with EFA networking, GPU clusters for ML, memory-optimized instances for genomics.</p>
+                    <h3 class="feature-title">Optimized Computing Resources</h3>
+                    <p class="feature-description">Specialized compute environments for your research. HPC clusters with EFA networking, GPU instances for deep learning, memory-optimized setups for genomics analysis.</p>
                 </div>
 
-                <div class="feature-card phase2-feature">
-                    <span class="phase-badge phase2">v0.2.0 Enhanced</span>
+                <div class="feature-card">
                     <div class="feature-icon">🎨</div>
-                    <h3 class="feature-title">Interactive Terminal UI</h3>
-                    <p class="feature-description">Professional TUI with vim-like navigation, real-time progress bars, and comprehensive package management. Press <code>?</code> for help anywhere.</p>
+                    <h3 class="feature-title">Interactive Management Interface</h3>
+                    <p class="feature-description">Beautiful terminal interface for seamless package management. Monitor installations, browse environments, and manage your research stack with intuitive controls.</p>
                 </div>
 
-                <div class="feature-card phase1-feature">
-                    <span class="phase-badge">v0.1.0 Foundation</span>
-                    <div class="feature-icon">⚙️</div>
-                    <h3 class="feature-title">Smart Data Handling</h3>
-                    <p class="feature-description">Optimized data movement with <span class="performance-highlight">8.0 GB/s</span> peak transfer speeds. Automatic data staging, intelligent transfer optimization, and seamless AWS Open Data integration.</p>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3 class="feature-title">High-Performance Data Pipeline</h3>
+                    <p class="feature-description">Move research data at <span class="performance-highlight">8.0 GB/s</span> with intelligent optimization. Seamless access to 50+ PB of AWS Open Data with automatic staging and transfer optimization.</p>
                 </div>
 
-                <div class="feature-card phase1-feature">
-                    <span class="phase-badge">v0.1.0 Foundation</span>
+                <div class="feature-card">
                     <div class="feature-icon">💰</div>
-                    <h3 class="feature-title">Cost-Optimized Infrastructure</h3>
-                    <p class="feature-description">Intelligent instance selection and automatic scaling to minimize AWS costs. Spot instances, right-sizing recommendations, and budget monitoring built-in.</p>
+                    <h3 class="feature-title">Cost-Smart Infrastructure</h3>
+                    <p class="feature-description">Minimize AWS costs with intelligent resource management. Automatic spot instance selection, right-sizing recommendations, and built-in budget monitoring.</p>
                 </div>
             </div>
         </div>
@@ -962,8 +826,8 @@
     <!-- TUI Demo Section -->
     <section id="tui-demo" class="tui-demo">
         <div class="container">
-            <h2 class="section-title">🎨 Interactive Terminal User Interface</h2>
-            <p style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem;">Professional package management with beautiful, responsive interface (New in v0.2.0)</p>
+            <h2 class="section-title">🎨 Interactive Research Environment Manager</h2>
+            <p style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem;">Manage your research software with an intuitive, powerful interface</p>
 
             <div class="tui-preview">
                 <div class="tui-content">
@@ -987,8 +851,8 @@
             </div>
 
             <div class="text-center mt-2">
-                <a href="#getting-started" class="btn btn-spack">🎯 Try the TUI Now</a>
-                <a href="https://github.com/spack-go/spack-manager" class="btn btn-secondary">📚 Standalone Library</a>
+                <a href="#getting-started" class="btn btn-spack">🎯 Start Managing</a>
+                <a href="#domains" class="btn btn-secondary">🔬 Browse Domains</a>
             </div>
         </div>
     </section>
@@ -1078,62 +942,57 @@
     <!-- Getting Started Section -->
     <section id="getting-started" class="getting-started">
         <div class="container">
-            <h2 class="section-title">🚀 Get Started with v0.2.0</h2>
+            <h2 class="section-title">🚀 Start Your Research Computing</h2>
 
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
-                    <h3 class="step-title">Download v0.2.0</h3>
-                    <p class="step-description">Get the enhanced AWS Research Wizard with Spack integration</p>
+                    <h3 class="step-title">Download & Install</h3>
+                    <p class="step-description">Get AWS Research Wizard on your system</p>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
-                    <h3 class="step-title">Configure AWS</h3>
-                    <p class="step-description">Setup AWS credentials and test connectivity</p>
+                    <h3 class="step-title">Connect to AWS</h3>
+                    <p class="step-description">Configure your AWS credentials</p>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
-                    <h3 class="step-title">Launch Interactive TUI</h3>
-                    <p class="step-description">Use the beautiful terminal interface for package management</p>
+                    <h3 class="step-title">Choose Your Domain</h3>
+                    <p class="step-description">Select from 25+ research environments</p>
                 </div>
                 <div class="step">
                     <div class="step-number">4</div>
-                    <h3 class="step-title">Deploy Research Environment</h3>
-                    <p class="step-description">Choose a domain pack and deploy with 95% faster installations</p>
+                    <h3 class="step-title">Start Computing</h3>
+                    <p class="step-description">Deploy and begin your research</p>
                 </div>
             </div>
 
             <div class="code-block">
-<pre># Download and install v0.2.0
-wget https://github.com/aws-research-wizard/releases/latest/aws-research-wizard-v0.2.0-linux-amd64.tar.gz
-tar -xzf aws-research-wizard-v0.2.0-linux-amd64.tar.gz
+<pre># Download and install
+wget https://github.com/aws-research-wizard/releases/latest/aws-research-wizard-linux-amd64.tar.gz
+tar -xzf aws-research-wizard-linux-amd64.tar.gz
 sudo mv aws-research-wizard /usr/local/bin/
 
 # Configure AWS credentials
 aws configure
 
-# <span class="code-highlight">NEW in v0.2.0: Launch interactive Spack TUI</span>
-aws-research-wizard deploy spack tui
-
-# <span class="code-highlight">NEW in v0.2.0: Install domain with Spack optimization</span>
-aws-research-wizard deploy spack install --domain genomics
-
-# Browse available research domain packs
+# Browse available research domains
 aws-research-wizard config list
 
-# Deploy research infrastructure with enhanced performance
-aws-research-wizard deploy --domain genomics --enable-spack
+# <span class="code-highlight">Deploy your research environment</span>
+aws-research-wizard deploy --domain genomics
 
-# <span class="code-highlight">NEW in v0.2.0: Try standalone spack-manager</span>
-git clone https://github.com/spack-go/spack-manager
-cd spack-manager && go build -o spack-manager ./cmd/spack-manager
-./spack-manager tui</pre>
+# <span class="code-highlight">Or use the interactive interface</span>
+aws-research-wizard deploy spack tui
+
+# Start computing!
+aws-research-wizard connect</pre>
             </div>
 
             <div class="text-center mt-2">
-                <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases" class="btn btn-primary">📥 Download v0.2.0</a>
-                <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/go/PHASE_2_PRODUCTION_RELEASE.md" class="btn btn-spack">📖 v0.2.0 Release Notes</a>
-                <a href="https://github.com/spack-go/spack-manager" class="btn btn-secondary">🔗 Standalone Library</a>
+                <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases" class="btn btn-primary">📥 Download Now</a>
+                <a href="#domains" class="btn btn-secondary">🔬 View Domains</a>
+                <a href="https://github.com/aws-research-wizard/aws-research-wizard" class="btn btn-secondary">📚 Documentation</a>
             </div>
         </div>
     </section>
@@ -1145,25 +1004,25 @@ cd spack-manager && go build -o spack-manager ./cmd/spack-manager
                 <div class="footer-section">
                     <h3>🚀 Get Started</h3>
                     <a href="#getting-started">Quick Start Guide</a>
-                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases">Download v0.2.0</a>
-                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/go/PHASE_2_PRODUCTION_RELEASE.md">v0.2.0 Release Notes</a>
+                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases">Download Latest</a>
+                    <a href="#domains">Research Domains</a>
                     <a href="https://github.com/aws-research-wizard/aws-research-wizard/tree/main/examples">Example Configurations</a>
                 </div>
 
                 <div class="footer-section">
                     <h3>📚 Documentation</h3>
-                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/go/PHASE_2_FINAL_DOCUMENTATION.md">Complete Documentation</a>
+                    <a href="https://github.com/aws-research-wizard/aws-research-wizard">User Guide</a>
                     <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/CHANGELOG.md">Changelog</a>
-                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/go/PROJECT_STATUS_FINAL.md">v0.1.0 Status</a>
+                    <a href="#performance">Performance Metrics</a>
                     <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/go/AWS_INTEGRATION_TEST_RESULTS.md">Test Results</a>
                 </div>
 
                 <div class="footer-section">
-                    <h3>🎨 Spack Integration</h3>
-                    <a href="#tui-demo">Interactive TUI Demo</a>
-                    <a href="https://github.com/spack-go/spack-manager">Standalone Library</a>
-                    <a href="#performance">Performance Benchmarks</a>
-                    <a href="https://github.com/aws-research-wizard/aws-research-wizard/blob/main/go/PHASE_2C_COMPLETION_REPORT.md">Integration Details</a>
+                    <h3>🎨 Features</h3>
+                    <a href="#tui-demo">Interactive Interface</a>
+                    <a href="#features">Platform Capabilities</a>
+                    <a href="#performance">Performance Metrics</a>
+                    <a href="https://github.com/spack-go/spack-manager">Package Manager</a>
                 </div>
 
                 <div class="footer-section">
@@ -1176,9 +1035,8 @@ cd spack-manager && go build -o spack-manager ./cmd/spack-manager
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2025 AWS Research Wizard v0.2.0. Comprehensive research computing platform for AWS.
-                   <br>🤖 Built with <a href="https://claude.ai/code" style="color: var(--accent-color);">Claude Code</a> |
-                   🏗️ v0.1.0 Foundation + 🚀 v0.2.0 Advanced Spack Integration</p>
+                <p>&copy; 2025 AWS Research Wizard. Complete research computing platform for AWS.
+                   <br>🤖 Built with <a href="https://claude.ai/code" style="color: var(--accent-color);">Claude Code</a> | 🧙‍♂️ Ready for your research</p>
             </div>
         </div>
     </footer>
