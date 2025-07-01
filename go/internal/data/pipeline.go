@@ -12,14 +12,14 @@ import (
 
 // Pipeline represents a data processing pipeline
 type Pipeline struct {
-	ID          string           `json:"id"`
-	Name        string           `json:"name"`
-	Description string           `json:"description"`
-	Jobs        []Job            `json:"jobs"`
-	Status      PipelineStatus   `json:"status"`
-	CreatedAt   time.Time        `json:"created_at"`
-	UpdatedAt   time.Time        `json:"updated_at"`
-	Config      PipelineConfig   `json:"config"`
+	ID          string         `json:"id"`
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	Jobs        []Job          `json:"jobs"`
+	Status      PipelineStatus `json:"status"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+	Config      PipelineConfig `json:"config"`
 }
 
 // Job represents a single job within a pipeline
@@ -62,11 +62,11 @@ const (
 type JobType string
 
 const (
-	JobTypeDownload   JobType = "download"
-	JobTypeUpload     JobType = "upload"
-	JobTypeTransform  JobType = "transform"
-	JobTypeValidate   JobType = "validate"
-	JobTypeCleanup    JobType = "cleanup"
+	JobTypeDownload  JobType = "download"
+	JobTypeUpload    JobType = "upload"
+	JobTypeTransform JobType = "transform"
+	JobTypeValidate  JobType = "validate"
+	JobTypeCleanup   JobType = "cleanup"
 )
 
 // PipelineConfig holds configuration for pipeline execution
@@ -80,12 +80,12 @@ type PipelineConfig struct {
 
 // PipelineManager manages data processing pipelines
 type PipelineManager struct {
-	s3Manager     *S3Manager
-	openData      *OpenDataRegistry
-	pipelines     map[string]*Pipeline
+	s3Manager       *S3Manager
+	openData        *OpenDataRegistry
+	pipelines       map[string]*Pipeline
 	activePipelines map[string]*pipelineExecution
-	mu            sync.RWMutex
-	configPath    string
+	mu              sync.RWMutex
+	configPath      string
 }
 
 // pipelineExecution tracks the execution state of a pipeline
@@ -244,7 +244,7 @@ func (pm *PipelineManager) executePipelineJobs(execution *pipelineExecution) err
 	// Create dependency graph
 	dependsOn := make(map[string][]string)
 	dependents := make(map[string][]string)
-	
+
 	for _, job := range pipeline.Jobs {
 		dependsOn[job.ID] = job.Dependencies
 		for _, dep := range job.Dependencies {
@@ -285,14 +285,14 @@ func (pm *PipelineManager) executePipelineJobs(execution *pipelineExecution) err
 			wg.Add(1)
 			go func(jID string) {
 				defer wg.Done()
-				
+
 				// Acquire semaphore
 				semaphore <- struct{}{}
 				defer func() { <-semaphore }()
 
 				job := jobMap[jID]
 				err := pm.executeJob(execution.ctx, job)
-				
+
 				pm.mu.Lock()
 				if err != nil {
 					job.Status = JobStatusFailed
@@ -301,7 +301,7 @@ func (pm *PipelineManager) executePipelineJobs(execution *pipelineExecution) err
 				} else {
 					job.Status = JobStatusCompleted
 					completed[jID] = true
-					
+
 					// Add dependent jobs to ready queue
 					for _, dependent := range dependents[jID] {
 						if pm.areJobDependenciesCompleted(dependsOn[dependent], completed) {

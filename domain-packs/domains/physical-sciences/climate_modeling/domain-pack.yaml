@@ -1,0 +1,101 @@
+aws_config:
+  instance_types:
+    gpu: g5.xlarge
+    hpc: c6i.4xlarge
+    large: m6i.2xlarge
+    medium: m6i.xlarge
+    memory: r6i.2xlarge
+    small: m6i.large
+  network:
+    efa_enabled: true
+    enhanced_networking: true
+    placement_group: true
+  storage:
+    iops: 3000
+    size_gb: 500
+    throughput: 125
+    type: gp3
+categories:
+- Climate Science
+- Atmospheric Physics
+- Oceanography
+- Earth System Science
+cost_estimates:
+  data_analysis: $8-25/day (post-processing, visualization)
+  ensemble_runs: $500-2000/day (multiple scenarios)
+  global_modeling: $200-800/day (CESM century runs)
+  idle: $0/day (models cached, no compute)
+  monthly_estimate: $500-3000/month for climate modeling group
+  regional_runs: $50-200/day (WRF simulations)
+  storage: $2.30/month per 100GB model output
+description: High-performance climate models and analysis tools
+documentation:
+  best_practices: docs/climate_&_atmospheric_modeling_laboratory_best_practices.md
+  getting_started: docs/climate_&_atmospheric_modeling_laboratory_quickstart.md
+  tutorials: docs/climate_&_atmospheric_modeling_laboratory_tutorials.md
+maintainers:
+- email: aws-research-wizard@example.com
+  name: AWS Research Wizard
+  organization: AWS Research Computing
+name: Climate & Atmospheric Modeling Laboratory
+spack_config:
+  compiler: gcc@11.4.0
+  optimization: -O3
+  packages:
+  - wrf@4.5.0 %gcc@11.4.0 +netcdf+hdf5+mpi+openmp
+  - cesm@2.1.3 %gcc@11.4.0 +netcdf+pnetcdf+mpi
+  - cam@6.3.0 %gcc@11.4.0 +netcdf+mpi
+  - mpas@8.2.0 %gcc@11.4.0 +netcdf+pnetcdf+mpi+openmp
+  - mom6@2023.02 %gcc@11.4.0 +netcdf+mpi
+  - cice@6.4.1 %gcc@11.4.0 +netcdf+mpi
+  - pop@2.1.0 %gcc@11.4.0 +netcdf+mpi
+  - nco@5.1.6 %gcc@11.4.0 +netcdf4+openmp
+  - cdo@2.2.0 %gcc@11.4.0 +netcdf+hdf5+openmp
+  - ncview@2.1.9 %gcc@11.4.0 +netcdf
+  - ferret@7.6.0 %gcc@11.4.0 +netcdf
+  - grads@2.2.3 %gcc@11.4.0 +netcdf
+  - ncl@6.6.2 %gcc@11.4.0 +netcdf+hdf5+openmp
+  - hdf5@1.14.2 %gcc@11.4.0 +mpi+threadsafe+fortran
+  - netcdf-c@4.9.2 %gcc@11.4.0 +mpi+parallel-netcdf
+  - netcdf-fortran@4.6.1 %gcc@11.4.0
+  - parallel-netcdf@1.12.3 %gcc@11.4.0
+  - esmf@8.5.0 %gcc@11.4.0 +netcdf+mpi+openmp
+  - udunits@2.2.28 %gcc@11.4.0
+  - paraview@5.11.2 %gcc@11.4.0 +mpi+python3+qt+opengl2
+  - vapor@3.8.0 %gcc@11.4.0 +netcdf
+  - visit@3.3.3 %gcc@11.4.0 +mpi+python+hdf5+netcdf
+  - python@3.11.4 %gcc@11.4.0 +optimizations
+  - py-xarray@2023.7.0
+  - py-dask@2023.7.1
+  - py-cartopy@0.21.1
+  - py-matplotlib@3.7.2
+  - py-netcdf4@1.6.4
+  - py-metpy@1.5.1
+  - py-iris@3.6.1
+  - py-esmpy@8.5.0
+  - openmpi@4.1.5 %gcc@11.4.0 +legacylaunchers +pmix +pmi +fabrics
+  - libfabric@1.18.1 %gcc@11.4.0 +verbs +mlx +efa
+  - aws-ofi-nccl@1.7.0 %gcc@11.4.0
+  - ucx@1.14.1 %gcc@11.4.0 +verbs +mlx +ib_hw_tm
+  - fftw@3.3.10 %gcc@11.4.0 +mpi+openmp+pfft_patches
+  - petsc@3.19.4 %gcc@11.4.0 +mpi+hypre+metis+mumps
+  - hypre@2.29.0 %gcc@11.4.0 +mpi+openmp
+  - metis@5.1.0 %gcc@11.4.0 +int64+real64
+  target: neoverse_v1
+version: 1.0.0
+workflows:
+- description: Sample Regional climate downscaling with WRF (1-10 km resolution) workflow
+  expected_output: Processed research data
+  input_data: s3://aws-open-data/
+  name: Regional climate downscaling with WRF (1-10 km resolution)
+  script: workflows/regional_climate_downscaling_with_wrf_(1-10_km_resolution).sh
+- description: Sample Global climate projections with CESM workflow
+  expected_output: Processed research data
+  input_data: s3://aws-open-data/
+  name: Global climate projections with CESM
+  script: workflows/global_climate_projections_with_cesm.sh
+- description: Sample Hurricane/typhoon intensity modeling workflow
+  expected_output: Processed research data
+  input_data: s3://aws-open-data/
+  name: Hurricane/typhoon intensity modeling
+  script: workflows/hurricane/typhoon_intensity_modeling.sh

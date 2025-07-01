@@ -1,0 +1,90 @@
+aws_config:
+  instance_types:
+    gpu: g5.xlarge
+    hpc: c6i.4xlarge
+    large: m6i.2xlarge
+    medium: m6i.xlarge
+    memory: r6i.2xlarge
+    small: m6i.large
+  network:
+    efa_enabled: true
+    enhanced_networking: true
+    placement_group: true
+  storage:
+    iops: 3000
+    size_gb: 500
+    throughput: 125
+    type: gp3
+categories:
+- High Energy Physics
+- Condensed Matter
+- Quantum Physics
+- Particle Physics
+cost_estimates:
+  hep_simulation: $150-600/day (detector simulation)
+  idle: $0/day (physics codes cached)
+  lattice_qcd: $100-400/day (large-scale QCD)
+  light_analysis: $8-25/day (data analysis, plotting)
+  monte_carlo: $25-75/day (statistical simulations)
+  monthly_estimate: $300-2000/month for physics research group
+  storage: $2.30/month per 100GB simulation data
+description: High-energy physics, condensed matter, and general physics simulations
+documentation:
+  best_practices: docs/physics_simulation_laboratory_best_practices.md
+  getting_started: docs/physics_simulation_laboratory_quickstart.md
+  tutorials: docs/physics_simulation_laboratory_tutorials.md
+maintainers:
+- email: aws-research-wizard@example.com
+  name: AWS Research Wizard
+  organization: AWS Research Computing
+name: Physics Simulation Laboratory
+spack_config:
+  compiler: gcc@11.4.0
+  optimization: -O3
+  packages:
+  - root@6.28.04 %gcc@11.4.0 +python+x+opengl+tmva+roofit
+  - geant4@11.1.1 %gcc@11.4.0 +opengl+x11+motif+qt
+  - pythia8@8.309 %gcc@11.4.0 +shared
+  - fastjet@3.4.0 %gcc@11.4.0 +python
+  - hepmc3@3.2.6 %gcc@11.4.0 +python
+  - madgraph5amc@3.4.2
+  - qmp@2.5.4 %gcc@11.4.0
+  - qdp++@1.54.0 %gcc@11.4.0 +mpi
+  - chroma@3.57.0 %gcc@11.4.0 +mpi
+  - milc@7.8.1 %gcc@11.4.0 +mpi
+  - quantum-espresso@7.2 %gcc@11.4.0 +mpi+openmp+scalapack
+  - wannier90@3.1.0 %gcc@11.4.0 +mpi
+  - siesta@4.1.5 %gcc@11.4.0 +mpi+openmp
+  - fleur@6.1 %gcc@11.4.0 +mpi+openmp
+  - vegas@5.3.3
+  - gsl@2.7.1 %gcc@11.4.0
+  - boost@1.82.0 %gcc@11.4.0 +python+mpi
+  - eigen@3.4.0 %gcc@11.4.0
+  - paraview@5.11.2 %gcc@11.4.0 +mpi+python3+qt
+  - visit@3.3.3 %gcc@11.4.0 +mpi+python
+  - gnuplot@5.4.8 %gcc@11.4.0 +X+qt+cairo
+  - py-matplotlib@3.7.2
+  - python@3.11.4 %gcc@11.4.0 +optimizations
+  - py-numpy@1.25.1 ^openblas@0.3.23
+  - py-scipy@1.11.1
+  - py-sympy@1.12
+  - py-h5py@3.9.0 +mpi
+  - py-mpi4py@3.1.4
+  target: neoverse_v1
+version: 1.0.0
+workflows:
+- description: Sample High-energy physics event simulation (Geant4 + ROOT) workflow
+  expected_output: Processed research data
+  input_data: s3://aws-open-data/
+  name: High-energy physics event simulation (Geant4 + ROOT)
+  script: workflows/high-energy_physics_event_simulation_(geant4_+_root).sh
+- description: Sample Lattice QCD calculations and analysis workflow
+  expected_output: Processed research data
+  input_data: s3://aws-open-data/
+  name: Lattice QCD calculations and analysis
+  script: workflows/lattice_qcd_calculations_and_analysis.sh
+- description: Sample Condensed matter DFT calculations workflow
+  expected_output: Processed research data
+  input_data: s3://aws-open-data/
+  name: Condensed matter DFT calculations
+  script: workflows/condensed_matter_dft_calculations.sh

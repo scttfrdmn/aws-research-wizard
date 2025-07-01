@@ -1,0 +1,120 @@
+project:
+  name: auto-generated-project
+  description: Auto-generated configuration based on data analysis
+  domain: genomics
+  owner: ""
+  budget: "1000"
+  tags:
+    generated: "true"
+    tool: aws-research-wizard
+  created_at: 2025-06-28T21:57:51.432019-07:00
+  updated_at: 2025-06-28T21:57:51.432027-07:00
+data_profiles:
+  main_dataset:
+    name: Main Dataset
+    description: Primary research dataset
+    path: /Users/scttfrdmn/src/aws-research-wizard/go/examples
+    file_count: 7
+    total_size: 64.7 KB
+    avg_file_size: 9.2 KB
+    file_types:
+    - .md
+    - .yaml
+    access_pattern: frequent_access
+    priority: high
+destinations:
+  primary:
+    name: Primary Storage
+    uri: s3://your-bucket/primary/
+    storage_class: STANDARD
+    goals:
+    - cost_optimize
+    - reliable_access
+    encryption:
+      enabled: true
+      type: SSE-S3
+    lifecycle:
+      transition_ia: 30_days
+      transition_glacier: 90_days
+      incomplete_uploads: 7_days
+workflows:
+- name: primary_upload
+  description: Upload main dataset to primary storage
+  source: main_dataset
+  destination: primary
+  engine: suitcase + s5cmd
+  triggers:
+  - manual
+  preprocessing:
+  - name: compress_data
+    type: compress
+    parameters:
+      algorithm: gzip
+  configuration:
+    concurrency: 10
+    part_size: 32MB
+    retry_attempts: 3
+    timeout: 24h
+    checksum: true
+    overwrite_policy: if_newer
+    failure_policy: stop
+  enabled: true
+settings:
+  default_region: us-east-1
+  default_engine: auto
+  working_directory: /tmp/aws-research-wizard
+  log_level: info
+  config_directory: ~/.aws-research-wizard/config
+  cache_directory: ~/.aws-research-wizard/cache
+  temp_directory: /tmp
+  max_concurrent_workflows: 5
+  global_tags:
+    managed-by: aws-research-wizard
+    project: research
+optimization:
+  enable_auto_optimization: true
+  cost_optimization:
+    enabled: true
+    auto_bundle_small_files: false
+    auto_compression: true
+    auto_storage_class_optimization: true
+    auto_lifecycle_policies: true
+    cost_alerts:
+    - 80%
+    - 100%
+  performance_optimization:
+    enabled: true
+    auto_concurrency_tuning: true
+    auto_part_size_tuning: true
+    auto_engine_selection: true
+    prefetch_data: false
+    network_optimization: true
+  reliability_optimization:
+    enabled: true
+    auto_retry: true
+    auto_verification: true
+    auto_backup: false
+    auto_versioning: false
+    auto_replication: false
+    max_retry_attempts: 3
+    retry_delay: 5s
+    health_check_interval: ""
+monitoring:
+  enabled: true
+  dashboard_enabled: false
+  metrics_collection: true
+  log_collection: true
+  alerts_enabled: true
+  metrics:
+    collection_interval: 1m
+    retention_period: 90d
+    export_to_cloudwatch: false
+    export_to_prometheus: false
+  alerts:
+    transfer_failure: true
+    high_cost: true
+    slow_performance: true
+    large_queue_size: false
+    disk_space_low: false
+    cost_threshold: $100/day
+    performance_threshold: 10MB/s

@@ -36,22 +36,22 @@ type S3Manager struct {
 	uploader   *manager.Uploader
 	downloader *manager.Downloader
 	region     string
-	
+
 	// Transfer configuration
-	partSize      int64
-	concurrency   int
-	maxRetries    int
-	
+	partSize    int64
+	concurrency int
+	maxRetries  int
+
 	// Progress tracking
-	progressMu    sync.RWMutex
+	progressMu      sync.RWMutex
 	activeTransfers map[string]*TransferProgress
 }
 
 // S3ManagerConfig holds configuration for S3Manager
 type S3ManagerConfig struct {
-	PartSize      int64 // Default: 16MB
-	Concurrency   int   // Default: 10
-	MaxRetries    int   // Default: 3
+	PartSize    int64 // Default: 16MB
+	Concurrency int   // Default: 10
+	MaxRetries  int   // Default: 3
 }
 
 // NewS3Manager creates a new S3 transfer manager with optimizations
@@ -199,11 +199,11 @@ func (sm *S3Manager) ListObjects(ctx context.Context, bucket, prefix string, max
 	input := &s3.ListObjectsV2Input{
 		Bucket: aws.String(bucket),
 	}
-	
+
 	if prefix != "" {
 		input.Prefix = aws.String(prefix)
 	}
-	
+
 	if maxKeys > 0 {
 		input.MaxKeys = aws.Int32(maxKeys)
 	}
@@ -242,7 +242,7 @@ func (sm *S3Manager) BucketExists(ctx context.Context, bucket string) (bool, err
 	_, err := sm.client.HeadBucket(ctx, &s3.HeadBucketInput{
 		Bucket: aws.String(bucket),
 	})
-	
+
 	if err != nil {
 		// Check if it's a "not found" error
 		if strings.Contains(err.Error(), "NoSuchBucket") || strings.Contains(err.Error(), "NotFound") {
@@ -250,7 +250,7 @@ func (sm *S3Manager) BucketExists(ctx context.Context, bucket string) (bool, err
 		}
 		return false, fmt.Errorf("failed to check bucket %s: %w", bucket, err)
 	}
-	
+
 	return true, nil
 }
 
@@ -272,19 +272,19 @@ type progressReader struct {
 	reader   io.Reader
 	progress *TransferProgress
 	callback ProgressCallback
-	mu       sync.Mutex  // Use separate mutex for this progress reader
+	mu       sync.Mutex // Use separate mutex for this progress reader
 }
 
 func (pr *progressReader) Read(p []byte) (int, error) {
 	n, err := pr.reader.Read(p)
-	
+
 	if n > 0 {
 		pr.mu.Lock()
 		pr.progress.BytesTransferred += int64(n)
 		pr.updateProgress()
 		pr.mu.Unlock()
 	}
-	
+
 	return n, err
 }
 
@@ -292,16 +292,16 @@ func (pr *progressReader) updateProgress() {
 	// This method is called with pr.mu already held, so no additional locking needed
 	now := time.Now()
 	elapsed := now.Sub(pr.progress.StartTime)
-	
+
 	if pr.progress.TotalBytes > 0 {
 		pr.progress.Percentage = float64(pr.progress.BytesTransferred) / float64(pr.progress.TotalBytes) * 100
 	}
-	
+
 	if elapsed.Seconds() > 0 {
 		elapsedSeconds := elapsed.Seconds()
 		if elapsedSeconds >= 1.0 {
 			pr.progress.Speed = pr.progress.BytesTransferred / int64(elapsedSeconds)
-			
+
 			if pr.progress.Speed > 0 && pr.progress.TotalBytes > pr.progress.BytesTransferred {
 				remaining := pr.progress.TotalBytes - pr.progress.BytesTransferred
 				pr.progress.ETA = time.Duration(remaining/pr.progress.Speed) * time.Second
@@ -309,16 +309,16 @@ func (pr *progressReader) updateProgress() {
 		} else {
 			// For transfers under 1 second, estimate speed differently
 			pr.progress.Speed = int64(float64(pr.progress.BytesTransferred) / elapsedSeconds)
-			
+
 			if pr.progress.Speed > 0 && pr.progress.TotalBytes > pr.progress.BytesTransferred {
 				remaining := pr.progress.TotalBytes - pr.progress.BytesTransferred
 				pr.progress.ETA = time.Duration(float64(remaining)/float64(pr.progress.Speed)) * time.Second
 			}
 		}
 	}
-	
+
 	pr.progress.LastUpdate = now
-	
+
 	// Call the callback without holding any locks to avoid deadlocks
 	if pr.callback != nil {
 		// Make a copy of the progress to avoid race conditions
@@ -334,19 +334,19 @@ type progressWriterAt struct {
 	writerAt io.WriterAt
 	progress *TransferProgress
 	callback ProgressCallback
-	mu       sync.Mutex  // Use separate mutex for this progress writer
+	mu       sync.Mutex // Use separate mutex for this progress writer
 }
 
 func (pw *progressWriterAt) WriteAt(p []byte, off int64) (int, error) {
 	n, err := pw.writerAt.WriteAt(p, off)
-	
+
 	if n > 0 {
 		pw.mu.Lock()
 		pw.progress.BytesTransferred += int64(n)
 		pw.updateProgress()
 		pw.mu.Unlock()
 	}
-	
+
 	return n, err
 }
 
@@ -359,16 +359,16 @@ func (pw *progressWriterAt) updateProgress() {
 	// This method is called with pw.mu already held, so no additional locking needed
 	now := time.Now()
 	elapsed := now.Sub(pw.progress.StartTime)
-	
+
 	if pw.progress.TotalBytes > 0 {
 		pw.progress.Percentage = float64(pw.progress.BytesTransferred) / float64(pw.progress.TotalBytes) * 100
 	}
-	
+
 	if elapsed.Seconds() > 0 {
 		elapsedSeconds := elapsed.Seconds()
 		if elapsedSeconds >= 1.0 {
 			pw.progress.Speed = pw.progress.BytesTransferred / int64(elapsedSeconds)
-			
+
 			if pw.progress.Speed > 0 && pw.progress.TotalBytes > pw.progress.BytesTransferred {
 				remaining := pw.progress.TotalBytes - pw.progress.BytesTransferred
 				pw.progress.ETA = time.Duration(remaining/pw.progress.Speed) * time.Second
@@ -376,16 +376,16 @@ func (pw *progressWriterAt) updateProgress() {
 		} else {
 			// For transfers under 1 second, estimate speed differently
 			pw.progress.Speed = int64(float64(pw.progress.BytesTransferred) / elapsedSeconds)
-			
+
 			if pw.progress.Speed > 0 && pw.progress.TotalBytes > pw.progress.BytesTransferred {
 				remaining := pw.progress.TotalBytes - pw.progress.BytesTransferred
 				pw.progress.ETA = time.Duration(float64(remaining)/float64(pw.progress.Speed)) * time.Second
 			}
 		}
 	}
-	
+
 	pw.progress.LastUpdate = now
-	
+
 	// Call the callback without holding any locks to avoid deadlocks
 	if pw.callback != nil {
 		// Make a copy of the progress to avoid race conditions

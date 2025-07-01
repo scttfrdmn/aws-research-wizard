@@ -9,7 +9,7 @@ func (dpm *ResearchDomainProfileManager) createGenomicsProfile() *ResearchDomain
 	return &ResearchDomainProfile{
 		Name:        "genomics",
 		Description: "Optimizations for genomics and bioinformatics research data",
-		
+
 		FileTypeHints: map[string]FileTypeHint{
 			".fastq": {
 				Description:           "Raw sequencing reads",
@@ -48,7 +48,7 @@ func (dpm *ResearchDomainProfileManager) createGenomicsProfile() *ResearchDomain
 				},
 			},
 		},
-		
+
 		TransferOptimization: TransferOptimization{
 			PreferredEngines:   []string{"s5cmd", "aws_cli"},
 			OptimalConcurrency: 20,
@@ -75,7 +75,7 @@ func (dpm *ResearchDomainProfileManager) createGenomicsProfile() *ResearchDomain
 				},
 			},
 		},
-		
+
 		StorageOptimization: StorageOptimization{
 			DefaultStorageClass: "STANDARD",
 			LifecycleRules: []LifecycleRule{
@@ -91,7 +91,7 @@ func (dpm *ResearchDomainProfileManager) createGenomicsProfile() *ResearchDomain
 					Name:                "processed_data",
 					TransitionToIA:      "60d",
 					TransitionToGlacier: "180d",
-					TransitionToDA:      "730d", // 2 years
+					TransitionToDA:      "730d",  // 2 years
 					ExpirationDays:      "3650d", // 10 years
 					FilePatterns:        []string{"*.bam", "*.vcf.gz"},
 				},
@@ -123,7 +123,7 @@ func (dpm *ResearchDomainProfileManager) createGenomicsProfile() *ResearchDomain
 				"processing_pipeline": "recommended",
 			},
 		},
-		
+
 		BundlingStrategy: DomainBundlingStrategy{
 			EnableBundling:     true,
 			MinFilesForBundle:  100,
@@ -136,7 +136,7 @@ func (dpm *ResearchDomainProfileManager) createGenomicsProfile() *ResearchDomain
 			GroupingStrategy: DomainGroupingStrategy{
 				Strategy:          "sample_id",
 				MaxGroupSize:      "1GB",
-				GroupingPattern:   ".*_([^_]+)_.*",  // Extract sample ID
+				GroupingPattern:   ".*_([^_]+)_.*", // Extract sample ID
 				PreserveStructure: true,
 				CustomRules: map[string]string{
 					"pair_files": "group_together", // R1/R2 pairs
@@ -144,7 +144,7 @@ func (dpm *ResearchDomainProfileManager) createGenomicsProfile() *ResearchDomain
 				},
 			},
 		},
-		
+
 		QualityChecks: []QualityCheck{
 			{
 				Name:        "fastq_validation",
@@ -165,7 +165,7 @@ func (dpm *ResearchDomainProfileManager) createGenomicsProfile() *ResearchDomain
 				Description: "Check BAM file integrity and index consistency",
 			},
 		},
-		
+
 		CostOptimization: DomainCostOptimization{
 			BudgetLimits: BudgetLimits{
 				MonthlyLimit:  5000.0,
@@ -198,14 +198,14 @@ func (dpm *ResearchDomainProfileManager) createGenomicsProfile() *ResearchDomain
 				},
 			},
 			UsagePatterns: UsagePatterns{
-				TypicalDataVolume:    "10TB-100TB",
-				SeasonalPatterns:     map[string]string{"Q1": "high", "Q2": "medium"},
-				AccessFrequency:      "daily_analysis",
+				TypicalDataVolume:     "10TB-100TB",
+				SeasonalPatterns:      map[string]string{"Q1": "high", "Q2": "medium"},
+				AccessFrequency:       "daily_analysis",
 				RetentionRequirements: "7_years_minimum",
-				GrowthProjections:    map[string]string{"annual": "50%"},
+				GrowthProjections:     map[string]string{"annual": "50%"},
 			},
 		},
-		
+
 		SecurityRequirements: SecurityRequirements{
 			EncryptionRequired:  true,
 			EncryptionStandards: []string{"AES-256", "SSE-S3"},
@@ -217,24 +217,24 @@ func (dpm *ResearchDomainProfileManager) createGenomicsProfile() *ResearchDomain
 				IPRestrictions:      []string{"university_network"},
 			},
 			AuditRequirements: AuditRequirements{
-				AuditLogging:       true,
-				LogRetentionPeriod: "7_years",
+				AuditLogging:         true,
+				LogRetentionPeriod:   "7_years",
 				ComplianceFrameworks: []string{"NIH", "institutional_policy"},
-				AuditReporting:     true,
-				AccessLogging:      true,
-				ChangeTracking:     true,
+				AuditReporting:       true,
+				AccessLogging:        true,
+				ChangeTracking:       true,
 			},
 			DataClassification:     "sensitive_research",
 			GeographicRestrictions: []string{"US", "EU"},
 		},
-		
+
 		ComplianceSettings: ComplianceSettings{
-			Framework:         "NIH",
-			DataResidency:     []string{"US"},
-			RetentionPolicies: map[string]string{"raw_data": "7_years", "processed_data": "10_years"},
-			DeletionPolicies:  map[string]string{"temp_files": "90_days", "logs": "1_year"},
-			ConsentManagement: false, // Typically not human subjects
-			DataLineage:       true,
+			Framework:           "NIH",
+			DataResidency:       []string{"US"},
+			RetentionPolicies:   map[string]string{"raw_data": "7_years", "processed_data": "10_years"},
+			DeletionPolicies:    map[string]string{"temp_files": "90_days", "logs": "1_year"},
+			ConsentManagement:   false, // Typically not human subjects
+			DataLineage:         true,
 			ComplianceReporting: true,
 		},
 	}
@@ -245,7 +245,7 @@ func (dpm *ResearchDomainProfileManager) createClimateProfile() *ResearchDomainP
 	return &ResearchDomainProfile{
 		Name:        "climate",
 		Description: "Optimizations for climate science and atmospheric research data",
-		
+
 		FileTypeHints: map[string]FileTypeHint{
 			".nc": {
 				Description:           "NetCDF climate data files",
@@ -275,12 +275,12 @@ func (dpm *ResearchDomainProfileManager) createClimateProfile() *ResearchDomainP
 				PreferredStorageClass: "STANDARD",
 				PreferredEngine:       "s5cmd",
 				SpecialHandling: map[string]string{
-					"chunking":     "dataset_aware",
-					"compression":  "lz4_recommended",
+					"chunking":    "dataset_aware",
+					"compression": "lz4_recommended",
 				},
 			},
 		},
-		
+
 		TransferOptimization: TransferOptimization{
 			PreferredEngines:   []string{"rclone", "s5cmd"},
 			OptimalConcurrency: 15,
@@ -298,7 +298,7 @@ func (dpm *ResearchDomainProfileManager) createClimateProfile() *ResearchDomainP
 				MaxDelay:     2 * time.Minute,
 			},
 		},
-		
+
 		BundlingStrategy: DomainBundlingStrategy{
 			EnableBundling:     true,
 			MinFilesForBundle:  50,
@@ -315,7 +315,7 @@ func (dpm *ResearchDomainProfileManager) createClimateProfile() *ResearchDomainP
 				PreserveStructure: true,
 			},
 		},
-		
+
 		CostOptimization: DomainCostOptimization{
 			BudgetLimits: BudgetLimits{
 				MonthlyLimit: 8000.0,
@@ -330,15 +330,15 @@ func (dpm *ResearchDomainProfileManager) createClimateProfile() *ResearchDomainP
 				GrowthProjections:     map[string]string{"annual": "30%"},
 			},
 		},
-		
+
 		SecurityRequirements: SecurityRequirements{
-			EncryptionRequired:  false, // Often public data
-			DataClassification:  "public_research",
+			EncryptionRequired: false, // Often public data
+			DataClassification: "public_research",
 		},
-		
+
 		ComplianceSettings: ComplianceSettings{
-			Framework:     "open_science",
-			DataResidency: []string{"global"},
+			Framework:         "open_science",
+			DataResidency:     []string{"global"},
 			RetentionPolicies: map[string]string{"all_data": "indefinite"},
 		},
 	}
@@ -349,7 +349,7 @@ func (dpm *ResearchDomainProfileManager) createMachineLearningProfile() *Researc
 	return &ResearchDomainProfile{
 		Name:        "machine_learning",
 		Description: "Optimizations for machine learning and AI research data",
-		
+
 		FileTypeHints: map[string]FileTypeHint{
 			".pkl": {
 				Description:           "Pickled Python objects (models, datasets)",
@@ -368,7 +368,7 @@ func (dpm *ResearchDomainProfileManager) createMachineLearningProfile() *Researc
 				PreferredEngine:       "s5cmd",
 				SpecialHandling: map[string]string{
 					"chunking": "layer_aware",
-					"caching": "recommended",
+					"caching":  "recommended",
 				},
 			},
 			".model": {
@@ -380,7 +380,7 @@ func (dpm *ResearchDomainProfileManager) createMachineLearningProfile() *Researc
 				PreferredEngine:       "s5cmd",
 			},
 		},
-		
+
 		TransferOptimization: TransferOptimization{
 			PreferredEngines:   []string{"s5cmd", "aws_cli"},
 			OptimalConcurrency: 25,
@@ -392,7 +392,7 @@ func (dpm *ResearchDomainProfileManager) createMachineLearningProfile() *Researc
 			ProgressMonitoring: true,
 			VerificationLevel:  "basic",
 		},
-		
+
 		BundlingStrategy: DomainBundlingStrategy{
 			EnableBundling:     true,
 			MinFilesForBundle:  200,
@@ -407,12 +407,12 @@ func (dpm *ResearchDomainProfileManager) createMachineLearningProfile() *Researc
 				MaxGroupSize:      "5GB",
 				PreserveStructure: true,
 				CustomRules: map[string]string{
-					"training_data": "separate_bundle",
+					"training_data":     "separate_bundle",
 					"model_checkpoints": "version_aware",
 				},
 			},
 		},
-		
+
 		CostOptimization: DomainCostOptimization{
 			BudgetLimits: BudgetLimits{
 				MonthlyLimit: 10000.0,
@@ -420,13 +420,13 @@ func (dpm *ResearchDomainProfileManager) createMachineLearningProfile() *Researc
 				PerJobLimit:  200.0,
 			},
 			UsagePatterns: UsagePatterns{
-				TypicalDataVolume:    "1TB-1PB",
-				AccessFrequency:      "experiment_driven",
+				TypicalDataVolume:     "1TB-1PB",
+				AccessFrequency:       "experiment_driven",
 				RetentionRequirements: "model_lifecycle",
-				GrowthProjections:    map[string]string{"annual": "100%"},
+				GrowthProjections:     map[string]string{"annual": "100%"},
 			},
 		},
-		
+
 		SecurityRequirements: SecurityRequirements{
 			EncryptionRequired:  true,
 			EncryptionStandards: []string{"AES-256"},
@@ -440,7 +440,7 @@ func (dpm *ResearchDomainProfileManager) createAstronomyProfile() *ResearchDomai
 	return &ResearchDomainProfile{
 		Name:        "astronomy",
 		Description: "Optimizations for astronomy and astrophysics research data",
-		
+
 		FileTypeHints: map[string]FileTypeHint{
 			".fits": {
 				Description:           "Flexible Image Transport System files",
@@ -455,25 +455,25 @@ func (dpm *ResearchDomainProfileManager) createAstronomyProfile() *ResearchDomai
 				},
 			},
 		},
-		
+
 		TransferOptimization: TransferOptimization{
 			PreferredEngines:   []string{"rclone", "globus"},
 			OptimalConcurrency: 10,
 			OptimalPartSize:    "256MB",
 		},
-		
+
 		BundlingStrategy: DomainBundlingStrategy{
-			EnableBundling:     true,
-			MinFilesForBundle:  20,
-			MaxFilesPerBundle:  100,
-			TargetBundleSize:   "2GB",
-			BundlingCriteria:   []string{"observation_date", "instrument"},
+			EnableBundling:    true,
+			MinFilesForBundle: 20,
+			MaxFilesPerBundle: 100,
+			TargetBundleSize:  "2GB",
+			BundlingCriteria:  []string{"observation_date", "instrument"},
 			GroupingStrategy: DomainGroupingStrategy{
 				Strategy:     "time_based",
 				MaxGroupSize: "5GB",
 			},
 		},
-		
+
 		CostOptimization: DomainCostOptimization{
 			UsagePatterns: UsagePatterns{
 				TypicalDataVolume:     "10TB-10PB",
@@ -481,7 +481,7 @@ func (dpm *ResearchDomainProfileManager) createAstronomyProfile() *ResearchDomai
 				RetentionRequirements: "indefinite",
 			},
 		},
-		
+
 		SecurityRequirements: SecurityRequirements{
 			EncryptionRequired: false, // Often public survey data
 			DataClassification: "public_research",
@@ -494,7 +494,7 @@ func (dpm *ResearchDomainProfileManager) createGeospatialProfile() *ResearchDoma
 	return &ResearchDomainProfile{
 		Name:        "geospatial",
 		Description: "Optimizations for geospatial and remote sensing data",
-		
+
 		FileTypeHints: map[string]FileTypeHint{
 			".tif": {
 				Description:           "GeoTIFF raster images",
@@ -521,13 +521,13 @@ func (dpm *ResearchDomainProfileManager) createGeospatialProfile() *ResearchDoma
 				},
 			},
 		},
-		
+
 		BundlingStrategy: DomainBundlingStrategy{
-			EnableBundling:     true,
-			MinFilesForBundle:  100,
-			MaxFilesPerBundle:  500,
-			TargetBundleSize:   "800MB",
-			BundlingCriteria:   []string{"geographic_region", "data_source"},
+			EnableBundling:    true,
+			MinFilesForBundle: 100,
+			MaxFilesPerBundle: 500,
+			TargetBundleSize:  "800MB",
+			BundlingCriteria:  []string{"geographic_region", "data_source"},
 			GroupingStrategy: DomainGroupingStrategy{
 				Strategy:     "directory",
 				MaxGroupSize: "2GB",
@@ -537,7 +537,7 @@ func (dpm *ResearchDomainProfileManager) createGeospatialProfile() *ResearchDoma
 				},
 			},
 		},
-		
+
 		CostOptimization: DomainCostOptimization{
 			UsagePatterns: UsagePatterns{
 				TypicalDataVolume: "5TB-500TB",
@@ -552,7 +552,7 @@ func (dpm *ResearchDomainProfileManager) createChemistryProfile() *ResearchDomai
 	return &ResearchDomainProfile{
 		Name:        "chemistry",
 		Description: "Optimizations for computational chemistry and molecular data",
-		
+
 		FileTypeHints: map[string]FileTypeHint{
 			".xyz": {
 				Description:           "Molecular coordinate files",
@@ -579,13 +579,13 @@ func (dpm *ResearchDomainProfileManager) createChemistryProfile() *ResearchDomai
 				PreferredEngine:       "s5cmd",
 			},
 		},
-		
+
 		BundlingStrategy: DomainBundlingStrategy{
-			EnableBundling:     true,
-			MinFilesForBundle:  500,
-			MaxFilesPerBundle:  5000,
-			TargetBundleSize:   "500MB",
-			BundlingCriteria:   []string{"calculation_type", "molecule_family"},
+			EnableBundling:    true,
+			MinFilesForBundle: 500,
+			MaxFilesPerBundle: 5000,
+			TargetBundleSize:  "500MB",
+			BundlingCriteria:  []string{"calculation_type", "molecule_family"},
 		},
 	}
 }
@@ -595,7 +595,7 @@ func (dpm *ResearchDomainProfileManager) createPhysicsProfile() *ResearchDomainP
 	return &ResearchDomainProfile{
 		Name:        "physics",
 		Description: "Optimizations for physics simulation and experimental data",
-		
+
 		FileTypeHints: map[string]FileTypeHint{
 			".root": {
 				Description:           "ROOT physics analysis files",
@@ -606,13 +606,13 @@ func (dpm *ResearchDomainProfileManager) createPhysicsProfile() *ResearchDomainP
 				PreferredEngine:       "s5cmd",
 			},
 		},
-		
+
 		TransferOptimization: TransferOptimization{
 			PreferredEngines:   []string{"s5cmd", "xrootd"},
 			OptimalConcurrency: 30,
 			OptimalPartSize:    "128MB",
 		},
-		
+
 		CostOptimization: DomainCostOptimization{
 			UsagePatterns: UsagePatterns{
 				TypicalDataVolume: "100TB-10PB",
@@ -627,7 +627,7 @@ func (dpm *ResearchDomainProfileManager) createMaterialsScienceProfile() *Resear
 	return &ResearchDomainProfile{
 		Name:        "materials_science",
 		Description: "Optimizations for materials science and engineering data",
-		
+
 		FileTypeHints: map[string]FileTypeHint{
 			".cif": {
 				Description:           "Crystallographic information files",
@@ -646,13 +646,13 @@ func (dpm *ResearchDomainProfileManager) createMaterialsScienceProfile() *Resear
 				PreferredEngine:       "s5cmd",
 			},
 		},
-		
+
 		BundlingStrategy: DomainBundlingStrategy{
-			EnableBundling:     true,
-			MinFilesForBundle:  1000,
-			MaxFilesPerBundle:  10000,
-			TargetBundleSize:   "200MB",
-			BundlingCriteria:   []string{"material_type", "experiment_batch"},
+			EnableBundling:    true,
+			MinFilesForBundle: 1000,
+			MaxFilesPerBundle: 10000,
+			TargetBundleSize:  "200MB",
+			BundlingCriteria:  []string{"material_type", "experiment_batch"},
 			GroupingStrategy: DomainGroupingStrategy{
 				Strategy:     "directory",
 				MaxGroupSize: "1GB",

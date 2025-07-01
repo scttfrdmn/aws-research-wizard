@@ -23,13 +23,13 @@ func main() {
 	var rootCmd = &cobra.Command{
 		Use:   "aws-research-wizard",
 		Short: "AWS Research Wizard - Complete research environment management",
-		Long: `AWS Research Wizard provides comprehensive tools for configuring, deploying, 
+		Long: `AWS Research Wizard provides comprehensive tools for configuring, deploying,
 and monitoring optimized AWS research environments across multiple scientific domains.
 
 Key Features:
 - Interactive domain configuration with 18+ research packs
 - S3 transfer optimization and AWS Open Data integration
-- Infrastructure deployment with CloudFormation automation  
+- Infrastructure deployment with CloudFormation automation
 - Real-time monitoring with cost tracking and alerts
 - Data pipeline orchestration and progress tracking
 - Single binary distribution with zero dependencies
@@ -52,7 +52,7 @@ Perfect for:
 	rootCmd.AddCommand(
 		config.NewConfigCommand(),
 		data.DataCmd,
-		deploy.NewDeployCommand(), 
+		deploy.NewDeployCommand(),
 		monitor.NewMonitorCommand(),
 	)
 

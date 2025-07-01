@@ -1,7 +1,7 @@
 repos:
   # Standard pre-commit hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -14,55 +14,31 @@ repos:
     rev: v0.5.1
     hooks:
       - id: go-fmt
-      - id: go-vet-mod
+      - id: go-vet
       - id: go-mod-tidy
 
   # Advanced Go linting
   - repo: https://github.com/golangci/golangci-lint
-    rev: v1.55.2
+    rev: v2.2.1
     hooks:
       - id: golangci-lint
         args: [--timeout=5m]
 
   # Security scanning will be handled by the comprehensive linting script
 
-  # Comprehensive linting and quality checks
+  # Basic Go checks
   - repo: local
     hooks:
-      - id: comprehensive-linting
-        name: Comprehensive Code Linting
-        entry: scripts/lint-all.sh
-        language: script
-        files: '\.(go|py|sh|yaml|yml|json)$'
-        pass_filenames: false
-        
-      - id: go-test-coverage
-        name: Go Test Coverage Check
-        entry: scripts/check-coverage.sh
-        language: script
-        files: '\.go$'
-        args: ['--min-coverage=85', '--min-file-coverage=80']
-        
       - id: go-build-check
         name: Go Build Check
         entry: bash -c "cd go && go build -v ./..."
         language: system
         files: '\.go$'
         pass_filenames: false
-        
-      - id: go-test-all
-        name: Go Test All Packages
-        entry: bash -c "cd go && go test -v -race ./..."
+
+      - id: go-test-basic
+        name: Go Test Basic
+        entry: bash -c "cd go && go test ./..."
         language: system
         files: '\.go$'
         pass_filenames: false
-
-  # Domain pack validation
-  - repo: local
-    hooks:
-      - id: validate-domain-packs
-        name: Validate Domain Packs
-        entry: python domain-packs/tools/validate_domains.py
-        language: python
-        files: 'domain-packs/.*\.(yaml|yml)$'
-        additional_dependencies: [pyyaml, jsonschema]

@@ -66,12 +66,12 @@ var cancelWorkflowCmd = &cobra.Command{
 
 // Command flags
 var (
-	configFile     string
-	workflowName   string
-	executionID    string
-	workflowOutputFormat   string
-	followProgress bool
-	dryRun         bool
+	configFile           string
+	workflowName         string
+	executionID          string
+	workflowOutputFormat string
+	followProgress       bool
+	dryRun               bool
 )
 
 func init() {
@@ -186,7 +186,7 @@ func statusWorkflow(cmd *cobra.Command, args []string) error {
 
 func cancelWorkflow(cmd *cobra.Command, args []string) error {
 	engine := createWorkflowEngine()
-	
+
 	err := engine.CancelWorkflow(executionID)
 	if err != nil {
 		return fmt.Errorf("failed to cancel workflow: %w", err)
@@ -222,9 +222,9 @@ func createWorkflowEngine() *data.WorkflowEngine {
 	config := &data.WorkflowEngineConfig{
 		MaxConcurrentWorkflows: 3,
 		DefaultTimeout:         2 * time.Hour,
-		RetryAttempts:         3,
-		RetryDelay:            30 * time.Second,
-		MonitoringEnabled:     true,
+		RetryAttempts:          3,
+		RetryDelay:             30 * time.Second,
+		MonitoringEnabled:      true,
 	}
 
 	engine := data.NewWorkflowEngine(config)
@@ -235,7 +235,7 @@ func createWorkflowEngine() *data.WorkflowEngine {
 	engine.RegisterWarningSystem(data.NewWarningSystem())
 
 	// Register transfer engines
-	s5cmdEngine := data.NewS5cmdEngine("s5cmd")  // Use default executable name
+	s5cmdEngine := data.NewS5cmdEngine("s5cmd") // Use default executable name
 	engine.RegisterTransferEngine(s5cmdEngine)
 
 	rcloneEngine := data.NewRcloneEngine("rclone", "") // Use default executable name and empty config path
@@ -257,7 +257,7 @@ func createWorkflowEngine() *data.WorkflowEngine {
 func showWorkflowPlan(projectConfig *data.ProjectConfig, workflow *data.Workflow) error {
 	fmt.Printf("🔍 Workflow Dry-Run Validation: %s\n", workflow.Name)
 	fmt.Printf("==========================================\n\n")
-	
+
 	// Basic workflow information
 	fmt.Printf("📋 Workflow Configuration:\n")
 	fmt.Printf("  Name: %s\n", workflow.Name)
@@ -267,33 +267,33 @@ func showWorkflowPlan(projectConfig *data.ProjectConfig, workflow *data.Workflow
 	fmt.Printf("  Engine: %s\n", workflow.Engine)
 	fmt.Printf("  Enabled: %t\n", workflow.Enabled)
 	fmt.Println()
-	
+
 	// Validation results
 	validationErrors := []string{}
 	validationWarnings := []string{}
-	
+
 	// Validate source data profile
 	sourceProfile, sourceExists := projectConfig.DataProfiles[workflow.Source]
 	if !sourceExists {
 		validationErrors = append(validationErrors, fmt.Sprintf("Source data profile '%s' not found", workflow.Source))
 	}
-	
+
 	// Validate destination
 	destination, destExists := projectConfig.Destinations[workflow.Destination]
 	if !destExists {
 		validationErrors = append(validationErrors, fmt.Sprintf("Destination '%s' not found", workflow.Destination))
 	}
-	
+
 	// Validate engine
 	if workflow.Engine == "" || workflow.Engine == "auto" {
 		validationWarnings = append(validationWarnings, "Engine set to 'auto' - will be selected based on data pattern analysis")
 	}
-	
+
 	// Validate workflow is enabled
 	if !workflow.Enabled {
 		validationWarnings = append(validationWarnings, "Workflow is disabled and will not execute")
 	}
-	
+
 	// Validate source path exists (if available)
 	if sourceExists {
 		if sourceProfile.Path != "" {
@@ -302,7 +302,7 @@ func showWorkflowPlan(projectConfig *data.ProjectConfig, workflow *data.Workflow
 			}
 		}
 	}
-	
+
 	// Display validation results
 	if len(validationErrors) > 0 {
 		fmt.Printf("❌ Validation Errors:\n")
@@ -311,7 +311,7 @@ func showWorkflowPlan(projectConfig *data.ProjectConfig, workflow *data.Workflow
 		}
 		fmt.Println()
 	}
-	
+
 	if len(validationWarnings) > 0 {
 		fmt.Printf("⚠️  Validation Warnings:\n")
 		for _, warning := range validationWarnings {
@@ -319,16 +319,16 @@ func showWorkflowPlan(projectConfig *data.ProjectConfig, workflow *data.Workflow
 		}
 		fmt.Println()
 	}
-	
+
 	if len(validationErrors) == 0 && len(validationWarnings) == 0 {
 		fmt.Printf("✅ Validation passed - no issues found\n\n")
 	}
-	
+
 	// Only continue with execution plan if validation passes
 	if len(validationErrors) > 0 {
 		return fmt.Errorf("workflow validation failed with %d errors", len(validationErrors))
 	}
-	
+
 	// Perform data analysis to get realistic estimates
 	if sourceExists && sourceProfile.Path != "" {
 		fmt.Printf("🔍 Data Analysis Preview:\n")
@@ -340,11 +340,11 @@ func showWorkflowPlan(projectConfig *data.ProjectConfig, workflow *data.Workflow
 			fmt.Printf("  Files to transfer: %d\n", pattern.TotalFiles)
 			fmt.Printf("  Total data size: %s\n", pattern.TotalSizeHuman)
 			if pattern.FileSizes.SmallFiles.CountUnder1MB > 0 {
-				fmt.Printf("  Small files (<1MB): %d (%.1f%%)\n", 
+				fmt.Printf("  Small files (<1MB): %d (%.1f%%)\n",
 					pattern.FileSizes.SmallFiles.CountUnder1MB,
 					pattern.FileSizes.SmallFiles.PercentageSmall)
 			}
-			
+
 			// Show domain detection
 			if len(pattern.DomainHints.DetectedDomains) > 0 {
 				fmt.Printf("  Detected domains: ")
@@ -360,11 +360,11 @@ func showWorkflowPlan(projectConfig *data.ProjectConfig, workflow *data.Workflow
 		}
 		fmt.Println()
 	}
-	
+
 	// Show estimated execution plan
 	fmt.Printf("📋 Estimated Execution Plan:\n")
 	stepNum := 1
-	
+
 	// Analysis step
 	fmt.Printf("  %d. 🔍 Data Pattern Analysis\n", stepNum)
 	fmt.Printf("     • Scan source directory structure\n")
@@ -372,7 +372,7 @@ func showWorkflowPlan(projectConfig *data.ProjectConfig, workflow *data.Workflow
 	fmt.Printf("     • Detect research domain patterns\n")
 	fmt.Printf("     • Generate optimization recommendations\n")
 	stepNum++
-	
+
 	// Preprocessing steps
 	if len(workflow.PreProcessing) > 0 {
 		for _, step := range workflow.PreProcessing {
@@ -394,7 +394,7 @@ func showWorkflowPlan(projectConfig *data.ProjectConfig, workflow *data.Workflow
 			stepNum++
 		}
 	}
-	
+
 	// Main transfer step
 	fmt.Printf("  %d. 🚀 Primary Data Transfer\n", stepNum)
 	fmt.Printf("     • Engine: %s\n", workflow.Engine)
@@ -412,7 +412,7 @@ func showWorkflowPlan(projectConfig *data.ProjectConfig, workflow *data.Workflow
 		fmt.Printf("     • Checksums: enabled\n")
 	}
 	stepNum++
-	
+
 	// Postprocessing steps
 	if len(workflow.PostProcessing) > 0 {
 		for _, step := range workflow.PostProcessing {
@@ -433,17 +433,17 @@ func showWorkflowPlan(projectConfig *data.ProjectConfig, workflow *data.Workflow
 			stepNum++
 		}
 	}
-	
+
 	// Final reporting
 	fmt.Printf("  %d. 📊 Final Report Generation\n", stepNum)
 	fmt.Printf("     • Cost analysis and savings summary\n")
 	fmt.Printf("     • Transfer performance metrics\n")
 	fmt.Printf("     • Recommendations for optimization\n")
 	fmt.Printf("     • Workflow execution summary\n")
-	
+
 	fmt.Printf("\n🎯 Dry-run completed successfully!\n")
 	fmt.Printf("💡 To execute this workflow: aws-research-wizard data workflow run --workflow=%s\n", workflow.Name)
-	
+
 	return nil
 }
 
@@ -466,14 +466,14 @@ func followWorkflowProgress(engine *data.WorkflowEngine, executionID string) err
 		}
 
 		if execution.Status == data.WorkflowStatusCompleted ||
-		   execution.Status == data.WorkflowStatusFailed ||
-		   execution.Status == data.WorkflowStatusCancelled {
+			execution.Status == data.WorkflowStatusFailed ||
+			execution.Status == data.WorkflowStatusCancelled {
 			fmt.Printf("\n🏁 Workflow %s: %s\n", execution.ID, execution.Status)
-			
+
 			if execution.Results != nil {
 				printFinalResults(execution.Results)
 			}
-			
+
 			break
 		}
 
@@ -486,7 +486,7 @@ func followWorkflowProgress(engine *data.WorkflowEngine, executionID string) err
 func printProgressUpdate(execution *data.WorkflowExecution) {
 	progress := execution.Progress * 100
 	currentStep := "unknown"
-	
+
 	if execution.CurrentStep < len(execution.Steps) {
 		currentStep = execution.Steps[execution.CurrentStep].Name
 	}
@@ -501,12 +501,12 @@ func printWorkflowTable(workflows map[string]*data.WorkflowExecution) {
 	for _, execution := range workflows {
 		duration := time.Since(execution.StartTime).Truncate(time.Second)
 		progress := fmt.Sprintf("%.1f%%", execution.Progress*100)
-		
-		fmt.Printf("%-20s %-25s %-12s %-10s %-15s\n", 
-			execution.ID[:20], 
-			execution.WorkflowName, 
-			execution.Status, 
-			progress, 
+
+		fmt.Printf("%-20s %-25s %-12s %-10s %-15s\n",
+			execution.ID[:20],
+			execution.WorkflowName,
+			execution.Status,
+			progress,
 			duration.String())
 	}
 }
@@ -541,11 +541,11 @@ func printWorkflowStatus(execution *data.WorkflowExecution) {
 		}
 
 		fmt.Printf("  %s %s%s\n", status, step.Name, current)
-		
+
 		if step.Duration > 0 {
 			fmt.Printf("     Duration: %s\n", step.Duration.Truncate(time.Second))
 		}
-		
+
 		if step.Error != nil {
 			fmt.Printf("     Error: %v\n", step.Error)
 		}
@@ -559,7 +559,7 @@ func printWorkflowStatus(execution *data.WorkflowExecution) {
 		if start < 0 {
 			start = 0
 		}
-		
+
 		for i := start; i < eventCount; i++ {
 			event := execution.Events[i]
 			timestamp := event.Timestamp.Format("15:04:05")
@@ -570,19 +570,19 @@ func printWorkflowStatus(execution *data.WorkflowExecution) {
 
 func printFinalResults(results *data.WorkflowResults) {
 	fmt.Println("\n📊 Final Results:")
-	
+
 	if results.TotalFilesProcessed > 0 {
 		fmt.Printf("Files Processed: %d\n", results.TotalFilesProcessed)
 	}
-	
+
 	if results.TotalBytesTransferred > 0 {
 		fmt.Printf("Bytes Transferred: %s\n", formatBytes(results.TotalBytesTransferred))
 	}
-	
+
 	if results.TotalCostSavings > 0 {
 		fmt.Printf("💰 Cost Savings: $%.2f/month\n", results.TotalCostSavings)
 	}
-	
+
 	if results.SuccessRate > 0 {
 		fmt.Printf("Success Rate: %.1f%%\n", results.SuccessRate)
 	}

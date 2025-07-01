@@ -1,0 +1,92 @@
+aws_config:
+  instance_types:
+    gpu: g5.xlarge
+    hpc: c6i.4xlarge
+    large: m6i.2xlarge
+    medium: m6i.xlarge
+    memory: r6i.2xlarge
+    small: m6i.large
+  network:
+    efa_enabled: true
+    enhanced_networking: true
+    placement_group: true
+  storage:
+    iops: 3000
+    size_gb: 500
+    throughput: 125
+    type: gp3
+categories:
+- Neuroscience
+- Neuroimaging
+- Cognitive Science
+- Medical Imaging
+cost_estimates:
+  basic_analysis: $10-30/day (single subject analysis)
+  gpu_acceleration: $80-300/day (deep learning analysis)
+  group_studies: $30-80/day (population studies)
+  idle: $0/day (imaging tools cached)
+  monthly_estimate: $300-1500/month for neuroimaging lab
+  realtime_analysis: $50-150/day (online processing)
+  storage: $2.30/month per 100GB imaging data
+description: Neuroimaging, electrophysiology, and computational neuroscience tools
+documentation:
+  best_practices: docs/neuroscience_&_brain_imaging_laboratory_best_practices.md
+  getting_started: docs/neuroscience_&_brain_imaging_laboratory_quickstart.md
+  tutorials: docs/neuroscience_&_brain_imaging_laboratory_tutorials.md
+maintainers:
+- email: aws-research-wizard@example.com
+  name: AWS Research Wizard
+  organization: AWS Research Computing
+name: Neuroscience & Brain Imaging Laboratory
+spack_config:
+  compiler: gcc@11.4.0
+  optimization: -O3
+  packages:
+  - fsl@6.0.7.4 %gcc@11.4.0
+  - freesurfer@7.4.1
+  - afni@23.1.10 %gcc@11.4.0 +openmp
+  - ants@2.4.4 %gcc@11.4.0
+  - spm@12.0
+  - dipy@1.7.0
+  - py-mne@1.4.2
+  - py-neo@0.12.0
+  - py-elephant@0.14.0
+  - py-quantities@0.14.1
+  - eeglab@2023.0
+  - brian2@2.5.1
+  - neuron@8.2.2 %gcc@11.4.0 +mpi+python
+  - nest@3.5 %gcc@11.4.0 +mpi+openmp+python
+  - py-brian2@2.5.1
+  - genesis@2.4.0
+  - itk@5.3.0 %gcc@11.4.0 +python
+  - vtk@9.3.0 %gcc@11.4.0 +python+mpi+opengl2
+  - simpleitk@2.2.1
+  - py-nibabel@5.1.0
+  - py-nilearn@0.10.1
+  - py-nitime@0.10.2
+  - python@3.11.4 %gcc@11.4.0 +optimizations
+  - py-numpy@1.25.1 ^openblas@0.3.23
+  - py-scipy@1.11.1
+  - py-matplotlib@3.7.2
+  - py-seaborn@0.12.2
+  - py-pandas@2.0.3
+  - py-scikit-learn@1.3.0
+  - py-jupyter@1.0.0
+  target: neoverse_v1
+version: 1.0.0
+workflows:
+- description: Sample fMRI preprocessing and GLM analysis (FSL/SPM) workflow
+  expected_output: Processed research data
+  input_data: s3://aws-open-data/
+  name: fMRI preprocessing and GLM analysis (FSL/SPM)
+  script: workflows/fmri_preprocessing_and_glm_analysis_(fsl/spm).sh
+- description: Sample Structural brain morphometry (FreeSurfer) workflow
+  expected_output: Processed research data
+  input_data: s3://aws-open-data/
+  name: Structural brain morphometry (FreeSurfer)
+  script: workflows/structural_brain_morphometry_(freesurfer).sh
+- description: Sample Diffusion tensor imaging and tractography workflow
+  expected_output: Processed research data
+  input_data: s3://aws-open-data/
+  name: Diffusion tensor imaging and tractography
+  script: workflows/diffusion_tensor_imaging_and_tractography.sh

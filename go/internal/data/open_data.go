@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"strings"
 	"time"
@@ -12,8 +13,8 @@ import (
 
 // OpenDataRegistry represents the AWS Open Data Registry
 type OpenDataRegistry struct {
-	client     *http.Client
-	s3Manager  *S3Manager
+	client      *http.Client
+	s3Manager   *S3Manager
 	registryURL string
 }
 
@@ -65,19 +66,19 @@ func (odr *OpenDataRegistry) SearchDatasets(ctx context.Context, params SearchPa
 	// Build URL with search parameters
 	url := odr.registryURL + "/api/datasets"
 	queryParams := make([]string, 0)
-	
+
 	if params.Domain != "" {
 		queryParams = append(queryParams, fmt.Sprintf("domain=%s", params.Domain))
 	}
-	
+
 	if params.Keywords != "" {
 		queryParams = append(queryParams, fmt.Sprintf("q=%s", params.Keywords))
 	}
-	
+
 	if params.Limit > 0 {
 		queryParams = append(queryParams, fmt.Sprintf("limit=%d", params.Limit))
 	}
-	
+
 	if len(queryParams) > 0 {
 		url += "?" + strings.Join(queryParams, "&")
 	}
@@ -215,11 +216,11 @@ func (odr *OpenDataRegistry) GetDatasetSize(ctx context.Context, dataset *Datase
 // CreateDatasetAccess configures access to a dataset for optimal cost-free usage
 func (odr *OpenDataRegistry) CreateDatasetAccess(ctx context.Context, dataset *DatasetInfo, localPath string) (*DatasetAccessConfig, error) {
 	config := &DatasetAccessConfig{
-		DatasetID:   dataset.ID,
-		Name:        dataset.Name,
-		LocalPath:   localPath,
-		Resources:   make([]AccessResource, 0, len(dataset.Resources)),
-		CreatedAt:   time.Now(),
+		DatasetID: dataset.ID,
+		Name:      dataset.Name,
+		LocalPath: localPath,
+		Resources: make([]AccessResource, 0, len(dataset.Resources)),
+		CreatedAt: time.Now(),
 	}
 
 	for _, resource := range dataset.Resources {
@@ -246,11 +247,11 @@ func (odr *OpenDataRegistry) CreateDatasetAccess(ctx context.Context, dataset *D
 
 // DatasetAccessConfig defines how to access a dataset optimally
 type DatasetAccessConfig struct {
-	DatasetID   string           `json:"dataset_id"`
-	Name        string           `json:"name"`
-	LocalPath   string           `json:"local_path"`
-	Resources   []AccessResource `json:"resources"`
-	CreatedAt   time.Time        `json:"created_at"`
+	DatasetID string           `json:"dataset_id"`
+	Name      string           `json:"name"`
+	LocalPath string           `json:"local_path"`
+	Resources []AccessResource `json:"resources"`
+	CreatedAt time.Time        `json:"created_at"`
 }
 
 // AccessResource defines how to access a specific resource
@@ -270,7 +271,14 @@ func (odr *OpenDataRegistry) DownloadDatasetSample(ctx context.Context, dataset 
 	for _, resource := range dataset.Resources {
 		if resource.Type == "s3" && resource.Bucket != "" {
 			// List a few sample files
-			objects, err := odr.s3Manager.ListObjects(ctx, resource.Bucket, resource.Prefix, int32(maxFiles))
+			// Ensure maxFiles doesn't exceed int32 range
+			var maxFilesInt32 int32
+			if maxFiles > math.MaxInt32 {
+				maxFilesInt32 = math.MaxInt32
+			} else {
+				maxFilesInt32 = int32(maxFiles)
+			}
+			objects, err := odr.s3Manager.ListObjects(ctx, resource.Bucket, resource.Prefix, maxFilesInt32)
 			if err != nil {
 				return fmt.Errorf("failed to list sample objects: %w", err)
 			}

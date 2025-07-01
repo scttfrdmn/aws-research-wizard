@@ -1,0 +1,52 @@
+spack:
+  concretizer:
+    reuse: true
+    unify: true
+  config:
+    build_cache: true
+    build_stage:
+    - $tempdir/$user/spack-stage
+    install_tree:
+      root: $spack/opt/spack
+  mirrors:
+    aws-binary-cache: https://cache.spack.io/aws-ahug-east/
+  packages:
+    all:
+      compiler:
+      - gcc@11.4.0
+      target:
+      - neoverse_v1
+  specs:
+  - ds9@8.4.1
+  - wcslib@8.2.2 %gcc@11.4.0
+  - cfitsio@4.3.0 %gcc@11.4.0
+  - fitsverify@4.22
+  - sextractor@2.28.0 %gcc@11.4.0
+  - swarp@2.41.5 %gcc@11.4.0
+  - psfex@3.24.1 %gcc@11.4.0
+  - gadget4@0.6 %gcc@11.4.0 +mpi+openmp
+  - arepo@1.0 %gcc@11.4.0 +mpi
+  - ramses@1.0 %gcc@11.4.0 +mpi+openmp
+  - rockstar@0.99.9 %gcc@11.4.0 +mpi
+  - subfind@2.0.1 %gcc@11.4.0 +mpi
+  - python@3.11.4 %gcc@11.4.0 +optimizations
+  - py-astropy@5.3.1
+  - py-numpy@1.25.1 ^openblas@0.3.23
+  - py-scipy@1.11.1
+  - py-matplotlib@3.7.2
+  - py-pandas@2.0.3
+  - py-h5py@3.9.0
+  - py-healpy@1.16.2
+  - py-photutils@1.8.0
+  - py-astroquery@0.4.6
+  - py-specutils@1.11.0
+  - py-scikit-image@0.21.0
+  - py-opencv@4.8.0
+  - py-pillow@10.0.0
+  - py-imageio@2.31.1
+  - swarp@2.41.5 %gcc@11.4.0
+  - topcat@4.8.11
+  - stilts@3.4.11
+  - gaia@2.3.2
+  - aladin@12.0
+  view: true

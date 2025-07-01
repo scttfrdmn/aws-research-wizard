@@ -52,7 +52,7 @@ var (
 func init() {
 	// Add validate command to data command
 	DataCmd.AddCommand(validateCmd)
-	
+
 	// Flags
 	validateCmd.Flags().BoolVar(&validateAll, "all", false, "Validate all workflows in configuration")
 	validateCmd.Flags().StringVarP(&validateWorkflowName, "workflow", "w", "", "Validate specific workflow by name")
@@ -68,35 +68,35 @@ func runValidate(cmd *cobra.Command, args []string) error {
 	if len(args) > 0 {
 		configFile = args[0]
 	}
-	
+
 	// Check if config file exists
 	if _, err := os.Stat(configFile); os.IsNotExist(err) {
 		return fmt.Errorf("configuration file not found: %s", configFile)
 	}
-	
+
 	fmt.Printf("🔍 AWS Research Wizard - Workflow Validation\n")
 	fmt.Printf("===========================================\n\n")
 	fmt.Printf("📋 Configuration file: %s\n\n", configFile)
-	
+
 	// Load project configuration
 	projectConfig, err := loadProjectConfig(configFile)
 	if err != nil {
 		return fmt.Errorf("failed to load configuration: %w", err)
 	}
-	
+
 	validationResults := &ValidationResults{
 		ConfigFile: configFile,
 		Workflows:  make(map[string]*WorkflowValidation),
 	}
-	
+
 	// Validate overall project configuration
 	if validateVerbose {
 		fmt.Printf("🏗️  Validating project configuration...\n")
 	}
-	
+
 	projectValidation := validateProjectConfig(projectConfig)
 	validationResults.ProjectValidation = projectValidation
-	
+
 	if len(projectValidation.Errors) > 0 {
 		fmt.Printf("❌ Project Configuration Errors:\n")
 		for _, err := range projectValidation.Errors {
@@ -104,7 +104,7 @@ func runValidate(cmd *cobra.Command, args []string) error {
 		}
 		fmt.Println()
 	}
-	
+
 	if len(projectValidation.Warnings) > 0 && validateVerbose {
 		fmt.Printf("⚠️  Project Configuration Warnings:\n")
 		for _, warning := range projectValidation.Warnings {
@@ -112,10 +112,10 @@ func runValidate(cmd *cobra.Command, args []string) error {
 		}
 		fmt.Println()
 	}
-	
+
 	// Determine which workflows to validate
 	workflowsToValidate := []data.Workflow{}
-	
+
 	if validateWorkflowName != "" {
 		// Validate specific workflow
 		found := false
@@ -143,20 +143,20 @@ func runValidate(cmd *cobra.Command, args []string) error {
 			workflowsToValidate = projectConfig.Workflows // Fallback to all
 		}
 	}
-	
+
 	fmt.Printf("🔧 Validating %d workflow(s)...\n\n", len(workflowsToValidate))
-	
+
 	// Validate each workflow
 	totalErrors := 0
 	totalWarnings := 0
-	
+
 	for i, workflow := range workflowsToValidate {
 		fmt.Printf("Workflow %d/%d: %s\n", i+1, len(workflowsToValidate), workflow.Name)
 		fmt.Printf("─────────────────────────────────\n")
-		
+
 		workflowValidation := validateWorkflow(projectConfig, &workflow, !validateSkipAnalysis, validateVerbose)
 		validationResults.Workflows[workflow.Name] = workflowValidation
-		
+
 		// Display validation results
 		if len(workflowValidation.Errors) > 0 {
 			fmt.Printf("❌ Errors (%d):\n", len(workflowValidation.Errors))
@@ -165,7 +165,7 @@ func runValidate(cmd *cobra.Command, args []string) error {
 			}
 			totalErrors += len(workflowValidation.Errors)
 		}
-		
+
 		if len(workflowValidation.Warnings) > 0 {
 			fmt.Printf("⚠️  Warnings (%d):\n", len(workflowValidation.Warnings))
 			for _, warning := range workflowValidation.Warnings {
@@ -173,11 +173,11 @@ func runValidate(cmd *cobra.Command, args []string) error {
 			}
 			totalWarnings += len(workflowValidation.Warnings)
 		}
-		
+
 		if len(workflowValidation.Errors) == 0 && len(workflowValidation.Warnings) == 0 {
 			fmt.Printf("✅ Validation passed\n")
 		}
-		
+
 		// Show optimization suggestions if verbose
 		if validateVerbose && len(workflowValidation.Suggestions) > 0 {
 			fmt.Printf("💡 Optimization Suggestions:\n")
@@ -185,10 +185,10 @@ func runValidate(cmd *cobra.Command, args []string) error {
 				fmt.Printf("  • %s\n", suggestion)
 			}
 		}
-		
+
 		fmt.Println()
 	}
-	
+
 	// Summary
 	fmt.Printf("📊 Validation Summary\n")
 	fmt.Printf("═══════════════════\n")
@@ -196,13 +196,13 @@ func runValidate(cmd *cobra.Command, args []string) error {
 	fmt.Printf("Workflows validated: %d\n", len(workflowsToValidate))
 	fmt.Printf("Total errors: %d\n", totalErrors)
 	fmt.Printf("Total warnings: %d\n", totalWarnings)
-	
+
 	if totalErrors == 0 {
 		fmt.Printf("🎉 All validations passed!\n")
 	} else {
 		fmt.Printf("⚠️  %d validation errors need attention\n", totalErrors)
 	}
-	
+
 	// Generate report if requested
 	if validateReport != "" {
 		err := generateValidationReport(validationResults, validateReport)
@@ -212,21 +212,21 @@ func runValidate(cmd *cobra.Command, args []string) error {
 			fmt.Printf("📄 Validation report saved: %s\n", validateReport)
 		}
 	}
-	
+
 	// Return error if there were critical validation failures
 	if totalErrors > 0 {
 		return fmt.Errorf("validation failed with %d errors", totalErrors)
 	}
-	
+
 	return nil
 }
 
 // ValidationResults holds the complete validation results
 type ValidationResults struct {
-	ConfigFile         string                         `json:"config_file"`
-	ProjectValidation  *ProjectValidation             `json:"project_validation"`
-	Workflows          map[string]*WorkflowValidation `json:"workflows"`
-	Summary            *ValidationSummary             `json:"summary,omitempty"`
+	ConfigFile        string                         `json:"config_file"`
+	ProjectValidation *ProjectValidation             `json:"project_validation"`
+	Workflows         map[string]*WorkflowValidation `json:"workflows"`
+	Summary           *ValidationSummary             `json:"summary,omitempty"`
 }
 
 // ProjectValidation holds project-level validation results
@@ -238,25 +238,25 @@ type ProjectValidation struct {
 
 // WorkflowValidation holds workflow-specific validation results
 type WorkflowValidation struct {
-	WorkflowName    string               `json:"workflow_name"`
-	Enabled         bool                 `json:"enabled"`
-	Errors          []string             `json:"errors"`
-	Warnings        []string             `json:"warnings"`
-	Suggestions     []string             `json:"suggestions"`
-	DataAnalysis    *data.DataPattern    `json:"data_analysis,omitempty"`
-	EstimatedCost   float64              `json:"estimated_cost"`
-	EstimatedTime   string               `json:"estimated_time"`
-	ValidationTime  string               `json:"validation_time"`
+	WorkflowName   string            `json:"workflow_name"`
+	Enabled        bool              `json:"enabled"`
+	Errors         []string          `json:"errors"`
+	Warnings       []string          `json:"warnings"`
+	Suggestions    []string          `json:"suggestions"`
+	DataAnalysis   *data.DataPattern `json:"data_analysis,omitempty"`
+	EstimatedCost  float64           `json:"estimated_cost"`
+	EstimatedTime  string            `json:"estimated_time"`
+	ValidationTime string            `json:"validation_time"`
 }
 
 // ValidationSummary provides overall validation statistics
 type ValidationSummary struct {
-	TotalWorkflows    int `json:"total_workflows"`
-	PassedWorkflows   int `json:"passed_workflows"`
-	FailedWorkflows   int `json:"failed_workflows"`
-	TotalErrors       int `json:"total_errors"`
-	TotalWarnings     int `json:"total_warnings"`
-	TotalSuggestions  int `json:"total_suggestions"`
+	TotalWorkflows   int `json:"total_workflows"`
+	PassedWorkflows  int `json:"passed_workflows"`
+	FailedWorkflows  int `json:"failed_workflows"`
+	TotalErrors      int `json:"total_errors"`
+	TotalWarnings    int `json:"total_warnings"`
+	TotalSuggestions int `json:"total_suggestions"`
 }
 
 // validateProjectConfig validates the overall project configuration
@@ -266,54 +266,54 @@ func validateProjectConfig(config *data.ProjectConfig) *ProjectValidation {
 		Warnings:    []string{},
 		Suggestions: []string{},
 	}
-	
+
 	// Validate project metadata
 	if config.Project.Name == "" {
 		validation.Errors = append(validation.Errors, "Project name is required")
 	}
-	
+
 	if config.Project.Owner == "" {
 		validation.Warnings = append(validation.Warnings, "Project owner not specified")
 	}
-	
+
 	// Validate data profiles
 	if len(config.DataProfiles) == 0 {
 		validation.Errors = append(validation.Errors, "At least one data profile is required")
 	}
-	
+
 	for name, profile := range config.DataProfiles {
 		if profile.Path == "" {
 			validation.Errors = append(validation.Errors, fmt.Sprintf("Data profile '%s' missing path", name))
 		}
 	}
-	
+
 	// Validate destinations
 	if len(config.Destinations) == 0 {
 		validation.Errors = append(validation.Errors, "At least one destination is required")
 	}
-	
+
 	for name, dest := range config.Destinations {
 		if dest.URI == "" {
 			validation.Errors = append(validation.Errors, fmt.Sprintf("Destination '%s' missing URI", name))
 		}
 	}
-	
+
 	// Validate workflows
 	if len(config.Workflows) == 0 {
 		validation.Warnings = append(validation.Warnings, "No workflows defined")
 	}
-	
+
 	enabledWorkflows := 0
 	for _, workflow := range config.Workflows {
 		if workflow.Enabled {
 			enabledWorkflows++
 		}
 	}
-	
+
 	if enabledWorkflows == 0 {
 		validation.Warnings = append(validation.Warnings, "No workflows are enabled")
 	}
-	
+
 	return validation
 }
 
@@ -326,20 +326,20 @@ func validateWorkflow(config *data.ProjectConfig, workflow *data.Workflow, analy
 		Warnings:     []string{},
 		Suggestions:  []string{},
 	}
-	
+
 	// Basic workflow validation
 	if workflow.Name == "" {
 		validation.Errors = append(validation.Errors, "Workflow name is required")
 	}
-	
+
 	if workflow.Source == "" {
 		validation.Errors = append(validation.Errors, "Source data profile is required")
 	}
-	
+
 	if workflow.Destination == "" {
 		validation.Errors = append(validation.Errors, "Destination is required")
 	}
-	
+
 	// Validate source data profile
 	sourceProfile, sourceExists := config.DataProfiles[workflow.Source]
 	if !sourceExists {
@@ -357,17 +357,17 @@ func validateWorkflow(config *data.ProjectConfig, workflow *data.Workflow, analy
 					validation.Warnings = append(validation.Warnings, fmt.Sprintf("Could not analyze source data: %v", err))
 				} else {
 					validation.DataAnalysis = pattern
-					
+
 					// Generate suggestions based on analysis
 					if pattern.FileSizes.SmallFiles.CountUnder1MB > pattern.TotalFiles/2 {
-						validation.Suggestions = append(validation.Suggestions, 
+						validation.Suggestions = append(validation.Suggestions,
 							"High ratio of small files detected - consider enabling bundling")
 					}
-					
+
 					if len(pattern.DomainHints.DetectedDomains) > 0 {
 						domain := pattern.DomainHints.DetectedDomains[0]
 						if config.Project.Domain != domain {
-							validation.Suggestions = append(validation.Suggestions, 
+							validation.Suggestions = append(validation.Suggestions,
 								fmt.Sprintf("Consider setting project domain to '%s' for optimizations", domain))
 						}
 					}
@@ -375,7 +375,7 @@ func validateWorkflow(config *data.ProjectConfig, workflow *data.Workflow, analy
 			}
 		}
 	}
-	
+
 	// Validate destination
 	destination, destExists := config.Destinations[workflow.Destination]
 	if !destExists {
@@ -387,21 +387,21 @@ func validateWorkflow(config *data.ProjectConfig, workflow *data.Workflow, analy
 		}
 		// Could add more sophisticated URI validation here
 	}
-	
+
 	// Validate engine
 	if workflow.Engine == "" {
 		validation.Warnings = append(validation.Warnings, "No engine specified - will use auto-detection")
 	}
-	
+
 	// Validate configuration
 	if workflow.Configuration.Concurrency < 0 {
 		validation.Errors = append(validation.Errors, "Concurrency cannot be negative")
 	}
-	
+
 	if workflow.Configuration.Concurrency > 100 {
 		validation.Warnings = append(validation.Warnings, "Very high concurrency may impact performance")
 	}
-	
+
 	// Validate preprocessing steps
 	for _, step := range workflow.PreProcessing {
 		if step.Name == "" {
@@ -411,7 +411,7 @@ func validateWorkflow(config *data.ProjectConfig, workflow *data.Workflow, analy
 			validation.Errors = append(validation.Errors, "Preprocessing step missing type")
 		}
 	}
-	
+
 	// Validate postprocessing steps
 	for _, step := range workflow.PostProcessing {
 		if step.Name == "" {
@@ -421,7 +421,7 @@ func validateWorkflow(config *data.ProjectConfig, workflow *data.Workflow, analy
 			validation.Errors = append(validation.Errors, "Postprocessing step missing type")
 		}
 	}
-	
+
 	return validation
 }
 
@@ -431,7 +431,7 @@ func generateValidationReport(results *ValidationResults, outputFile string) err
 	summary := &ValidationSummary{
 		TotalWorkflows: len(results.Workflows),
 	}
-	
+
 	for _, workflow := range results.Workflows {
 		if len(workflow.Errors) == 0 {
 			summary.PassedWorkflows++
@@ -442,9 +442,9 @@ func generateValidationReport(results *ValidationResults, outputFile string) err
 		summary.TotalWarnings += len(workflow.Warnings)
 		summary.TotalSuggestions += len(workflow.Suggestions)
 	}
-	
+
 	results.Summary = summary
-	
+
 	// Determine output format from file extension
 	ext := filepath.Ext(outputFile)
 	switch ext {

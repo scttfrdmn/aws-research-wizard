@@ -16,12 +16,12 @@ var (
 	baseStyle = lipgloss.NewStyle().
 			BorderStyle(lipgloss.NormalBorder()).
 			BorderForeground(lipgloss.Color("240"))
-	
+
 	titleStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("62")).
 			Bold(true).
 			Padding(0, 1)
-	
+
 	selectedStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("229")).
 			Background(lipgloss.Color("57")).
@@ -45,35 +45,35 @@ func NewDomainSelector(domains map[string]*config.DomainPack) *DomainSelectorMod
 		{Title: "Users", Width: 15},
 		{Title: "Monthly Cost", Width: 12},
 	}
-	
+
 	// Create table rows from domains
 	var rows []table.Row
 	var domainNames []string
-	
+
 	// Sort domains by name for consistent display
 	for name := range domains {
 		domainNames = append(domainNames, name)
 	}
 	sort.Strings(domainNames)
-	
+
 	for _, name := range domainNames {
 		domain := domains[name]
-		
+
 		// Format users - already a string in YAML
 		users := domain.TargetUsers
 		if len(users) > 12 {
 			users = users[:12] + "..."
 		}
-		
+
 		// Format cost
 		cost := fmt.Sprintf("$%.0f", domain.EstimatedCost.Total)
-		
+
 		// Truncate description if too long
 		description := domain.Description
 		if len(description) > 47 {
 			description = description[:47] + "..."
 		}
-		
+
 		rows = append(rows, table.Row{
 			name,
 			description,
@@ -81,7 +81,7 @@ func NewDomainSelector(domains map[string]*config.DomainPack) *DomainSelectorMod
 			cost,
 		})
 	}
-	
+
 	// Create and configure table
 	t := table.New(
 		table.WithColumns(columns),
@@ -89,7 +89,7 @@ func NewDomainSelector(domains map[string]*config.DomainPack) *DomainSelectorMod
 		table.WithFocused(true),
 		table.WithHeight(15),
 	)
-	
+
 	// Style the table
 	s := table.DefaultStyles()
 	s.Header = s.Header.
@@ -102,7 +102,7 @@ func NewDomainSelector(domains map[string]*config.DomainPack) *DomainSelectorMod
 		Background(lipgloss.Color("57")).
 		Bold(false)
 	t.SetStyles(s)
-	
+
 	return &DomainSelectorModel{
 		table:   t,
 		domains: domains,
@@ -117,7 +117,7 @@ func (m *DomainSelectorModel) Init() tea.Cmd {
 // Update handles messages and updates the model
 func (m *DomainSelectorModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
-	
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -134,7 +134,7 @@ func (m *DomainSelectorModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 	}
-	
+
 	m.table, cmd = m.table.Update(msg)
 	return m, cmd
 }
@@ -144,12 +144,12 @@ func (m *DomainSelectorModel) View() string {
 	if m.quitting {
 		return ""
 	}
-	
+
 	title := titleStyle.Render("🔬 AWS Research Wizard - Domain Selection")
 	help := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("241")).
 		Render("↑/↓: navigate • enter: select • q: quit")
-	
+
 	content := lipgloss.JoinVertical(
 		lipgloss.Left,
 		title,
@@ -158,7 +158,7 @@ func (m *DomainSelectorModel) View() string {
 		"",
 		help,
 	)
-	
+
 	return lipgloss.NewStyle().
 		Padding(1, 2).
 		Render(content)
@@ -172,16 +172,16 @@ func (m *DomainSelectorModel) GetSelected() *config.DomainPack {
 // RunDomainSelector runs the domain selection TUI
 func RunDomainSelector(domains map[string]*config.DomainPack) (*config.DomainPack, error) {
 	model := NewDomainSelector(domains)
-	
+
 	p := tea.NewProgram(model, tea.WithAltScreen())
 	finalModel, err := p.Run()
 	if err != nil {
 		return nil, fmt.Errorf("failed to run domain selector: %w", err)
 	}
-	
+
 	if selectorModel, ok := finalModel.(*DomainSelectorModel); ok {
 		return selectorModel.GetSelected(), nil
 	}
-	
+
 	return nil, fmt.Errorf("unexpected model type")
 }

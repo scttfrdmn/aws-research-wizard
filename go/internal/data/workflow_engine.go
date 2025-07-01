@@ -10,23 +10,23 @@ import (
 // WorkflowEngine orchestrates complex data movement workflows
 type WorkflowEngine struct {
 	// Core components
-	patternAnalyzer    *PatternAnalyzer
+	patternAnalyzer      *PatternAnalyzer
 	recommendationEngine *RecommendationEngine
-	bundlingEngine     *BundlingEngine
-	transferEngines    map[string]TransferEngine
-	warningSystem      *WarningSystem
+	bundlingEngine       *BundlingEngine
+	transferEngines      map[string]TransferEngine
+	warningSystem        *WarningSystem
 	domainProfileManager *ResearchDomainProfileManager
 	errorRecoveryManager *ErrorRecoveryManager
-	
+
 	// Execution state
-	activeWorkflows    map[string]*WorkflowExecution
-	executionHistory   []*WorkflowExecution
-	config            *WorkflowEngineConfig
-	
+	activeWorkflows  map[string]*WorkflowExecution
+	executionHistory []*WorkflowExecution
+	config           *WorkflowEngineConfig
+
 	// Synchronization
-	mu                sync.RWMutex
-	shutdownChan      chan struct{}
-	
+	mu           sync.RWMutex
+	shutdownChan chan struct{}
+
 	// Monitoring
 	progressCallbacks map[string][]WorkflowProgressCallback
 	eventBus          *WorkflowEventBus
@@ -34,97 +34,97 @@ type WorkflowEngine struct {
 
 // WorkflowEngineConfig contains configuration for the workflow engine
 type WorkflowEngineConfig struct {
-	MaxConcurrentWorkflows int               `json:"max_concurrent_workflows"`
-	DefaultTimeout         time.Duration     `json:"default_timeout"`
-	RetryAttempts         int               `json:"retry_attempts"`
-	RetryDelay            time.Duration     `json:"retry_delay"`
-	EnablePersistence     bool              `json:"enable_persistence"`
-	PersistenceDir        string            `json:"persistence_dir"`
-	MonitoringEnabled     bool              `json:"monitoring_enabled"`
-	MetricsCollection     bool              `json:"metrics_collection"`
-	
+	MaxConcurrentWorkflows int           `json:"max_concurrent_workflows"`
+	DefaultTimeout         time.Duration `json:"default_timeout"`
+	RetryAttempts          int           `json:"retry_attempts"`
+	RetryDelay             time.Duration `json:"retry_delay"`
+	EnablePersistence      bool          `json:"enable_persistence"`
+	PersistenceDir         string        `json:"persistence_dir"`
+	MonitoringEnabled      bool          `json:"monitoring_enabled"`
+	MetricsCollection      bool          `json:"metrics_collection"`
+
 	// Domain-specific settings
-	DomainConfigs         map[string]DomainConfig `json:"domain_configs"`
+	DomainConfigs map[string]DomainConfig `json:"domain_configs"`
 }
 
 // DomainConfig contains domain-specific workflow settings
 type DomainConfig struct {
-	DefaultBundling       bool              `json:"default_bundling"`
-	PreferredEngines      []string          `json:"preferred_engines"`
-	CustomOptimizations   map[string]interface{} `json:"custom_optimizations"`
-	QualityChecks         []string          `json:"quality_checks"`
+	DefaultBundling     bool                   `json:"default_bundling"`
+	PreferredEngines    []string               `json:"preferred_engines"`
+	CustomOptimizations map[string]interface{} `json:"custom_optimizations"`
+	QualityChecks       []string               `json:"quality_checks"`
 }
 
 // WorkflowExecution represents a running or completed workflow
 type WorkflowExecution struct {
 	// Identification
-	ID                string            `json:"id"`
-	WorkflowName      string            `json:"workflow_name"`
-	ProjectConfig     *ProjectConfig    `json:"project_config"`
-	
+	ID            string         `json:"id"`
+	WorkflowName  string         `json:"workflow_name"`
+	ProjectConfig *ProjectConfig `json:"project_config"`
+
 	// Execution state
-	Status            WorkflowStatus    `json:"status"`
-	CurrentStep       int               `json:"current_step"`
-	TotalSteps        int               `json:"total_steps"`
-	StartTime         time.Time         `json:"start_time"`
-	EndTime           time.Time         `json:"end_time,omitempty"`
-	Duration          time.Duration     `json:"duration"`
-	
+	Status      WorkflowStatus `json:"status"`
+	CurrentStep int            `json:"current_step"`
+	TotalSteps  int            `json:"total_steps"`
+	StartTime   time.Time      `json:"start_time"`
+	EndTime     time.Time      `json:"end_time,omitempty"`
+	Duration    time.Duration  `json:"duration"`
+
 	// Steps and results
-	Steps             []*WorkflowStep   `json:"steps"`
-	Results           *WorkflowResults  `json:"results,omitempty"`
-	Error             error             `json:"error,omitempty"`
-	
+	Steps   []*WorkflowStep  `json:"steps"`
+	Results *WorkflowResults `json:"results,omitempty"`
+	Error   error            `json:"error,omitempty"`
+
 	// Progress tracking
-	Progress          float64           `json:"progress"` // 0.0 to 1.0
-	CurrentStepProgress float64         `json:"current_step_progress"`
-	
+	Progress            float64 `json:"progress"` // 0.0 to 1.0
+	CurrentStepProgress float64 `json:"current_step_progress"`
+
 	// Context and cancellation
-	Context           context.Context   `json:"-"`
-	CancelFunc        context.CancelFunc `json:"-"`
-	
+	Context    context.Context    `json:"-"`
+	CancelFunc context.CancelFunc `json:"-"`
+
 	// Monitoring
-	Metrics           *WorkflowMetrics  `json:"metrics,omitempty"`
-	Events            []*WorkflowEvent  `json:"events,omitempty"`
+	Metrics *WorkflowMetrics `json:"metrics,omitempty"`
+	Events  []*WorkflowEvent `json:"events,omitempty"`
 }
 
 // WorkflowStatus represents the current status of a workflow
 type WorkflowStatus string
 
 const (
-	WorkflowStatusPending    WorkflowStatus = "pending"
-	WorkflowStatusRunning    WorkflowStatus = "running"
-	WorkflowStatusCompleted  WorkflowStatus = "completed"
-	WorkflowStatusFailed     WorkflowStatus = "failed"
-	WorkflowStatusCancelled  WorkflowStatus = "cancelled"
-	WorkflowStatusPaused     WorkflowStatus = "paused"
+	WorkflowStatusPending   WorkflowStatus = "pending"
+	WorkflowStatusRunning   WorkflowStatus = "running"
+	WorkflowStatusCompleted WorkflowStatus = "completed"
+	WorkflowStatusFailed    WorkflowStatus = "failed"
+	WorkflowStatusCancelled WorkflowStatus = "cancelled"
+	WorkflowStatusPaused    WorkflowStatus = "paused"
 )
 
 // WorkflowStep represents a single step in a workflow execution
 type WorkflowStep struct {
 	// Definition
-	Name              string            `json:"name"`
-	Type              string            `json:"type"`
-	Engine            string            `json:"engine,omitempty"`
-	
+	Name   string `json:"name"`
+	Type   string `json:"type"`
+	Engine string `json:"engine,omitempty"`
+
 	// Configuration
-	Parameters        map[string]string `json:"parameters"`
-	Conditions        []string          `json:"conditions,omitempty"`
-	Dependencies      []string          `json:"dependencies,omitempty"`
-	
+	Parameters   map[string]string `json:"parameters"`
+	Conditions   []string          `json:"conditions,omitempty"`
+	Dependencies []string          `json:"dependencies,omitempty"`
+
 	// Execution state
-	Status            StepStatus        `json:"status"`
-	StartTime         time.Time         `json:"start_time,omitempty"`
-	EndTime           time.Time         `json:"end_time,omitempty"`
-	Duration          time.Duration     `json:"duration"`
-	RetryCount        int               `json:"retry_count"`
-	
+	Status     StepStatus    `json:"status"`
+	StartTime  time.Time     `json:"start_time,omitempty"`
+	EndTime    time.Time     `json:"end_time,omitempty"`
+	Duration   time.Duration `json:"duration"`
+	RetryCount int           `json:"retry_count"`
+
 	// Results
-	Output            map[string]interface{} `json:"output,omitempty"`
-	Error             error                  `json:"error,omitempty"`
-	
+	Output map[string]interface{} `json:"output,omitempty"`
+	Error  error                  `json:"error,omitempty"`
+
 	// Progress
-	Progress          float64           `json:"progress"`
+	Progress float64 `json:"progress"`
 }
 
 // StepStatus represents the status of a workflow step
@@ -141,60 +141,60 @@ const (
 // WorkflowResults contains the comprehensive results of a workflow execution
 type WorkflowResults struct {
 	// Analysis results
-	DataPattern           *DataPattern           `json:"data_pattern,omitempty"`
-	Recommendations       *RecommendationResult  `json:"recommendations,omitempty"`
-	WarningReport         *WarningReport         `json:"warning_report,omitempty"`
-	
+	DataPattern     *DataPattern          `json:"data_pattern,omitempty"`
+	Recommendations *RecommendationResult `json:"recommendations,omitempty"`
+	WarningReport   *WarningReport        `json:"warning_report,omitempty"`
+
 	// Processing results
-	BundlingResult        *BundlingResult        `json:"bundling_result,omitempty"`
-	TransferResults       []*TransferResult      `json:"transfer_results,omitempty"`
-	
+	BundlingResult  *BundlingResult   `json:"bundling_result,omitempty"`
+	TransferResults []*TransferResult `json:"transfer_results,omitempty"`
+
 	// Summary metrics
-	TotalFilesProcessed   int64                  `json:"total_files_processed"`
-	TotalBytesTransferred int64                  `json:"total_bytes_transferred"`
-	TotalCostSavings      float64                `json:"total_cost_savings"`
-	PerformanceGain       float64                `json:"performance_gain_percent"`
-	
+	TotalFilesProcessed   int64   `json:"total_files_processed"`
+	TotalBytesTransferred int64   `json:"total_bytes_transferred"`
+	TotalCostSavings      float64 `json:"total_cost_savings"`
+	PerformanceGain       float64 `json:"performance_gain_percent"`
+
 	// Quality metrics
-	SuccessRate           float64                `json:"success_rate"`
-	ErrorCount            int                    `json:"error_count"`
-	WarningCount          int                    `json:"warning_count"`
-	
+	SuccessRate  float64 `json:"success_rate"`
+	ErrorCount   int     `json:"error_count"`
+	WarningCount int     `json:"warning_count"`
+
 	// Recommendations for future
-	NextStepSuggestions   []string               `json:"next_step_suggestions"`
-	OptimizationOpportunities []string           `json:"optimization_opportunities"`
+	NextStepSuggestions       []string `json:"next_step_suggestions"`
+	OptimizationOpportunities []string `json:"optimization_opportunities"`
 }
 
 // WorkflowMetrics contains detailed metrics about workflow execution
 type WorkflowMetrics struct {
 	// Timing metrics
-	TotalExecutionTime    time.Duration         `json:"total_execution_time"`
-	StepExecutionTimes    map[string]time.Duration `json:"step_execution_times"`
-	QueueTime             time.Duration         `json:"queue_time"`
-	
+	TotalExecutionTime time.Duration            `json:"total_execution_time"`
+	StepExecutionTimes map[string]time.Duration `json:"step_execution_times"`
+	QueueTime          time.Duration            `json:"queue_time"`
+
 	// Resource utilization
-	PeakMemoryUsage       int64                 `json:"peak_memory_usage"`
-	CPUUtilization        float64               `json:"cpu_utilization"`
-	NetworkUtilization    float64               `json:"network_utilization"`
-	
+	PeakMemoryUsage    int64   `json:"peak_memory_usage"`
+	CPUUtilization     float64 `json:"cpu_utilization"`
+	NetworkUtilization float64 `json:"network_utilization"`
+
 	// Efficiency metrics
-	TransferEfficiency    float64               `json:"transfer_efficiency"`
-	CompressionRatio      float64               `json:"compression_ratio"`
-	CostEfficiency        float64               `json:"cost_efficiency"`
-	
+	TransferEfficiency float64 `json:"transfer_efficiency"`
+	CompressionRatio   float64 `json:"compression_ratio"`
+	CostEfficiency     float64 `json:"cost_efficiency"`
+
 	// Error and retry metrics
-	RetryAttempts         map[string]int        `json:"retry_attempts"`
-	ErrorRecoveryTime     time.Duration         `json:"error_recovery_time"`
+	RetryAttempts     map[string]int `json:"retry_attempts"`
+	ErrorRecoveryTime time.Duration  `json:"error_recovery_time"`
 }
 
 // WorkflowEvent represents an event that occurred during workflow execution
 type WorkflowEvent struct {
-	Timestamp    time.Time   `json:"timestamp"`
-	Type         string      `json:"type"`
-	Step         string      `json:"step,omitempty"`
-	Message      string      `json:"message"`
-	Severity     string      `json:"severity"` // "info", "warning", "error"
-	Metadata     map[string]interface{} `json:"metadata,omitempty"`
+	Timestamp time.Time              `json:"timestamp"`
+	Type      string                 `json:"type"`
+	Step      string                 `json:"step,omitempty"`
+	Message   string                 `json:"message"`
+	Severity  string                 `json:"severity"` // "info", "warning", "error"
+	Metadata  map[string]interface{} `json:"metadata,omitempty"`
 }
 
 // WorkflowProgressCallback is called to report workflow progress
@@ -232,24 +232,24 @@ func NewWorkflowEngine(config *WorkflowEngineConfig) *WorkflowEngine {
 		config = &WorkflowEngineConfig{
 			MaxConcurrentWorkflows: 5,
 			DefaultTimeout:         2 * time.Hour,
-			RetryAttempts:         3,
-			RetryDelay:            30 * time.Second,
-			EnablePersistence:     true,
-			MonitoringEnabled:     true,
-			MetricsCollection:     true,
+			RetryAttempts:          3,
+			RetryDelay:             30 * time.Second,
+			EnablePersistence:      true,
+			MonitoringEnabled:      true,
+			MetricsCollection:      true,
 		}
 	}
-	
+
 	return &WorkflowEngine{
-		activeWorkflows:   make(map[string]*WorkflowExecution),
-		executionHistory:  make([]*WorkflowExecution, 0),
-		transferEngines:   make(map[string]TransferEngine),
-		progressCallbacks: make(map[string][]WorkflowProgressCallback),
+		activeWorkflows:      make(map[string]*WorkflowExecution),
+		executionHistory:     make([]*WorkflowExecution, 0),
+		transferEngines:      make(map[string]TransferEngine),
+		progressCallbacks:    make(map[string][]WorkflowProgressCallback),
 		domainProfileManager: NewResearchDomainProfileManager(),
 		errorRecoveryManager: NewErrorRecoveryManager(),
-		config:           config,
-		shutdownChan:     make(chan struct{}),
-		eventBus:         &WorkflowEventBus{
+		config:               config,
+		shutdownChan:         make(chan struct{}),
+		eventBus: &WorkflowEventBus{
 			subscribers: make(map[string][]chan *WorkflowEvent),
 		},
 	}
@@ -275,12 +275,12 @@ func (we *WorkflowEngine) RegisterTransferEngine(engine TransferEngine) error {
 	if engine == nil {
 		return fmt.Errorf("engine cannot be nil")
 	}
-	
+
 	name := engine.GetName()
 	if name == "" {
 		return fmt.Errorf("engine name cannot be empty")
 	}
-	
+
 	we.transferEngines[name] = engine
 	return nil
 }
@@ -303,63 +303,63 @@ func (we *WorkflowEngine) ApplyDomainOptimizations(workflow *Workflow, projectCo
 		// Try to infer from data profiles or use general profile
 		domain = "general"
 	}
-	
+
 	profile, exists := we.domainProfileManager.GetProfile(domain)
 	if !exists {
 		// No domain-specific optimizations available
 		return nil
 	}
-	
+
 	// Apply transfer optimizations
 	if workflow.Configuration.Concurrency == 0 {
 		workflow.Configuration.Concurrency = profile.TransferOptimization.OptimalConcurrency
 	}
-	
+
 	if workflow.Configuration.PartSize == "" {
 		workflow.Configuration.PartSize = profile.TransferOptimization.OptimalPartSize
 	}
-	
+
 	// Apply engine selection if not specified
 	if workflow.Engine == "" || workflow.Engine == "auto" {
 		if len(profile.TransferOptimization.PreferredEngines) > 0 {
 			workflow.Engine = profile.TransferOptimization.PreferredEngines[0]
 		}
 	}
-	
+
 	// Apply bundling strategy if enabled
 	if profile.BundlingStrategy.EnableBundling && len(workflow.PreProcessing) == 0 {
 		bundlingStep := ProcessingStep{
 			Name: "domain_optimized_bundling",
 			Type: "bundle",
 			Parameters: map[string]string{
-				"target_size":        profile.BundlingStrategy.TargetBundleSize,
-				"min_files":          fmt.Sprintf("%d", profile.BundlingStrategy.MinFilesForBundle),
-				"max_files":          fmt.Sprintf("%d", profile.BundlingStrategy.MaxFilesPerBundle),
-				"tool":               profile.BundlingStrategy.ToolPreference,
-				"compression":        fmt.Sprintf("%t", profile.BundlingStrategy.CompressionEnabled),
-				"preserve_path":      fmt.Sprintf("%t", profile.BundlingStrategy.PreservePath),
-				"grouping_strategy":  profile.BundlingStrategy.GroupingStrategy.Strategy,
+				"target_size":       profile.BundlingStrategy.TargetBundleSize,
+				"min_files":         fmt.Sprintf("%d", profile.BundlingStrategy.MinFilesForBundle),
+				"max_files":         fmt.Sprintf("%d", profile.BundlingStrategy.MaxFilesPerBundle),
+				"tool":              profile.BundlingStrategy.ToolPreference,
+				"compression":       fmt.Sprintf("%t", profile.BundlingStrategy.CompressionEnabled),
+				"preserve_path":     fmt.Sprintf("%t", profile.BundlingStrategy.PreservePath),
+				"grouping_strategy": profile.BundlingStrategy.GroupingStrategy.Strategy,
 			},
 		}
 		workflow.PreProcessing = append(workflow.PreProcessing, bundlingStep)
 	}
-	
+
 	// Apply quality checks
 	for _, check := range profile.QualityChecks {
 		qualityStep := ProcessingStep{
 			Name: check.Name,
 			Type: "quality_check",
 			Parameters: map[string]string{
-				"check_type":   check.Type,
-				"command":      check.Command,
-				"severity":     check.Severity,
-				"auto_fix":     fmt.Sprintf("%t", check.AutoFix),
-				"description":  check.Description,
+				"check_type":  check.Type,
+				"command":     check.Command,
+				"severity":    check.Severity,
+				"auto_fix":    fmt.Sprintf("%t", check.AutoFix),
+				"description": check.Description,
 			},
 		}
 		workflow.PostProcessing = append(workflow.PostProcessing, qualityStep)
 	}
-	
+
 	return nil
 }
 
@@ -373,47 +373,47 @@ func (we *WorkflowEngine) ExecuteWorkflow(ctx context.Context, projectConfig *Pr
 			break
 		}
 	}
-	
+
 	if workflow == nil {
 		return nil, fmt.Errorf("workflow '%s' not found in project configuration", workflowName)
 	}
-	
+
 	if !workflow.Enabled {
 		return nil, fmt.Errorf("workflow '%s' is disabled", workflowName)
 	}
-	
+
 	// Apply domain-specific optimizations
 	if err := we.ApplyDomainOptimizations(workflow, projectConfig); err != nil {
 		return nil, fmt.Errorf("failed to apply domain optimizations: %w", err)
 	}
-	
+
 	// Check concurrent workflow limit
 	we.mu.RLock()
 	activeCount := len(we.activeWorkflows)
 	we.mu.RUnlock()
-	
+
 	if activeCount >= we.config.MaxConcurrentWorkflows {
 		return nil, fmt.Errorf("maximum concurrent workflows (%d) reached", we.config.MaxConcurrentWorkflows)
 	}
-	
+
 	// Create workflow execution
 	execution := we.createWorkflowExecution(ctx, projectConfig, workflow)
-	
+
 	// Register execution
 	we.mu.Lock()
 	we.activeWorkflows[execution.ID] = execution
 	we.mu.Unlock()
-	
+
 	// Start execution in background
 	go we.executeWorkflowSteps(execution)
-	
+
 	return execution, nil
 }
 
 // createWorkflowExecution creates a new workflow execution instance
 func (we *WorkflowEngine) createWorkflowExecution(ctx context.Context, projectConfig *ProjectConfig, workflow *Workflow) *WorkflowExecution {
 	executionID := fmt.Sprintf("wf_%d", time.Now().UnixNano())
-	
+
 	// Create cancellable context with timeout
 	timeout := we.config.DefaultTimeout
 	if workflow.Configuration.Timeout != "" {
@@ -421,25 +421,25 @@ func (we *WorkflowEngine) createWorkflowExecution(ctx context.Context, projectCo
 			timeout = parsedTimeout
 		}
 	}
-	
+
 	execCtx, cancelFunc := context.WithTimeout(ctx, timeout)
-	
+
 	// Build workflow steps
 	steps := we.buildWorkflowSteps(workflow)
-	
+
 	return &WorkflowExecution{
-		ID:           executionID,
-		WorkflowName: workflow.Name,
+		ID:            executionID,
+		WorkflowName:  workflow.Name,
 		ProjectConfig: projectConfig,
-		Status:       WorkflowStatusPending,
-		TotalSteps:   len(steps),
-		StartTime:    time.Now(),
-		Steps:        steps,
-		Context:      execCtx,
-		CancelFunc:   cancelFunc,
-		Progress:     0.0,
-		Events:       make([]*WorkflowEvent, 0),
-		Metrics:      &WorkflowMetrics{
+		Status:        WorkflowStatusPending,
+		TotalSteps:    len(steps),
+		StartTime:     time.Now(),
+		Steps:         steps,
+		Context:       execCtx,
+		CancelFunc:    cancelFunc,
+		Progress:      0.0,
+		Events:        make([]*WorkflowEvent, 0),
+		Metrics: &WorkflowMetrics{
 			StepExecutionTimes: make(map[string]time.Duration),
 			RetryAttempts:      make(map[string]int),
 		},
@@ -449,17 +449,17 @@ func (we *WorkflowEngine) createWorkflowExecution(ctx context.Context, projectCo
 // buildWorkflowSteps converts workflow configuration into executable steps
 func (we *WorkflowEngine) buildWorkflowSteps(workflow *Workflow) []*WorkflowStep {
 	var steps []*WorkflowStep
-	
+
 	// Add analysis step (always first)
 	steps = append(steps, &WorkflowStep{
-		Name:       "analyze_data_pattern",
-		Type:       "analyze",
+		Name: "analyze_data_pattern",
+		Type: "analyze",
 		Parameters: map[string]string{
 			"source_path": workflow.Source,
 		},
 		Status: StepStatusPending,
 	})
-	
+
 	// Add preprocessing steps
 	for _, preStep := range workflow.PreProcessing {
 		step := &WorkflowStep{
@@ -471,7 +471,7 @@ func (we *WorkflowEngine) buildWorkflowSteps(workflow *Workflow) []*WorkflowStep
 		}
 		steps = append(steps, step)
 	}
-	
+
 	// Add main transfer step
 	steps = append(steps, &WorkflowStep{
 		Name:   "primary_transfer",
@@ -485,7 +485,7 @@ func (we *WorkflowEngine) buildWorkflowSteps(workflow *Workflow) []*WorkflowStep
 		},
 		Status: StepStatusPending,
 	})
-	
+
 	// Add postprocessing steps
 	for _, postStep := range workflow.PostProcessing {
 		step := &WorkflowStep{
@@ -497,18 +497,18 @@ func (we *WorkflowEngine) buildWorkflowSteps(workflow *Workflow) []*WorkflowStep
 		}
 		steps = append(steps, step)
 	}
-	
+
 	// Add monitoring step (always last)
 	steps = append(steps, &WorkflowStep{
 		Name: "generate_report",
 		Type: "report",
 		Parameters: map[string]string{
-			"include_metrics": "true",
+			"include_metrics":         "true",
 			"include_recommendations": "true",
 		},
 		Status: StepStatusPending,
 	})
-	
+
 	return steps
 }
 
@@ -520,26 +520,26 @@ func (we *WorkflowEngine) executeWorkflowSteps(execution *WorkflowExecution) {
 		delete(we.activeWorkflows, execution.ID)
 		we.executionHistory = append(we.executionHistory, execution)
 		we.mu.Unlock()
-		
+
 		execution.CancelFunc()
 		execution.EndTime = time.Now()
 		execution.Duration = execution.EndTime.Sub(execution.StartTime)
 	}()
-	
+
 	execution.Status = WorkflowStatusRunning
 	we.emitEvent(execution, "workflow_started", "Workflow execution started", "info", nil)
-	
+
 	// Initialize results
 	execution.Results = &WorkflowResults{
-		TransferResults:       make([]*TransferResult, 0),
-		NextStepSuggestions:   make([]string, 0),
+		TransferResults:           make([]*TransferResult, 0),
+		NextStepSuggestions:       make([]string, 0),
 		OptimizationOpportunities: make([]string, 0),
 	}
-	
+
 	// Execute each step
 	for i, step := range execution.Steps {
 		execution.CurrentStep = i
-		
+
 		// Check for cancellation
 		select {
 		case <-execution.Context.Done():
@@ -548,7 +548,7 @@ func (we *WorkflowEngine) executeWorkflowSteps(execution *WorkflowExecution) {
 			return
 		default:
 		}
-		
+
 		// Execute step with retry logic
 		if err := we.executeStepWithRetry(execution, step); err != nil {
 			execution.Status = WorkflowStatusFailed
@@ -556,12 +556,12 @@ func (we *WorkflowEngine) executeWorkflowSteps(execution *WorkflowExecution) {
 			we.emitEvent(execution, "workflow_failed", fmt.Sprintf("Workflow failed at step '%s': %v", step.Name, err), "error", nil)
 			return
 		}
-		
+
 		// Update progress
 		execution.Progress = float64(i+1) / float64(execution.TotalSteps)
 		we.notifyProgress(execution)
 	}
-	
+
 	execution.Status = WorkflowStatusCompleted
 	we.emitEvent(execution, "workflow_completed", "Workflow completed successfully", "info", nil)
 	we.notifyProgress(execution)
@@ -571,43 +571,43 @@ func (we *WorkflowEngine) executeWorkflowSteps(execution *WorkflowExecution) {
 func (we *WorkflowEngine) executeStepWithRetry(execution *WorkflowExecution, step *WorkflowStep) error {
 	step.StartTime = time.Now()
 	step.Status = StepStatusRunning
-	
+
 	// Create operation name for recovery tracking
 	operationName := fmt.Sprintf("%s_%s", execution.WorkflowName, step.Name)
-	
+
 	// Use comprehensive error recovery
 	result := we.errorRecoveryManager.ExecuteWithRecovery(
 		execution.Context,
 		operationName,
 		func() error {
 			step.RetryCount++
-			we.emitEvent(execution, "step_attempt", 
-				fmt.Sprintf("Executing step '%s' (attempt %d)", step.Name, step.RetryCount), 
+			we.emitEvent(execution, "step_attempt",
+				fmt.Sprintf("Executing step '%s' (attempt %d)", step.Name, step.RetryCount),
 				"info", nil)
-			
+
 			return we.executeStep(execution, step)
 		},
 	)
-	
+
 	step.EndTime = time.Now()
 	step.Duration = step.EndTime.Sub(step.StartTime)
 	execution.Metrics.StepExecutionTimes[step.Name] = step.Duration
 	execution.Metrics.RetryAttempts[step.Name] = result.AttemptCount
-	
+
 	if result.Success {
 		step.Status = StepStatusCompleted
 		step.RetryCount = result.AttemptCount
-		we.emitEvent(execution, "step_completed", 
-			fmt.Sprintf("Step '%s' completed successfully after %d attempts", step.Name, result.AttemptCount), 
+		we.emitEvent(execution, "step_completed",
+			fmt.Sprintf("Step '%s' completed successfully after %d attempts", step.Name, result.AttemptCount),
 			"info", nil)
 		return nil
 	}
-	
+
 	// Step failed - record error and recovery information
 	step.Status = StepStatusFailed
 	step.Error = result.LastError
 	step.RetryCount = result.AttemptCount
-	
+
 	// Emit detailed error event with recovery suggestions
 	errorDetails := map[string]interface{}{
 		"attempt_count":    result.AttemptCount,
@@ -616,12 +616,12 @@ func (we *WorkflowEngine) executeStepWithRetry(execution *WorkflowExecution, ste
 		"suggestions":      result.Suggestions,
 		"last_error":       result.LastError.Error(),
 	}
-	
-	we.emitEvent(execution, "step_failed", 
-		fmt.Sprintf("Step '%s' failed after %d attempts and %v: %v", 
-			step.Name, result.AttemptCount, result.TotalDuration, result.LastError), 
+
+	we.emitEvent(execution, "step_failed",
+		fmt.Sprintf("Step '%s' failed after %d attempts and %v: %v",
+			step.Name, result.AttemptCount, result.TotalDuration, result.LastError),
 		"error", errorDetails)
-	
+
 	// Create enhanced error with recovery suggestions
 	enhancedError := &WorkflowStepError{
 		StepName:        step.Name,
@@ -631,14 +631,14 @@ func (we *WorkflowEngine) executeStepWithRetry(execution *WorkflowExecution, ste
 		RecoveryActions: result.RecoveryActions,
 		Suggestions:     result.Suggestions,
 	}
-	
+
 	return enhancedError
 }
 
 // executeStep executes a single workflow step
 func (we *WorkflowEngine) executeStep(execution *WorkflowExecution, step *WorkflowStep) error {
 	we.emitEvent(execution, "step_started", fmt.Sprintf("Starting step '%s' (%s)", step.Name, step.Type), "info", nil)
-	
+
 	switch step.Type {
 	case "analyze":
 		return we.executeAnalyzeStep(execution, step)
@@ -663,25 +663,25 @@ func (we *WorkflowEngine) executeAnalyzeStep(execution *WorkflowExecution, step 
 	if we.patternAnalyzer == nil {
 		return fmt.Errorf("pattern analyzer not registered")
 	}
-	
+
 	sourcePath := step.Parameters["source_path"]
 	if sourcePath == "" {
 		sourcePath = execution.ProjectConfig.DataProfiles["main_dataset"].Path
 	}
-	
+
 	// Analyze data pattern
 	pattern, err := we.patternAnalyzer.AnalyzePattern(execution.Context, sourcePath)
 	if err != nil {
 		return fmt.Errorf("data pattern analysis failed: %w", err)
 	}
-	
+
 	execution.Results.DataPattern = pattern
 	step.Output = map[string]interface{}{
 		"total_files": pattern.TotalFiles,
 		"total_size":  pattern.TotalSizeHuman,
 		"small_files": pattern.FileSizes.SmallFiles.CountUnder1MB,
 	}
-	
+
 	// Generate recommendations if engine is available
 	if we.recommendationEngine != nil {
 		recommendations, err := we.recommendationEngine.GenerateRecommendations(execution.Context, sourcePath)
@@ -691,7 +691,7 @@ func (we *WorkflowEngine) executeAnalyzeStep(execution *WorkflowExecution, step 
 			execution.Results.Recommendations = recommendations
 		}
 	}
-	
+
 	// Generate warnings if system is available
 	if we.warningSystem != nil && execution.Results.Recommendations != nil {
 		warnings, err := we.warningSystem.AnalyzePattern(execution.Context, pattern, execution.Results.Recommendations.CostAnalysis)
@@ -701,7 +701,7 @@ func (we *WorkflowEngine) executeAnalyzeStep(execution *WorkflowExecution, step 
 			execution.Results.WarningReport = warnings
 		}
 	}
-	
+
 	return nil
 }
 
@@ -709,14 +709,14 @@ func (we *WorkflowEngine) executeBundleStep(execution *WorkflowExecution, step *
 	if we.bundlingEngine == nil {
 		return fmt.Errorf("bundling engine not registered")
 	}
-	
+
 	// Check if bundling is recommended
 	if execution.Results.DataPattern != nil {
 		recommendation, err := we.bundlingEngine.ShouldBundle(execution.Context, execution.Results.DataPattern)
 		if err != nil {
 			return fmt.Errorf("bundling recommendation failed: %w", err)
 		}
-		
+
 		if !recommendation.Recommended {
 			step.Status = StepStatusSkipped
 			step.Output = map[string]interface{}{
@@ -726,40 +726,40 @@ func (we *WorkflowEngine) executeBundleStep(execution *WorkflowExecution, step *
 			return nil
 		}
 	}
-	
+
 	// Create bundling request
 	sourcePath := step.Parameters["source_path"]
 	if sourcePath == "" && execution.Results.DataPattern != nil {
 		sourcePath = execution.Results.DataPattern.AnalyzedPath
 	}
-	
+
 	request := &BundlingTransferRequest{
 		SourcePath:      sourcePath,
 		DestinationPath: step.Parameters["output_path"],
 		Metadata:        make(map[string]interface{}),
 	}
-	
+
 	// Copy step parameters to metadata
 	for k, v := range step.Parameters {
 		request.Metadata[k] = v
 	}
-	
+
 	// Execute bundling
 	result, err := we.bundlingEngine.ProcessForBundling(execution.Context, request)
 	if err != nil {
 		return fmt.Errorf("bundling failed: %w", err)
 	}
-	
+
 	execution.Results.BundlingResult = result
 	execution.Results.TotalCostSavings += result.CostSavings.TotalSavings
-	
+
 	step.Output = map[string]interface{}{
-		"bundles_created":    len(result.BundlePaths),
-		"compression_ratio":  result.CompressionRatio,
-		"cost_savings":       result.CostSavings.TotalSavings,
-		"files_bundled":      result.BundledFileCount,
+		"bundles_created":   len(result.BundlePaths),
+		"compression_ratio": result.CompressionRatio,
+		"cost_savings":      result.CostSavings.TotalSavings,
+		"files_bundled":     result.BundledFileCount,
 	}
-	
+
 	return nil
 }
 
@@ -775,23 +775,23 @@ func (we *WorkflowEngine) executeTransferStep(execution *WorkflowExecution, step
 				}
 			}
 		}
-		
+
 		// Default to s5cmd if no recommendation
 		if engineName == "" {
 			engineName = "s5cmd"
 		}
 	}
-	
+
 	engine, exists := we.transferEngines[engineName]
 	if !exists {
 		return fmt.Errorf("transfer engine '%s' not registered", engineName)
 	}
-	
+
 	// Check engine availability
 	if err := engine.IsAvailable(execution.Context); err != nil {
 		return fmt.Errorf("transfer engine '%s' not available: %w", engineName, err)
 	}
-	
+
 	// Build transfer request
 	transferReq := &TransferRequest{
 		ID:          fmt.Sprintf("%s_transfer_%d", execution.ID, time.Now().UnixNano()),
@@ -800,32 +800,32 @@ func (we *WorkflowEngine) executeTransferStep(execution *WorkflowExecution, step
 		Context:     execution.Context,
 		Options:     TransferOptions{},
 	}
-	
+
 	// Configure transfer options from step parameters
 	if concurrency := step.Parameters["concurrency"]; concurrency != "" {
 		if c, err := fmt.Sscanf(concurrency, "%d", &transferReq.Options.Concurrency); err == nil && c == 1 {
 			// Concurrency set successfully
 		}
 	}
-	
+
 	// Execute transfer
 	result, err := engine.Upload(execution.Context, transferReq)
 	if err != nil {
 		return fmt.Errorf("transfer failed: %w", err)
 	}
-	
+
 	execution.Results.TransferResults = append(execution.Results.TransferResults, result)
 	execution.Results.TotalFilesProcessed += int64(result.FilesTransferred)
 	execution.Results.TotalBytesTransferred += result.BytesTransferred
-	
+
 	step.Output = map[string]interface{}{
-		"engine":             engineName,
-		"files_transferred":  result.FilesTransferred,
-		"bytes_transferred":  result.BytesTransferred,
-		"average_speed":      result.AverageSpeed,
-		"duration":           result.Duration.String(),
+		"engine":            engineName,
+		"files_transferred": result.FilesTransferred,
+		"bytes_transferred": result.BytesTransferred,
+		"average_speed":     result.AverageSpeed,
+		"duration":          result.Duration.String(),
 	}
-	
+
 	return nil
 }
 
@@ -857,11 +857,11 @@ func (we *WorkflowEngine) executeReportStep(execution *WorkflowExecution, step *
 				successfulTransfers++
 			}
 		}
-		
+
 		if len(execution.Results.TransferResults) > 0 {
 			execution.Results.SuccessRate = float64(successfulTransfers) / float64(len(execution.Results.TransferResults)) * 100
 		}
-		
+
 		// Add recommendations for future
 		if execution.Results.WarningReport != nil && len(execution.Results.WarningReport.QuickFixes) > 0 {
 			for _, fix := range execution.Results.WarningReport.QuickFixes {
@@ -869,13 +869,13 @@ func (we *WorkflowEngine) executeReportStep(execution *WorkflowExecution, step *
 			}
 		}
 	}
-	
+
 	step.Output = map[string]interface{}{
 		"report_generated": true,
 		"total_savings":    execution.Results.TotalCostSavings,
 		"success_rate":     execution.Results.SuccessRate,
 	}
-	
+
 	return nil
 }
 
@@ -885,12 +885,12 @@ func (we *WorkflowEngine) executeReportStep(execution *WorkflowExecution, step *
 func (we *WorkflowEngine) GetActiveWorkflows() map[string]*WorkflowExecution {
 	we.mu.RLock()
 	defer we.mu.RUnlock()
-	
+
 	active := make(map[string]*WorkflowExecution)
 	for id, execution := range we.activeWorkflows {
 		active[id] = execution
 	}
-	
+
 	return active
 }
 
@@ -898,18 +898,18 @@ func (we *WorkflowEngine) GetActiveWorkflows() map[string]*WorkflowExecution {
 func (we *WorkflowEngine) GetWorkflowExecution(executionID string) (*WorkflowExecution, error) {
 	we.mu.RLock()
 	defer we.mu.RUnlock()
-	
+
 	if execution, exists := we.activeWorkflows[executionID]; exists {
 		return execution, nil
 	}
-	
+
 	// Search in history
 	for _, execution := range we.executionHistory {
 		if execution.ID == executionID {
 			return execution, nil
 		}
 	}
-	
+
 	return nil, fmt.Errorf("workflow execution '%s' not found", executionID)
 }
 
@@ -918,11 +918,11 @@ func (we *WorkflowEngine) CancelWorkflow(executionID string) error {
 	we.mu.RLock()
 	execution, exists := we.activeWorkflows[executionID]
 	we.mu.RUnlock()
-	
+
 	if !exists {
 		return fmt.Errorf("workflow execution '%s' not found or not active", executionID)
 	}
-	
+
 	execution.CancelFunc()
 	return nil
 }
@@ -934,7 +934,7 @@ func (we *WorkflowEngine) notifyProgress(execution *WorkflowExecution) {
 	if !exists {
 		return
 	}
-	
+
 	for _, callback := range callbacks {
 		go callback(execution)
 	}
@@ -948,7 +948,7 @@ func (we *WorkflowEngine) emitEvent(execution *WorkflowExecution, eventType, mes
 		Severity:  severity,
 		Metadata:  metadata,
 	}
-	
+
 	execution.Events = append(execution.Events, event)
 	we.eventBus.publish(eventType, event)
 }
@@ -957,7 +957,7 @@ func (eb *WorkflowEventBus) publish(eventType string, event *WorkflowEvent) {
 	eb.mu.RLock()
 	subscribers := eb.subscribers[eventType]
 	eb.mu.RUnlock()
-	
+
 	for _, ch := range subscribers {
 		select {
 		case ch <- event:
@@ -978,18 +978,18 @@ func (we *WorkflowEngine) RegisterProgressCallback(executionID string, callback 
 // Shutdown gracefully shuts down the workflow engine
 func (we *WorkflowEngine) Shutdown(ctx context.Context) error {
 	close(we.shutdownChan)
-	
+
 	// Cancel all active workflows
 	we.mu.RLock()
 	for _, execution := range we.activeWorkflows {
 		execution.CancelFunc()
 	}
 	we.mu.RUnlock()
-	
+
 	// Wait for workflows to complete or timeout
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
-	
+
 	for {
 		select {
 		case <-ctx.Done():
@@ -998,7 +998,7 @@ func (we *WorkflowEngine) Shutdown(ctx context.Context) error {
 			we.mu.RLock()
 			activeCount := len(we.activeWorkflows)
 			we.mu.RUnlock()
-			
+
 			if activeCount == 0 {
 				return nil
 			}

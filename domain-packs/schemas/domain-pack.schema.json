@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Domain Pack Schema",
+  "description": "Schema for AWS Research Wizard domain pack configurations",
+  "type": "object",
+  "required": ["name", "description", "version", "spack_config", "aws_config"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*$",
+      "description": "Domain pack identifier"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 200,
+      "description": "Brief description of the domain pack"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version"
+    },
+    "maintainers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "email"],
+        "properties": {
+          "name": {"type": "string"},
+          "email": {"type": "string", "format": "email"},
+          "organization": {"type": "string"}
+        }
+      }
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["life-sciences", "physical-sciences", "engineering", "computer-science", "social-sciences"]
+      }
+    },
+    "spack_config": {
+      "type": "object",
+      "required": ["packages", "compiler"],
+      "properties": {
+        "packages": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "compiler": {"type": "string"},
+        "target": {"type": "string"},
+        "optimization": {"type": "string"}
+      }
+    },
+    "aws_config": {
+      "type": "object",
+      "required": ["instance_types", "storage"],
+      "properties": {
+        "instance_types": {
+          "type": "object",
+          "properties": {
+            "small": {"type": "string"},
+            "medium": {"type": "string"},
+            "large": {"type": "string"}
+          }
+        },
+        "storage": {
+          "type": "object",
+          "properties": {
+            "type": {"type": "string", "enum": ["gp3", "io2", "st1"]},
+            "size_gb": {"type": "integer", "minimum": 10}
+          }
+        },
+        "network": {
+          "type": "object",
+          "properties": {
+            "placement_group": {"type": "boolean"},
+            "enhanced_networking": {"type": "boolean"}
+          }
+        }
+      }
+    },
+    "workflows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description", "script"],
+        "properties": {
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "script": {"type": "string"},
+          "input_data": {"type": "string"},
+          "expected_output": {"type": "string"}
+        }
+      }
+    }
+  }
+}
