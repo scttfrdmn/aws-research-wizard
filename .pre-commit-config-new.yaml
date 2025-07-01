@@ -1,0 +1,73 @@
+repos:
+  # Standard pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+
+  # Go linting and formatting
+  - repo: https://github.com/dnephin/pre-commit-golang
+    rev: v0.5.1
+    hooks:
+      - id: go-fmt
+      - id: go-vet-mod
+      - id: go-mod-tidy
+
+  # Advanced Go linting
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.55.2
+    hooks:
+      - id: golangci-lint
+        args: [--timeout=5m]
+
+  # Security scanning
+  - repo: https://github.com/securecodewarrior/github-action-add-sarif
+    rev: v1
+    hooks:
+      - id: gosec
+        args: ['-fmt=json', '-out=gosec-report.json', '-stdout', '-verbose=text', './...']
+
+  # Comprehensive linting and quality checks
+  - repo: local
+    hooks:
+      - id: comprehensive-linting
+        name: Comprehensive Code Linting
+        entry: scripts/lint-all.sh
+        language: script
+        files: '\.(go|py|sh|yaml|yml|json)$'
+        pass_filenames: false
+
+      - id: go-test-coverage
+        name: Go Test Coverage Check
+        entry: scripts/check-coverage.sh
+        language: script
+        files: '\.go$'
+        args: ['--min-coverage=85', '--min-file-coverage=80']
+
+      - id: go-build-check
+        name: Go Build Check
+        entry: bash -c "cd go && go build -v ./..."
+        language: system
+        files: '\.go$'
+        pass_filenames: false
+
+      - id: go-test-all
+        name: Go Test All Packages
+        entry: bash -c "cd go && go test -v -race ./..."
+        language: system
+        files: '\.go$'
+        pass_filenames: false
+
+  # Domain pack validation
+  - repo: local
+    hooks:
+      - id: validate-domain-packs
+        name: Validate Domain Packs
+        entry: python domain-packs/tools/validate_domains.py
+        language: python
+        files: 'domain-packs/.*\.(yaml|yml)$'
+        additional_dependencies: [pyyaml, jsonschema]

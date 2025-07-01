@@ -1,0 +1,148 @@
+site_name: AWS Research Wizard
+site_description: Run Research Workloads on AWS with Pre-configured Domain Packs
+site_url: https://researchwizard.app
+repo_url: https://github.com/aws-research-wizard/aws-research-wizard
+repo_name: aws-research-wizard/aws-research-wizard
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - search.highlight
+    - search.share
+    - toc.follow
+    - content.code.copy
+    - content.code.annotate
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  logo: assets/wizard-logo.png
+  favicon: assets/favicon.ico
+
+extra_css:
+  - assets/extra.css
+
+extra_javascript:
+  - assets/extra.js
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: ['.']
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - tables
+  - footnotes
+  - def_list
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+plugins:
+  - search:
+      lang: en
+  - awesome-pages
+  - redirects:
+      redirect_maps:
+        'index.md': 'getting-started/index.md'
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Quick Start: getting-started/index.md
+    - Installation: getting-started/installation.md
+    - Your First Research Environment: getting-started/first-environment.md
+    - Configuration: getting-started/configuration.md
+  - Domain Packs:
+    - Overview: domain-packs/index.md
+    - Life Sciences:
+      - Genomics & Bioinformatics: domain-packs/life-sciences/genomics.md
+      - Structural Biology: domain-packs/life-sciences/structural-biology.md
+      - Neuroscience: domain-packs/life-sciences/neuroscience.md
+      - Drug Discovery: domain-packs/life-sciences/drug-discovery.md
+    - Physical Sciences:
+      - Climate Modeling: domain-packs/physical-sciences/climate-modeling.md
+      - Materials Science: domain-packs/physical-sciences/materials-science.md
+      - Chemistry: domain-packs/physical-sciences/chemistry.md
+      - Astronomy: domain-packs/physical-sciences/astronomy.md
+    - Engineering:
+      - CFD Engineering: domain-packs/engineering/cfd-engineering.md
+      - Mechanical Engineering: domain-packs/engineering/mechanical-engineering.md
+      - Aerospace Engineering: domain-packs/engineering/aerospace-engineering.md
+    - Computer Science:
+      - AI/ML Research: domain-packs/computer-science/ai-research.md
+      - HPC Development: domain-packs/computer-science/hpc-development.md
+      - Data Science: domain-packs/computer-science/data-science.md
+      - Quantum Computing: domain-packs/computer-science/quantum-computing.md
+  - Tutorials:
+    - Domain Pack Tutorials: tutorials/index.md
+    - Genomics Workflows: tutorials/genomics/index.md
+    - Climate Modeling: tutorials/climate/index.md
+    - AI/ML Training: tutorials/ai-ml/index.md
+    - Cost Optimization: tutorials/cost-optimization.md
+  - API Reference:
+    - Go API: api/go/index.md
+    - REST API: api/rest/index.md
+    - CLI Commands: api/cli/index.md
+  - Deployment:
+    - Production Deployment: deployment/production.md
+    - AWS Configuration: deployment/aws-setup.md
+    - Security Best Practices: deployment/security.md
+    - Monitoring & Alerting: deployment/monitoring.md
+  - Contributing:
+    - Development Guide: contributing/development.md
+    - Creating Domain Packs: contributing/domain-packs.md
+    - Testing: contributing/testing.md
+    - Documentation: contributing/documentation.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/aws-research-wizard/aws-research-wizard
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/aws_research
+  analytics:
+    provider: google
+    property: G-XXXXXXXXXX
+  version:
+    provider: mike
+    default: latest
+
+copyright: >
+  Copyright &copy; 2025 AWS Research Wizard Team –
+  <a href="#__consent">Change cookie settings</a>
