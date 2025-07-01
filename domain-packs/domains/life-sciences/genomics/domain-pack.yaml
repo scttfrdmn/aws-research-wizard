@@ -1,0 +1,67 @@
+name: genomics
+description: "Complete genomics analysis with optimized bioinformatics tools"
+version: "1.0.0"
+categories: ["life-sciences"]
+
+maintainers:
+  - name: "AWS Research Wizard Team"
+    email: "research-wizard@example.com"
+    organization: "AWS Research Computing"
+
+spack_config:
+  packages:
+    - "bwa@0.7.17 %gcc@11.4.0 +pic"
+    - "bwa-mem2@2.2.1 %gcc@11.4.0 +sse4"
+    - "bowtie2@2.5.0 %gcc@11.4.0 +tbb"
+    - "star@2.7.10b %gcc@11.4.0 +shared+zlib"
+    - "hisat2@2.2.1 %gcc@11.4.0 +sse4"
+    - "minimap2@2.26 %gcc@11.4.0 +sse4"
+    - "blast-plus@2.14.0 %gcc@11.4.0 +pic"
+    - "gatk@4.4.0.0 %gcc@11.4.0"
+    - "samtools@1.17 %gcc@11.4.0 +curses"
+    - "bcftools@1.17 %gcc@11.4.0 +curses"
+    - "picard@3.0.0 %gcc@11.4.0"
+    - "trimmomatic@0.39 %gcc@11.4.0"
+    - "fastqc@0.12.1 %gcc@11.4.0"
+    - "multiqc@1.14 %gcc@11.4.0"
+  compiler: "gcc@11.4.0"
+  target: "x86_64_v3"
+  optimization: "-O3 -march=native"
+
+aws_config:
+  instance_types:
+    small: "c6i.2xlarge"    # 8 vCPU, 16 GB RAM - $0.34/hr
+    medium: "r6i.4xlarge"   # 16 vCPU, 128 GB RAM - $1.02/hr  
+    large: "r6i.8xlarge"    # 32 vCPU, 256 GB RAM - $2.05/hr
+  storage:
+    type: "gp3"
+    size_gb: 500
+    iops: 3000
+    throughput: 125
+  network:
+    placement_group: true
+    enhanced_networking: true
+    efa_enabled: false
+
+workflows:
+  - name: "variant_calling"
+    description: "GATK best practices variant calling pipeline"
+    script: "workflows/variant_calling.sh"
+    input_data: "s3://aws-research-data/1000genomes/samples/"
+    expected_output: "VCF files with called variants"
+    
+  - name: "rna_seq_analysis"
+    description: "RNA-seq differential expression analysis"
+    script: "workflows/rna_seq.sh"
+    input_data: "s3://aws-research-data/tcga/rna-seq/"
+    expected_output: "Gene expression matrices and DEG results"
+
+cost_estimates:
+  small_workload: "$5-15/day"
+  medium_workload: "$25-75/day" 
+  large_workload: "$50-200/day"
+
+documentation:
+  getting_started: "docs/genomics_quickstart.md"
+  tutorials: "docs/tutorials/"
+  best_practices: "docs/best_practices.md"

@@ -21,7 +21,7 @@ for resolving problems.
 
 Issue types:
   - network: Network connectivity and performance issues
-  - auth: Authentication and permission problems  
+  - auth: Authentication and permission problems
   - config: Configuration file and setup issues
   - transfer: Data transfer failures and performance
   - storage: S3 storage access and quota issues
@@ -59,7 +59,7 @@ var (
 func init() {
 	// Add diagnose command to data command
 	DataCmd.AddCommand(diagnoseCmd)
-	
+
 	// Flags
 	diagnoseCmd.Flags().StringVar(&diagnoseConfig, "config", "", "Configuration file to diagnose")
 	diagnoseCmd.Flags().BoolVarP(&diagnoseVerbose, "verbose", "v", false, "Show detailed diagnostic information")
@@ -73,33 +73,33 @@ func init() {
 func runDiagnose(cmd *cobra.Command, args []string) error {
 	fmt.Printf("🔧 AWS Research Wizard - System Diagnostics\n")
 	fmt.Printf("==========================================\n\n")
-	
+
 	// Determine issue type
 	issueType := "general"
 	if len(args) > 0 {
 		issueType = args[0]
 	}
-	
+
 	fmt.Printf("📋 Diagnostic Mode: %s\n", issueType)
 	if diagnoseTimeout > 0 {
 		fmt.Printf("⏱️  Timeout: %d seconds\n", diagnoseTimeout)
 	}
 	fmt.Println()
-	
+
 	// Create diagnostic context with timeout
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(diagnoseTimeout)*time.Second)
 	defer cancel()
-	
+
 	// Create error recovery manager for testing
 	erm := data.NewErrorRecoveryManager()
-	
+
 	diagnostics := &DiagnosticResults{
 		IssueType:   issueType,
 		StartTime:   time.Now(),
 		Tests:       make(map[string]*DiagnosticTest),
 		Suggestions: []string{},
 	}
-	
+
 	// Run diagnostics based on issue type
 	switch issueType {
 	case "network":
@@ -139,13 +139,13 @@ func runDiagnose(cmd *cobra.Command, args []string) error {
 			fmt.Printf("General diagnostic error: %v\n", err)
 		}
 	}
-	
+
 	diagnostics.EndTime = time.Now()
 	diagnostics.Duration = diagnostics.EndTime.Sub(diagnostics.StartTime)
-	
+
 	// Display results
 	displayDiagnosticResults(diagnostics)
-	
+
 	// Interactive mode
 	if diagnoseInteractive {
 		err := runInteractiveTroubleshooting(diagnostics)
@@ -153,7 +153,7 @@ func runDiagnose(cmd *cobra.Command, args []string) error {
 			fmt.Printf("Interactive mode error: %v\n", err)
 		}
 	}
-	
+
 	// Generate report if requested
 	if diagnoseReport != "" {
 		err := generateDiagnosticReport(diagnostics, diagnoseReport)
@@ -163,7 +163,7 @@ func runDiagnose(cmd *cobra.Command, args []string) error {
 			fmt.Printf("📄 Diagnostic report saved: %s\n", diagnoseReport)
 		}
 	}
-	
+
 	return nil
 }
 
@@ -202,15 +202,15 @@ type DiagnosticSummary struct {
 func diagnoseNetwork(ctx context.Context, erm *data.ErrorRecoveryManager, results *DiagnosticResults) error {
 	fmt.Printf("🌐 Network Connectivity Diagnostics\n")
 	fmt.Printf("─────────────────────────────────────\n")
-	
+
 	// Test DNS resolution
-	results.Tests["dns_resolution"] = runDiagnosticTest("DNS Resolution", 
+	results.Tests["dns_resolution"] = runDiagnosticTest("DNS Resolution",
 		"Testing DNS resolution for AWS endpoints", func() error {
 			// Simulate DNS test
 			time.Sleep(100 * time.Millisecond)
 			return nil
 		})
-	
+
 	// Test AWS endpoint connectivity
 	results.Tests["aws_connectivity"] = runDiagnosticTest("AWS Endpoint Connectivity",
 		"Testing connectivity to AWS S3 endpoints", func() error {
@@ -218,7 +218,7 @@ func diagnoseNetwork(ctx context.Context, erm *data.ErrorRecoveryManager, result
 			time.Sleep(200 * time.Millisecond)
 			return nil
 		})
-	
+
 	// Test bandwidth
 	results.Tests["bandwidth"] = runDiagnosticTest("Bandwidth Test",
 		"Testing network bandwidth to S3", func() error {
@@ -226,7 +226,7 @@ func diagnoseNetwork(ctx context.Context, erm *data.ErrorRecoveryManager, result
 			time.Sleep(500 * time.Millisecond)
 			return nil
 		})
-	
+
 	return nil
 }
 
@@ -234,7 +234,7 @@ func diagnoseNetwork(ctx context.Context, erm *data.ErrorRecoveryManager, result
 func diagnoseAuthentication(ctx context.Context, erm *data.ErrorRecoveryManager, results *DiagnosticResults) error {
 	fmt.Printf("🔐 Authentication & Permissions Diagnostics\n")
 	fmt.Printf("──────────────────────────────────────────────\n")
-	
+
 	// Test AWS credentials
 	results.Tests["aws_credentials"] = runDiagnosticTest("AWS Credentials",
 		"Validating AWS credential configuration", func() error {
@@ -244,7 +244,7 @@ func diagnoseAuthentication(ctx context.Context, erm *data.ErrorRecoveryManager,
 			}
 			return nil
 		})
-	
+
 	// Test S3 permissions
 	results.Tests["s3_permissions"] = runDiagnosticTest("S3 Permissions",
 		"Testing S3 bucket access permissions", func() error {
@@ -252,7 +252,7 @@ func diagnoseAuthentication(ctx context.Context, erm *data.ErrorRecoveryManager,
 			time.Sleep(300 * time.Millisecond)
 			return nil
 		})
-	
+
 	return nil
 }
 
@@ -260,12 +260,12 @@ func diagnoseAuthentication(ctx context.Context, erm *data.ErrorRecoveryManager,
 func diagnoseConfiguration(ctx context.Context, erm *data.ErrorRecoveryManager, results *DiagnosticResults) error {
 	fmt.Printf("⚙️  Configuration Diagnostics\n")
 	fmt.Printf("─────────────────────────────\n")
-	
+
 	configFile := diagnoseConfig
 	if configFile == "" {
 		configFile = "project.yaml"
 	}
-	
+
 	// Test configuration file existence
 	results.Tests["config_exists"] = runDiagnosticTest("Configuration File",
 		fmt.Sprintf("Checking if configuration file exists: %s", configFile), func() error {
@@ -274,7 +274,7 @@ func diagnoseConfiguration(ctx context.Context, erm *data.ErrorRecoveryManager, 
 			}
 			return nil
 		})
-	
+
 	// Test configuration syntax
 	if results.Tests["config_exists"].Status == "pass" {
 		results.Tests["config_syntax"] = runDiagnosticTest("Configuration Syntax",
@@ -284,7 +284,7 @@ func diagnoseConfiguration(ctx context.Context, erm *data.ErrorRecoveryManager, 
 				return err
 			})
 	}
-	
+
 	return nil
 }
 
@@ -292,7 +292,7 @@ func diagnoseConfiguration(ctx context.Context, erm *data.ErrorRecoveryManager, 
 func diagnoseTransfer(ctx context.Context, erm *data.ErrorRecoveryManager, results *DiagnosticResults) error {
 	fmt.Printf("📤 Transfer Diagnostics\n")
 	fmt.Printf("──────────────────────\n")
-	
+
 	// Test transfer engines availability
 	engines := []string{"s5cmd", "rclone", "aws"}
 	for _, engine := range engines {
@@ -308,7 +308,7 @@ func diagnoseTransfer(ctx context.Context, erm *data.ErrorRecoveryManager, resul
 				return nil
 			})
 	}
-	
+
 	return nil
 }
 
@@ -316,7 +316,7 @@ func diagnoseTransfer(ctx context.Context, erm *data.ErrorRecoveryManager, resul
 func diagnoseStorage(ctx context.Context, erm *data.ErrorRecoveryManager, results *DiagnosticResults) error {
 	fmt.Printf("🗃️  Storage Diagnostics\n")
 	fmt.Printf("──────────────────────\n")
-	
+
 	// Test local storage
 	results.Tests["local_storage"] = runDiagnosticTest("Local Storage Space",
 		"Checking local disk space availability", func() error {
@@ -324,7 +324,7 @@ func diagnoseStorage(ctx context.Context, erm *data.ErrorRecoveryManager, result
 			time.Sleep(100 * time.Millisecond)
 			return nil
 		})
-	
+
 	// Test S3 bucket access
 	if diagnoseDestination != "" {
 		results.Tests["s3_bucket_access"] = runDiagnosticTest("S3 Bucket Access",
@@ -334,7 +334,7 @@ func diagnoseStorage(ctx context.Context, erm *data.ErrorRecoveryManager, result
 				return nil
 			})
 	}
-	
+
 	return nil
 }
 
@@ -342,7 +342,7 @@ func diagnoseStorage(ctx context.Context, erm *data.ErrorRecoveryManager, result
 func diagnoseWorkflow(ctx context.Context, erm *data.ErrorRecoveryManager, results *DiagnosticResults) error {
 	fmt.Printf("🔄 Workflow Diagnostics\n")
 	fmt.Printf("──────────────────────\n")
-	
+
 	// Test workflow engine initialization
 	results.Tests["workflow_engine"] = runDiagnosticTest("Workflow Engine",
 		"Testing workflow engine initialization", func() error {
@@ -352,7 +352,7 @@ func diagnoseWorkflow(ctx context.Context, erm *data.ErrorRecoveryManager, resul
 			}
 			return nil
 		})
-	
+
 	return nil
 }
 
@@ -360,12 +360,12 @@ func diagnoseWorkflow(ctx context.Context, erm *data.ErrorRecoveryManager, resul
 func diagnoseGeneral(ctx context.Context, erm *data.ErrorRecoveryManager, results *DiagnosticResults) error {
 	fmt.Printf("🔍 General System Diagnostics\n")
 	fmt.Printf("────────────────────────────\n")
-	
+
 	// Run subset of other diagnostics
 	diagnoseNetwork(ctx, erm, results)
 	diagnoseAuthentication(ctx, erm, results)
 	diagnoseTransfer(ctx, erm, results)
-	
+
 	return nil
 }
 
@@ -376,11 +376,11 @@ func runDiagnosticTest(name, description string, testFunc func() error) *Diagnos
 		Description: description,
 		Suggestions: []string{},
 	}
-	
+
 	startTime := time.Now()
 	err := testFunc()
 	test.Duration = time.Since(startTime)
-	
+
 	if err == nil {
 		test.Status = "pass"
 		fmt.Printf("✅ %s: PASS (%.2fs)\n", name, test.Duration.Seconds())
@@ -388,11 +388,11 @@ func runDiagnosticTest(name, description string, testFunc func() error) *Diagnos
 		test.Status = "fail"
 		test.Error = err
 		fmt.Printf("❌ %s: FAIL (%.2fs) - %v\n", name, test.Duration.Seconds(), err)
-		
+
 		// Add error-specific suggestions
 		test.Suggestions = generateTestSuggestions(err)
 	}
-	
+
 	return test
 }
 
@@ -401,10 +401,10 @@ func generateTestSuggestions(err error) []string {
 	if err == nil {
 		return []string{}
 	}
-	
+
 	errMsg := strings.ToLower(err.Error())
 	suggestions := []string{}
-	
+
 	if strings.Contains(errMsg, "credentials") {
 		suggestions = append(suggestions, "Configure AWS credentials using 'aws configure' or set environment variables")
 	}
@@ -417,7 +417,7 @@ func generateTestSuggestions(err error) []string {
 	if strings.Contains(errMsg, "network") || strings.Contains(errMsg, "timeout") {
 		suggestions = append(suggestions, "Check network connectivity and firewall settings")
 	}
-	
+
 	return suggestions
 }
 
@@ -425,7 +425,7 @@ func generateTestSuggestions(err error) []string {
 func displayDiagnosticResults(results *DiagnosticResults) {
 	fmt.Printf("\n📊 Diagnostic Summary\n")
 	fmt.Printf("═══════════════════\n")
-	
+
 	// Calculate summary
 	summary := &DiagnosticSummary{}
 	for _, test := range results.Tests {
@@ -442,7 +442,7 @@ func displayDiagnosticResults(results *DiagnosticResults) {
 		}
 	}
 	results.Summary = summary
-	
+
 	fmt.Printf("Total Tests: %d\n", summary.TotalTests)
 	fmt.Printf("✅ Passed: %d\n", summary.PassedTests)
 	fmt.Printf("❌ Failed: %d\n", summary.FailedTests)
@@ -453,7 +453,7 @@ func displayDiagnosticResults(results *DiagnosticResults) {
 		fmt.Printf("⏭️  Skipped: %d\n", summary.SkippedTests)
 	}
 	fmt.Printf("Duration: %v\n", results.Duration)
-	
+
 	// Show suggestions for failed tests
 	if summary.FailedTests > 0 {
 		fmt.Printf("\n💡 Recommendations:\n")
@@ -467,7 +467,7 @@ func displayDiagnosticResults(results *DiagnosticResults) {
 			}
 		}
 	}
-	
+
 	if summary.FailedTests == 0 {
 		fmt.Printf("\n🎉 All diagnostics passed! Your system appears to be configured correctly.\n")
 	}
@@ -477,14 +477,14 @@ func displayDiagnosticResults(results *DiagnosticResults) {
 func runInteractiveTroubleshooting(results *DiagnosticResults) error {
 	fmt.Printf("\n🤖 Interactive Troubleshooting Mode\n")
 	fmt.Printf("═══════════════════════════════════\n")
-	
+
 	fmt.Printf("Based on the diagnostic results, here are the recommended next steps:\n\n")
-	
+
 	if results.Summary.FailedTests == 0 {
 		fmt.Printf("✅ All tests passed! No troubleshooting needed.\n")
 		return nil
 	}
-	
+
 	// Provide step-by-step guidance for failed tests
 	stepNum := 1
 	for _, test := range results.Tests {
@@ -501,7 +501,7 @@ func runInteractiveTroubleshooting(results *DiagnosticResults) error {
 			stepNum++
 		}
 	}
-	
+
 	return nil
 }
 

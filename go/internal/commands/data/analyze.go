@@ -21,7 +21,7 @@ for transfer optimization, cost savings, and domain-specific configurations.
 
 This command performs comprehensive analysis including:
 - File pattern detection and classification
-- Research domain identification  
+- Research domain identification
 - Cost optimization analysis
 - Transfer engine recommendations
 - Bundling optimization suggestions
@@ -41,18 +41,18 @@ Examples:
 }
 
 var (
-	outputFormat    string
-	verbose         bool
-	generateConfig  bool
-	configOutput    string
+	outputFormat     string
+	verbose          bool
+	generateConfig   bool
+	configOutput     string
 	includeEstimates bool
-	domainHint      string
+	domainHint       string
 )
 
 func init() {
 	// Add analyze command to data command
 	DataCmd.AddCommand(analyzeCmd)
-	
+
 	// Flags
 	analyzeCmd.Flags().StringVarP(&outputFormat, "output", "o", "table", "Output format (table, json, yaml)")
 	analyzeCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Show detailed analysis")
@@ -68,30 +68,30 @@ func runAnalyze(cmd *cobra.Command, args []string) error {
 	if len(args) > 0 {
 		analyzePath = args[0]
 	}
-	
+
 	// Convert to absolute path
 	absPath, err := filepath.Abs(analyzePath)
 	if err != nil {
 		return fmt.Errorf("failed to get absolute path: %w", err)
 	}
-	
+
 	// Check if path exists
 	if _, err := os.Stat(absPath); os.IsNotExist(err) {
 		return fmt.Errorf("path does not exist: %s", absPath)
 	}
-	
+
 	fmt.Printf("🔍 Analyzing data patterns in: %s\n\n", absPath)
-	
+
 	// Create analyzer
 	analyzer := data.NewPatternAnalyzer()
-	
+
 	// Analyze patterns
 	ctx := context.Background()
 	pattern, err := analyzer.AnalyzePattern(ctx, absPath)
 	if err != nil {
 		return fmt.Errorf("pattern analysis failed: %w", err)
 	}
-	
+
 	// Apply domain hint if provided
 	if domainHint != "" {
 		// Add domain hint to detected domains if not already present
@@ -107,13 +107,13 @@ func runAnalyze(cmd *cobra.Command, args []string) error {
 			pattern.DomainHints.Confidence[domainHint] = 0.8 // User-provided hint
 		}
 	}
-	
+
 	// Generate recommendations
 	recommendations, err := generateRecommendations(ctx, pattern, absPath)
 	if err != nil {
 		fmt.Printf("⚠️  Warning: Could not generate recommendations: %v\n", err)
 	}
-	
+
 	// Display results
 	switch outputFormat {
 	case "json":
@@ -123,11 +123,11 @@ func runAnalyze(cmd *cobra.Command, args []string) error {
 	default:
 		err = outputTable(pattern, recommendations)
 	}
-	
+
 	if err != nil {
 		return fmt.Errorf("output failed: %w", err)
 	}
-	
+
 	// Generate configuration if requested
 	if generateConfig {
 		err = generateProjectConfig(pattern, recommendations, configOutput)
@@ -136,18 +136,18 @@ func runAnalyze(cmd *cobra.Command, args []string) error {
 		}
 		fmt.Printf("\n✅ Project configuration generated: %s\n", configOutput)
 	}
-	
+
 	return nil
 }
 
 func generateRecommendations(ctx context.Context, pattern *data.DataPattern, path string) (*data.RecommendationResult, error) {
 	// Create cost calculator
 	costCalculator := data.NewS3CostCalculator("us-east-1")
-	
+
 	// Create recommendation engine
 	analyzer := data.NewPatternAnalyzer()
 	recommendationEngine := data.NewRecommendationEngine(analyzer, costCalculator, nil, nil)
-	
+
 	// Generate recommendations
 	return recommendationEngine.GenerateRecommendations(ctx, path)
 }
@@ -155,12 +155,12 @@ func generateRecommendations(ctx context.Context, pattern *data.DataPattern, pat
 func outputTable(pattern *data.DataPattern, recommendations *data.RecommendationResult) error {
 	fmt.Println("📊 Data Pattern Analysis Results")
 	fmt.Println("================================")
-	
+
 	// Basic statistics
 	fmt.Printf("Total Files:     %d\n", pattern.TotalFiles)
 	fmt.Printf("Total Size:      %s\n", pattern.TotalSizeHuman)
 	fmt.Printf("Analysis Time:   %s\n", pattern.AnalysisTime.Format("2006-01-02 15:04:05"))
-	
+
 	// Domain detection
 	if len(pattern.DomainHints.DetectedDomains) > 0 {
 		fmt.Printf("\n🔬 Detected Research Domains:\n")
@@ -169,17 +169,17 @@ func outputTable(pattern *data.DataPattern, recommendations *data.Recommendation
 			fmt.Printf("  • %s (%.1f%% confidence)\n", domain, confidence)
 		}
 	}
-	
+
 	// File type breakdown
 	fmt.Printf("\n📁 File Type Analysis:\n")
 	for ext, info := range pattern.FileTypes {
 		if info.Count > 0 {
 			percentage := float64(info.TotalSize) / float64(pattern.TotalSize) * 100
-			fmt.Printf("  • %-10s: %6d files, %8s (%.1f%%)\n", 
+			fmt.Printf("  • %-10s: %6d files, %8s (%.1f%%)\n",
 				ext, info.Count, formatBytes(info.TotalSize), percentage)
 		}
 	}
-	
+
 	// Small file analysis
 	smallFiles := pattern.FileSizes.SmallFiles
 	if smallFiles.CountUnder1MB > 0 {
@@ -189,12 +189,12 @@ func outputTable(pattern *data.DataPattern, recommendations *data.Recommendation
 		fmt.Printf("  Files < 100KB: %d\n", smallFiles.CountUnder100KB)
 		fmt.Printf("  Files < 1MB:   %d\n", smallFiles.CountUnder1MB)
 		fmt.Printf("  Small file ratio: %.1f%%\n", smallFiles.PercentageSmall)
-		
+
 		if smallFiles.PercentageSmall > 50 {
 			fmt.Printf("  💡 High small file ratio detected - bundling recommended\n")
 		}
 	}
-	
+
 	// Efficiency metrics
 	if pattern.Efficiency.EstimatedBundles > 0 {
 		fmt.Printf("\n💰 Efficiency Analysis:\n")
@@ -207,20 +207,20 @@ func outputTable(pattern *data.DataPattern, recommendations *data.Recommendation
 			fmt.Printf("  Storage savings:    $%.2f/month\n", pattern.Efficiency.StorageClassSavings)
 		}
 	}
-	
+
 	// Recommendations
 	if recommendations != nil {
 		fmt.Printf("\n🚀 Optimization Recommendations:\n")
-		
+
 		// Tool recommendations
 		for _, toolRec := range recommendations.ToolRecommendations {
-			fmt.Printf("  • %s: Use %s (%.1f%% confidence)\n", 
+			fmt.Printf("  • %s: Use %s (%.1f%% confidence)\n",
 				toolRec.Task, toolRec.RecommendedTool, toolRec.Confidence*100)
 			if toolRec.Reasoning != "" {
 				fmt.Printf("    Reason: %s\n", toolRec.Reasoning)
 			}
 		}
-		
+
 		// Optimization suggestions
 		for _, opt := range recommendations.OptimizationSuggestions {
 			fmt.Printf("  • %s: %s\n", opt.Type, opt.Description)
@@ -228,7 +228,7 @@ func outputTable(pattern *data.DataPattern, recommendations *data.Recommendation
 				fmt.Printf("    Potential savings: $%.2f/month\n", opt.Impact.CostSavingsMonthly)
 			}
 		}
-		
+
 		// Cost analysis summary
 		if recommendations.CostAnalysis != nil {
 			fmt.Printf("\n💵 Cost Analysis:\n")
@@ -241,7 +241,7 @@ func outputTable(pattern *data.DataPattern, recommendations *data.Recommendation
 			}
 		}
 	}
-	
+
 	// Domain-specific recommendations
 	if len(pattern.DomainHints.DetectedDomains) > 0 {
 		fmt.Printf("\n🎯 Domain-Specific Recommendations:\n")
@@ -249,7 +249,7 @@ func outputTable(pattern *data.DataPattern, recommendations *data.Recommendation
 			showDomainRecommendations(domain)
 		}
 	}
-	
+
 	return nil
 }
 
@@ -259,7 +259,7 @@ func showDomainRecommendations(domain string) {
 	if !exists {
 		return
 	}
-	
+
 	fmt.Printf("  %s:\n", domain)
 	fmt.Printf("    • Preferred engines: %v\n", profile.TransferOptimization.PreferredEngines)
 	fmt.Printf("    • Optimal concurrency: %d\n", profile.TransferOptimization.OptimalConcurrency)
@@ -275,7 +275,7 @@ func outputJSON(pattern *data.DataPattern, recommendations *data.RecommendationR
 		"recommendations": recommendations,
 		"timestamp":       pattern.AnalysisTime,
 	}
-	
+
 	encoder := json.NewEncoder(os.Stdout)
 	encoder.SetIndent("", "  ")
 	return encoder.Encode(output)
@@ -287,20 +287,20 @@ func outputYAML(pattern *data.DataPattern, recommendations *data.RecommendationR
 		"recommendations": recommendations,
 		"timestamp":       pattern.AnalysisTime,
 	}
-	
+
 	return yaml.NewEncoder(os.Stdout).Encode(output)
 }
 
 func generateProjectConfig(pattern *data.DataPattern, recommendations *data.RecommendationResult, outputFile string) error {
 	// Create project config manager
 	pcm := data.NewProjectConfigManager(filepath.Dir(outputFile))
-	
+
 	// Generate configuration
 	projectConfig, err := pcm.GenerateConfig(pattern, recommendations)
 	if err != nil {
 		return err
 	}
-	
+
 	// Save to file
 	return pcm.SaveConfig(projectConfig, outputFile)
 }

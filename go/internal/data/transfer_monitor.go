@@ -17,12 +17,12 @@ import (
 type TransferMonitor struct {
 	s3Manager       *S3Manager
 	pipelineManager *PipelineManager
-	
+
 	// Monitoring state
-	mu              sync.RWMutex
-	transfers       map[string]*MonitoredTransfer
-	pipelines       map[string]*MonitoredPipeline
-	
+	mu        sync.RWMutex
+	transfers map[string]*MonitoredTransfer
+	pipelines map[string]*MonitoredPipeline
+
 	// UI state
 	refreshInterval time.Duration
 	lastUpdate      time.Time
@@ -41,14 +41,14 @@ type MonitoredTransfer struct {
 
 // MonitoredPipeline represents a pipeline being monitored
 type MonitoredPipeline struct {
-	ID          string
-	Name        string
-	Status      PipelineStatus
-	TotalJobs   int
-	CompletedJobs int
-	FailedJobs  int
-	Progress    float64
-	StartTime   time.Time
+	ID                  string
+	Name                string
+	Status              PipelineStatus
+	TotalJobs           int
+	CompletedJobs       int
+	FailedJobs          int
+	Progress            float64
+	StartTime           time.Time
 	EstimatedCompletion time.Time
 }
 
@@ -56,23 +56,23 @@ type MonitoredPipeline struct {
 type TransferStatus string
 
 const (
-	TransferStatusQueued     TransferStatus = "queued"
-	TransferStatusActive     TransferStatus = "active"
-	TransferStatusCompleted  TransferStatus = "completed"
-	TransferStatusFailed     TransferStatus = "failed"
-	TransferStatusCancelled  TransferStatus = "cancelled"
+	TransferStatusQueued    TransferStatus = "queued"
+	TransferStatusActive    TransferStatus = "active"
+	TransferStatusCompleted TransferStatus = "completed"
+	TransferStatusFailed    TransferStatus = "failed"
+	TransferStatusCancelled TransferStatus = "cancelled"
 )
 
 // MonitorModel represents the TUI model for transfer monitoring
 type MonitorModel struct {
-	monitor      *TransferMonitor
-	table        table.Model
-	progress     progress.Model
-	width        int
-	height       int
-	selectedTab  int
-	tabs         []string
-	quitting     bool
+	monitor     *TransferMonitor
+	table       table.Model
+	progress    progress.Model
+	width       int
+	height      int
+	selectedTab int
+	tabs        []string
+	quitting    bool
 }
 
 // NewTransferMonitor creates a new transfer monitor
@@ -157,7 +157,7 @@ func (tm *TransferMonitor) updateMonitoringData() {
 
 		monitored.CompletedJobs = completed
 		monitored.FailedJobs = failed
-		
+
 		if monitored.TotalJobs > 0 {
 			monitored.Progress = totalProgress / float64(monitored.TotalJobs)
 		}
@@ -174,11 +174,11 @@ func (tm *TransferMonitor) GetTransferSummary() TransferSummary {
 	defer tm.mu.RUnlock()
 
 	summary := TransferSummary{
-		ActiveTransfers:    0,
-		CompletedTransfers: 0,
-		FailedTransfers:    0,
+		ActiveTransfers:       0,
+		CompletedTransfers:    0,
+		FailedTransfers:       0,
 		TotalBytesTransferred: 0,
-		AverageSpeed:       0,
+		AverageSpeed:          0,
 	}
 
 	var totalSpeed int64
@@ -197,7 +197,7 @@ func (tm *TransferMonitor) GetTransferSummary() TransferSummary {
 		case TransferStatusFailed:
 			summary.FailedTransfers++
 		}
-		
+
 		summary.TotalBytesTransferred += transfer.Progress.BytesTransferred
 	}
 
@@ -214,11 +214,11 @@ func (tm *TransferMonitor) GetPipelineSummary() PipelineSummary {
 	defer tm.mu.RUnlock()
 
 	summary := PipelineSummary{
-		ActivePipelines:   0,
+		ActivePipelines:    0,
 		CompletedPipelines: 0,
-		FailedPipelines:   0,
-		TotalJobs:         0,
-		CompletedJobs:     0,
+		FailedPipelines:    0,
+		TotalJobs:          0,
+		CompletedJobs:      0,
 	}
 
 	for _, pipeline := range tm.pipelines {
@@ -230,7 +230,7 @@ func (tm *TransferMonitor) GetPipelineSummary() PipelineSummary {
 		case PipelineStatusFailed:
 			summary.FailedPipelines++
 		}
-		
+
 		summary.TotalJobs += pipeline.TotalJobs
 		summary.CompletedJobs += pipeline.CompletedJobs
 	}
@@ -259,7 +259,7 @@ type PipelineSummary struct {
 // NewMonitorModel creates a new TUI model for monitoring
 func NewMonitorModel(monitor *TransferMonitor) MonitorModel {
 	tabs := []string{"Transfers", "Pipelines", "Summary"}
-	
+
 	columns := []table.Column{
 		{Title: "ID", Width: 20},
 		{Title: "Type", Width: 10},
@@ -397,7 +397,7 @@ func (m MonitorModel) renderTransfersView() string {
 		speed := formatBytes(transfer.Progress.Speed) + "/s"
 		eta := transfer.Progress.ETA.Round(time.Second).String()
 		progress := fmt.Sprintf("%.1f%%", transfer.Progress.Percentage)
-		
+
 		rows = append(rows, table.Row{
 			transfer.ID[:20], // Truncate ID
 			transfer.Type,
@@ -418,15 +418,15 @@ func (m MonitorModel) renderPipelinesView() string {
 	defer m.monitor.mu.RUnlock()
 
 	doc := strings.Builder{}
-	
+
 	for _, pipeline := range m.monitor.pipelines {
 		status := string(pipeline.Status)
 		progress := fmt.Sprintf("%.1f%%", pipeline.Progress)
 		jobs := fmt.Sprintf("%d/%d", pipeline.CompletedJobs, pipeline.TotalJobs)
-		
+
 		doc.WriteString(fmt.Sprintf("Pipeline: %s\n", pipeline.Name))
 		doc.WriteString(fmt.Sprintf("Status: %s | Progress: %s | Jobs: %s\n", status, progress, jobs))
-		doc.WriteString(m.progress.ViewAs(pipeline.Progress/100.0))
+		doc.WriteString(m.progress.ViewAs(pipeline.Progress / 100.0))
 		doc.WriteString("\n\n")
 	}
 
@@ -439,17 +439,17 @@ func (m MonitorModel) renderSummaryView() string {
 	pipelineSummary := m.monitor.GetPipelineSummary()
 
 	doc := strings.Builder{}
-	
+
 	doc.WriteString("Transfer Summary:\n")
-	doc.WriteString(fmt.Sprintf("  Active: %d | Completed: %d | Failed: %d\n", 
+	doc.WriteString(fmt.Sprintf("  Active: %d | Completed: %d | Failed: %d\n",
 		transferSummary.ActiveTransfers, transferSummary.CompletedTransfers, transferSummary.FailedTransfers))
 	doc.WriteString(fmt.Sprintf("  Total Transferred: %s\n", formatBytes(transferSummary.TotalBytesTransferred)))
 	doc.WriteString(fmt.Sprintf("  Average Speed: %s/s\n", formatBytes(transferSummary.AverageSpeed)))
-	
+
 	doc.WriteString("\nPipeline Summary:\n")
-	doc.WriteString(fmt.Sprintf("  Active: %d | Completed: %d | Failed: %d\n", 
+	doc.WriteString(fmt.Sprintf("  Active: %d | Completed: %d | Failed: %d\n",
 		pipelineSummary.ActivePipelines, pipelineSummary.CompletedPipelines, pipelineSummary.FailedPipelines))
-	doc.WriteString(fmt.Sprintf("  Jobs: %d/%d completed\n", 
+	doc.WriteString(fmt.Sprintf("  Jobs: %d/%d completed\n",
 		pipelineSummary.CompletedJobs, pipelineSummary.TotalJobs))
 
 	return doc.String()

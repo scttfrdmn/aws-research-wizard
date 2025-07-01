@@ -14,12 +14,12 @@ import (
 
 // CostCalculatorModel represents the cost calculation interface
 type CostCalculatorModel struct {
-	table        table.Model
-	domain       *config.DomainPack
-	calculator   *aws.PricingCalculator
-	estimates    map[string]*aws.CostEstimate
+	table            table.Model
+	domain           *config.DomainPack
+	calculator       *aws.PricingCalculator
+	estimates        map[string]*aws.CostEstimate
 	selectedInstance string
-	quitting     bool
+	quitting         bool
 }
 
 // NewCostCalculator creates a new cost calculator
@@ -28,7 +28,7 @@ func NewCostCalculator(domain *config.DomainPack, region string) (*CostCalculato
 	if err != nil {
 		return nil, fmt.Errorf("failed to create pricing calculator: %w", err)
 	}
-	
+
 	// Create table columns
 	columns := []table.Column{
 		{Title: "Instance Type", Width: 15},
@@ -39,20 +39,20 @@ func NewCostCalculator(domain *config.DomainPack, region string) (*CostCalculato
 		{Title: "Annual", Width: 12},
 		{Title: "Spot Savings", Width: 12},
 	}
-	
+
 	// Calculate cost estimates for all recommended instances
 	estimates := make(map[string]*aws.CostEstimate)
 	var rows []table.Row
-	
+
 	for _, rec := range domain.AWSInstanceRecommendations {
 		estimate, err := calculator.CalculateCost(rec.InstanceType)
 		if err != nil {
 			// Skip instances we can't calculate costs for
 			continue
 		}
-		
+
 		estimates[rec.InstanceType] = estimate
-		
+
 		rows = append(rows, table.Row{
 			rec.InstanceType,
 			fmt.Sprintf("%d", rec.VCPUs),
@@ -63,12 +63,12 @@ func NewCostCalculator(domain *config.DomainPack, region string) (*CostCalculato
 			fmt.Sprintf("$%.0f (70%%)", rec.CostPerHour*24*30.44*0.7),
 		})
 	}
-	
+
 	// Sort rows by monthly cost
 	sort.Slice(rows, func(i, j int) bool {
 		return estimates[rows[i][0]].MonthlyCost < estimates[rows[j][0]].MonthlyCost
 	})
-	
+
 	// Create and configure table
 	t := table.New(
 		table.WithColumns(columns),
@@ -76,7 +76,7 @@ func NewCostCalculator(domain *config.DomainPack, region string) (*CostCalculato
 		table.WithFocused(true),
 		table.WithHeight(10),
 	)
-	
+
 	// Style the table
 	s := table.DefaultStyles()
 	s.Header = s.Header.
@@ -89,7 +89,7 @@ func NewCostCalculator(domain *config.DomainPack, region string) (*CostCalculato
 		Background(lipgloss.Color("57")).
 		Bold(false)
 	t.SetStyles(s)
-	
+
 	return &CostCalculatorModel{
 		table:      t,
 		domain:     domain,
@@ -106,7 +106,7 @@ func (m *CostCalculatorModel) Init() tea.Cmd {
 // Update handles messages and updates the model
 func (m *CostCalculatorModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
-	
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -122,7 +122,7 @@ func (m *CostCalculatorModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 	}
-	
+
 	m.table, cmd = m.table.Update(msg)
 	return m, cmd
 }
@@ -132,9 +132,9 @@ func (m *CostCalculatorModel) View() string {
 	if m.quitting {
 		return ""
 	}
-	
+
 	title := titleStyle.Render(fmt.Sprintf("💰 Cost Calculator - %s", m.domain.Name))
-	
+
 	// Domain info section
 	domainInfo := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
@@ -146,7 +146,7 @@ func (m *CostCalculatorModel) View() string {
 			m.domain.Description,
 			m.domain.TargetUsers,
 		))
-	
+
 	// Cost optimization tips
 	tips := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
@@ -157,11 +157,11 @@ func (m *CostCalculatorModel) View() string {
 			"• Reserved instances save 30-60%\n" +
 			"• Consider S3 Intelligent Tiering\n" +
 			"• Enable detailed monitoring")
-	
+
 	help := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("241")).
 		Render("↑/↓: navigate • enter: select instance • q: quit")
-	
+
 	// Get current selection info
 	selectedRow := m.table.SelectedRow()
 	var selectionInfo string
@@ -188,7 +188,7 @@ func (m *CostCalculatorModel) View() string {
 				))
 		}
 	}
-	
+
 	content := lipgloss.JoinVertical(
 		lipgloss.Left,
 		title,
@@ -206,7 +206,7 @@ func (m *CostCalculatorModel) View() string {
 		"",
 		help,
 	)
-	
+
 	return lipgloss.NewStyle().
 		Padding(1, 2).
 		Render(content)
@@ -228,18 +228,18 @@ func RunCostCalculator(domain *config.DomainPack, region string) (string, *aws.C
 	if err != nil {
 		return "", nil, err
 	}
-	
+
 	p := tea.NewProgram(model, tea.WithAltScreen())
 	finalModel, err := p.Run()
 	if err != nil {
 		return "", nil, fmt.Errorf("failed to run cost calculator: %w", err)
 	}
-	
+
 	if calcModel, ok := finalModel.(*CostCalculatorModel); ok {
 		selectedInstance := calcModel.GetSelectedInstance()
 		estimate := calcModel.GetEstimate(selectedInstance)
 		return selectedInstance, estimate, nil
 	}
-	
+
 	return "", nil, fmt.Errorf("unexpected model type")
 }

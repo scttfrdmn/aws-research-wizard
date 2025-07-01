@@ -5,7 +5,7 @@ This directory contains comprehensive example configurations for common research
 ## Available Examples
 
 ### 🧬 Genomics Research (`genomics-project.yaml`)
-**Use Case**: Whole genome sequencing data management  
+**Use Case**: Whole genome sequencing data management
 **Key Features**:
 - FASTQ/BAM/VCF file handling with domain-specific optimizations
 - Small file bundling for efficiency
@@ -13,11 +13,11 @@ This directory contains comprehensive example configurations for common research
 - Cost-optimized storage tiering
 - Genomics-specific quality checks and validation
 
-**Typical Data Volumes**: 2.5TB raw sequencing, 1.8TB alignments, 500GB variants  
+**Typical Data Volumes**: 2.5TB raw sequencing, 1.8TB alignments, 500GB variants
 **Monthly Budget**: $500
 
 ### 🌍 Climate Science (`climate-research-project.yaml`)
-**Use Case**: Climate modeling and satellite observations  
+**Use Case**: Climate modeling and satellite observations
 **Key Features**:
 - NetCDF and GRIB file optimization
 - Time-series data organization
@@ -25,11 +25,11 @@ This directory contains comprehensive example configurations for common research
 - Public data compliance (FAIR principles)
 - Temporal partitioning and indexing
 
-**Typical Data Volumes**: 15TB satellite data, 25TB model outputs, 45TB reanalysis  
+**Typical Data Volumes**: 15TB satellite data, 25TB model outputs, 45TB reanalysis
 **Monthly Budget**: $2000
 
 ### 🤖 Machine Learning (`machine-learning-project.yaml`)
-**Use Case**: Deep learning training and model management  
+**Use Case**: Deep learning training and model management
 **Key Features**:
 - High-volume training dataset management
 - Model artifact versioning and registry
@@ -37,11 +37,11 @@ This directory contains comprehensive example configurations for common research
 - MLflow experiment tracking integration
 - Preprocessing cache management
 
-**Typical Data Volumes**: 50TB training data, 8TB model artifacts, 12TB cache  
+**Typical Data Volumes**: 50TB training data, 8TB model artifacts, 12TB cache
 **Monthly Budget**: $1500
 
 ### 🔭 Astronomy (`astronomy-project.yaml`)
-**Use Case**: Large-scale astronomical surveys  
+**Use Case**: Large-scale astronomical surveys
 **Key Features**:
 - FITS file handling and compression
 - Observation metadata extraction
@@ -49,11 +49,11 @@ This directory contains comprehensive example configurations for common research
 - Long-term preservation strategies
 - Observatory-specific quality controls
 
-**Typical Data Volumes**: 75TB raw observations, 60TB calibrated data, 25TB mosaics  
+**Typical Data Volumes**: 75TB raw observations, 60TB calibrated data, 25TB mosaics
 **Monthly Budget**: $3000
 
 ### 🗺️ Geospatial Research (`geospatial-project.yaml`)
-**Use Case**: GIS data processing and mapping  
+**Use Case**: GIS data processing and mapping
 **Key Features**:
 - Spatial indexing and coordinate system handling
 - LiDAR point cloud optimization
@@ -61,11 +61,11 @@ This directory contains comprehensive example configurations for common research
 - Vector data topology validation
 - Web service integration (WMS/WFS)
 
-**Typical Data Volumes**: 40TB imagery, 100TB LiDAR, 500GB vector data  
+**Typical Data Volumes**: 40TB imagery, 100TB LiDAR, 500GB vector data
 **Monthly Budget**: $1200
 
 ### ⚗️ Computational Chemistry (`chemistry-project.yaml`)
-**Use Case**: Molecular simulations and quantum calculations  
+**Use Case**: Molecular simulations and quantum calculations
 **Key Features**:
 - Molecular structure validation
 - MD trajectory compression
@@ -73,7 +73,7 @@ This directory contains comprehensive example configurations for common research
 - Chemical database integration
 - Property extraction and analysis
 
-**Typical Data Volumes**: 2TB structures, 50TB simulations, 10TB calculations  
+**Typical Data Volumes**: 2TB structures, 50TB simulations, 10TB calculations
 **Monthly Budget**: $800
 
 ## How to Use These Examples
@@ -123,7 +123,7 @@ Each example follows the same comprehensive structure:
 ```yaml
 project:           # Project metadata and settings
 data_profiles:     # Source data definitions
-destinations:      # Target storage configurations  
+destinations:      # Target storage configurations
 workflows:         # Data movement and processing workflows
 settings:          # Global system settings
 optimization:      # Performance and cost optimization

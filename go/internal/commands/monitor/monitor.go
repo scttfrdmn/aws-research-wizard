@@ -63,7 +63,7 @@ func runInteractiveMonitor(cmd *cobra.Command, refreshRate int, stackName, insta
 	ctx := context.Background()
 
 	region, _ := cmd.Flags().GetString("region")
-	
+
 	fmt.Printf("📊 AWS Research Wizard - Real-time Monitoring\n")
 	fmt.Printf("Region: %s | Refresh: %ds | Auto-refresh: %v\n\n", region, refreshRate, autoRefresh)
 
@@ -96,7 +96,7 @@ func runInteractiveMonitor(cmd *cobra.Command, refreshRate int, stackName, insta
 
 	// Start the monitoring dashboard
 	dashboard := tui.NewMonitoringDashboard(awsClient, monitoringManager, infraManager, config)
-	
+
 	if err := dashboard.Run(ctx); err != nil {
 		log.Fatalf("Monitoring dashboard failed: %v", err)
 	}
@@ -118,7 +118,7 @@ func createCostCommand() *cobra.Command {
 		Short: "Show cost analysis and tracking",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
-			
+
 			region, _ := cmd.Flags().GetString("region")
 			awsClient, err := aws.NewClient(ctx, region)
 			if err != nil {
@@ -172,7 +172,7 @@ func createAlertsCommand() *cobra.Command {
 		Short: "Show CloudWatch alerts and alarms",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
-			
+
 			region, _ := cmd.Flags().GetString("region")
 			awsClient, err := aws.NewClient(ctx, region)
 			if err != nil {
@@ -220,7 +220,7 @@ func createInstancesCommand(instanceID *string) *cobra.Command {
 		Short: "Show EC2 instance status and metrics",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
-			
+
 			region, _ := cmd.Flags().GetString("region")
 			awsClient, err := aws.NewClient(ctx, region)
 			if err != nil {
@@ -287,7 +287,7 @@ func createStacksCommand(stackName *string) *cobra.Command {
 		Short: "Show CloudFormation stack status",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
-			
+
 			region, _ := cmd.Flags().GetString("region")
 			awsClient, err := aws.NewClient(ctx, region)
 			if err != nil {
@@ -306,7 +306,7 @@ func createStacksCommand(stackName *string) *cobra.Command {
 				fmt.Printf("📚 Stack: %s\n\n", stackInfo.StackName)
 				fmt.Printf("Status: %s\n", stackInfo.Status)
 				fmt.Printf("Created: %s\n", stackInfo.CreatedTime.Format(time.RFC3339))
-				
+
 				if stackInfo.UpdatedTime != nil {
 					fmt.Printf("Updated: %s\n", stackInfo.UpdatedTime.Format(time.RFC3339))
 				}

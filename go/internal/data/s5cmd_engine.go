@@ -16,9 +16,9 @@ import (
 // S5cmdEngine implements TransferEngine for s5cmd
 type S5cmdEngine struct {
 	*BaseTransferEngine
-	executablePath string
+	executablePath  string
 	activeTransfers map[string]*s5cmdTransfer
-	mu             sync.RWMutex
+	mu              sync.RWMutex
 }
 
 // s5cmdTransfer tracks an active s5cmd transfer
@@ -34,23 +34,23 @@ type s5cmdTransfer struct {
 // NewS5cmdEngine creates a new s5cmd transfer engine
 func NewS5cmdEngine(executablePath string) *S5cmdEngine {
 	capabilities := EngineCapabilities{
-		Protocols:            []string{"s3"},
-		SupportsResume:       false, // s5cmd doesn't natively support resume
-		SupportsProgress:     true,
-		SupportsParallel:     true,
-		SupportsCompression:  false,
-		SupportsEncryption:   true, // via S3 server-side encryption
-		SupportsValidation:   true,
+		Protocols:              []string{"s3"},
+		SupportsResume:         false, // s5cmd doesn't natively support resume
+		SupportsProgress:       true,
+		SupportsParallel:       true,
+		SupportsCompression:    false,
+		SupportsEncryption:     true, // via S3 server-side encryption
+		SupportsValidation:     true,
 		SupportsBandwidthLimit: false,
-		SupportsRetry:        true,
-		OptimalFileSizeMin:   1024 * 1024,      // 1MB
-		OptimalFileSizeMax:   1024 * 1024 * 1024 * 100, // 100GB
-		MaxConcurrency:       50,
-		CloudOptimized:       []string{"aws"},
+		SupportsRetry:          true,
+		OptimalFileSizeMin:     1024 * 1024,              // 1MB
+		OptimalFileSizeMax:     1024 * 1024 * 1024 * 100, // 100GB
+		MaxConcurrency:         50,
+		CloudOptimized:         []string{"aws"},
 	}
 
 	base := NewBaseTransferEngine("s5cmd", "s3", capabilities)
-	
+
 	engine := &S5cmdEngine{
 		BaseTransferEngine: base,
 		executablePath:     executablePath,
@@ -85,7 +85,7 @@ func (e *S5cmdEngine) Upload(ctx context.Context, req *TransferRequest) (*Transf
 
 	// Build s5cmd command
 	args := e.buildUploadArgs(req)
-	
+
 	// Execute transfer
 	return e.executeTransfer(ctx, req, args)
 }
@@ -99,7 +99,7 @@ func (e *S5cmdEngine) Download(ctx context.Context, req *TransferRequest) (*Tran
 
 	// Build s5cmd command
 	args := e.buildDownloadArgs(req)
-	
+
 	// Execute transfer
 	return e.executeTransfer(ctx, req, args)
 }
@@ -113,11 +113,11 @@ func (e *S5cmdEngine) Sync(ctx context.Context, req *SyncRequest) (*TransferResu
 		Destination:      req.Destination,
 		ProgressCallback: req.ProgressCallback,
 		Context:          req.Context,
-		Options:          TransferOptions{
-			Overwrite:     true, // sync typically overwrites
-			Concurrency:   req.Options.Concurrency,
+		Options: TransferOptions{
+			Overwrite:      true, // sync typically overwrites
+			Concurrency:    req.Options.Concurrency,
 			BandwidthLimit: req.Options.BandwidthLimit,
-			ToolSpecific:  map[string]interface{}{
+			ToolSpecific: map[string]interface{}{
 				"sync_options": req.Options,
 			},
 		},
@@ -125,7 +125,7 @@ func (e *S5cmdEngine) Sync(ctx context.Context, req *SyncRequest) (*TransferResu
 
 	// Build s5cmd sync command
 	args := e.buildSyncArgs(transferReq, &req.Options)
-	
+
 	// Execute transfer
 	return e.executeTransfer(ctx, transferReq, args)
 }
@@ -216,7 +216,7 @@ func (e *S5cmdEngine) executeTransfer(ctx context.Context, req *TransferRequest,
 
 	// Create command with progress monitoring
 	cmd := exec.CommandContext(ctx, e.executablePath, args...)
-	
+
 	// Set up pipes for output monitoring
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -230,8 +230,8 @@ func (e *S5cmdEngine) executeTransfer(ctx context.Context, req *TransferRequest,
 
 	// Create transfer tracking
 	transfer := &s5cmdTransfer{
-		id:   req.ID,
-		cmd:  cmd,
+		id:  req.ID,
+		cmd: cmd,
 		progress: &TransferProgress{
 			StartTime: startTime,
 		},
@@ -336,34 +336,34 @@ func (e *S5cmdEngine) executeTransfer(ctx context.Context, req *TransferRequest,
 // monitorProgress monitors s5cmd output for progress information
 func (e *S5cmdEngine) monitorProgress(reader io.Reader, transfer *s5cmdTransfer) {
 	scanner := bufio.NewScanner(reader)
-	
+
 	// Regular expressions for parsing s5cmd output
 	// s5cmd outputs progress in various formats, we'll try to parse what we can
 	progressRegex := regexp.MustCompile(`(\d+)\s*\/\s*(\d+)`)
 	speedRegex := regexp.MustCompile(`(\d+(?:\.\d+)?)\s*(B|KB|MB|GB)\/s`)
-	
+
 	for scanner.Scan() {
 		line := scanner.Text()
-		
+
 		transfer.mu.Lock()
-		
+
 		// Try to parse progress information
 		if matches := progressRegex.FindStringSubmatch(line); len(matches) == 3 {
 			current, err1 := strconv.ParseInt(matches[1], 10, 64)
 			total, err2 := strconv.ParseInt(matches[2], 10, 64)
-			
+
 			if err1 == nil && err2 == nil && total > 0 {
 				transfer.progress.BytesTransferred = current
 				transfer.progress.TotalBytes = total
 				transfer.progress.Percentage = float64(current) / float64(total) * 100.0
 			}
 		}
-		
+
 		// Try to parse speed information
 		if matches := speedRegex.FindStringSubmatch(line); len(matches) == 3 {
 			speed, err := strconv.ParseFloat(matches[1], 64)
 			unit := matches[2]
-			
+
 			if err == nil {
 				var bytesPerSec int64
 				switch unit {
@@ -376,9 +376,9 @@ func (e *S5cmdEngine) monitorProgress(reader io.Reader, transfer *s5cmdTransfer)
 				case "GB":
 					bytesPerSec = int64(speed * 1024 * 1024 * 1024)
 				}
-				
+
 				transfer.progress.Speed = bytesPerSec
-				
+
 				// Calculate ETA
 				if bytesPerSec > 0 && transfer.progress.TotalBytes > transfer.progress.BytesTransferred {
 					remaining := transfer.progress.TotalBytes - transfer.progress.BytesTransferred
@@ -386,15 +386,15 @@ func (e *S5cmdEngine) monitorProgress(reader io.Reader, transfer *s5cmdTransfer)
 				}
 			}
 		}
-		
+
 		// Update last update time
 		transfer.progress.LastUpdate = time.Now()
-		
+
 		// Call progress callback
 		if transfer.callback != nil {
 			transfer.callback(*transfer.progress)
 		}
-		
+
 		transfer.mu.Unlock()
 	}
 }
@@ -403,15 +403,15 @@ func (e *S5cmdEngine) monitorProgress(reader io.Reader, transfer *s5cmdTransfer)
 func (e *S5cmdEngine) GetProgress(ctx context.Context, transferID string) (*TransferProgress, error) {
 	e.mu.RLock()
 	defer e.mu.RUnlock()
-	
+
 	transfer, exists := e.activeTransfers[transferID]
 	if !exists {
 		return nil, fmt.Errorf("transfer not found: %s", transferID)
 	}
-	
+
 	transfer.mu.RLock()
 	defer transfer.mu.RUnlock()
-	
+
 	// Return a copy of the progress
 	progress := *transfer.progress
 	return &progress, nil
@@ -422,18 +422,18 @@ func (e *S5cmdEngine) Cancel(ctx context.Context, transferID string) error {
 	e.mu.RLock()
 	transfer, exists := e.activeTransfers[transferID]
 	e.mu.RUnlock()
-	
+
 	if !exists {
 		return fmt.Errorf("transfer not found: %s", transferID)
 	}
-	
+
 	// Kill the process
 	if transfer.cmd != nil && transfer.cmd.Process != nil {
 		if err := transfer.cmd.Process.Kill(); err != nil {
 			return fmt.Errorf("failed to kill s5cmd process: %w", err)
 		}
 	}
-	
+
 	return nil
 }
 
@@ -442,12 +442,12 @@ func (e *S5cmdEngine) Validate() error {
 	if e.executablePath == "" {
 		return fmt.Errorf("executable path not set")
 	}
-	
+
 	// Check if executable exists and is executable
 	if _, err := exec.LookPath(e.executablePath); err != nil {
 		return fmt.Errorf("s5cmd executable not found: %w", err)
 	}
-	
+
 	return nil
 }
 
@@ -455,7 +455,7 @@ func (e *S5cmdEngine) Validate() error {
 func (e *S5cmdEngine) GetActiveTransfers() map[string]*TransferProgress {
 	e.mu.RLock()
 	defer e.mu.RUnlock()
-	
+
 	transfers := make(map[string]*TransferProgress)
 	for id, transfer := range e.activeTransfers {
 		transfer.mu.RLock()
@@ -463,7 +463,7 @@ func (e *S5cmdEngine) GetActiveTransfers() map[string]*TransferProgress {
 		transfer.mu.RUnlock()
 		transfers[id] = &progress
 	}
-	
+
 	return transfers
 }
 
@@ -484,7 +484,7 @@ func (e *S5cmdEngine) GetVersion(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to get s5cmd version: %w", err)
 	}
-	
+
 	// Parse version from output
 	version := strings.TrimSpace(string(output))
 	return version, nil
@@ -493,7 +493,7 @@ func (e *S5cmdEngine) GetVersion(ctx context.Context) (string, error) {
 // SupportsFeature checks if s5cmd supports a specific feature
 func (e *S5cmdEngine) SupportsFeature(feature string) bool {
 	caps := e.GetCapabilities()
-	
+
 	switch feature {
 	case "resume":
 		return caps.SupportsResume

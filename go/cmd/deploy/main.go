@@ -28,7 +28,7 @@ func main() {
 	var rootCmd = &cobra.Command{
 		Use:   "aws-research-wizard-deploy",
 		Short: "AWS Research Wizard - Infrastructure Deployment Tool",
-		Long: `Deploy optimized AWS research environments with pre-configured 
+		Long: `Deploy optimized AWS research environments with pre-configured
 domain packs, monitoring, and cost optimization.
 
 This deployment tool provides:
@@ -321,7 +321,7 @@ func createDeployCommand() *cobra.Command {
 			if domainName == "" {
 				log.Fatal("Domain name is required. Use --domain flag.")
 			}
-			
+
 			ctx := context.Background()
 			if configRoot == "" {
 				configRoot = findConfigRoot()
@@ -355,7 +355,7 @@ func createStatusCommand() *cobra.Command {
 			}
 
 			infraManager := aws.NewInfrastructureManager(awsClient)
-			
+
 			stackInfo, err := infraManager.GetStackInfo(ctx, stackName)
 			if err != nil {
 				log.Fatalf("Failed to get stack info: %v", err)
@@ -364,7 +364,7 @@ func createStatusCommand() *cobra.Command {
 			fmt.Printf("📊 Stack Status: %s\n\n", stackName)
 			fmt.Printf("Status: %s\n", stackInfo.Status)
 			fmt.Printf("Created: %s\n", stackInfo.CreatedTime.Format(time.RFC3339))
-			
+
 			if stackInfo.UpdatedTime != nil {
 				fmt.Printf("Updated: %s\n", stackInfo.UpdatedTime.Format(time.RFC3339))
 			}
@@ -398,10 +398,10 @@ func createDeleteCommand() *cobra.Command {
 
 			fmt.Printf("⚠️  Deleting stack: %s\n", stackName)
 			fmt.Printf("This action cannot be undone. Continue? (y/N): ")
-			
+
 			var response string
 			fmt.Scanln(&response)
-			
+
 			if response != "y" && response != "Y" {
 				fmt.Println("Deletion cancelled.")
 				return
@@ -431,7 +431,7 @@ func createListCommand() *cobra.Command {
 
 			// List instances with research wizard tags
 			filters := map[string][]string{
-				"tag:CreatedBy": {"AWS-Research-Wizard"},
+				"tag:CreatedBy":       {"AWS-Research-Wizard"},
 				"instance-state-name": {"running", "pending", "stopping", "stopped"},
 			}
 
@@ -466,7 +466,7 @@ func createValidateCommand() *cobra.Command {
 		Short: "Validate deployment configuration",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
-			
+
 			if configRoot == "" {
 				configRoot = findConfigRoot()
 			}

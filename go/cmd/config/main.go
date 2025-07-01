@@ -21,7 +21,7 @@ func main() {
 	var rootCmd = &cobra.Command{
 		Use:   "aws-research-wizard",
 		Short: "AWS Research Wizard - Domain Configuration Tool",
-		Long: `AWS Research Wizard helps researchers configure and deploy 
+		Long: `AWS Research Wizard helps researchers configure and deploy
 optimized AWS environments for various research domains.
 
 This tool provides:
@@ -100,7 +100,7 @@ func runInteractiveConfig(cmd *cobra.Command, args []string) {
 	fmt.Printf("  Cost: $%.3f/hour ($%.0f/month)\n", estimate.HourlyCost, estimate.MonthlyCost)
 	fmt.Printf("  Specs: %d vCPUs, %s RAM\n", estimate.VCPUs, estimate.Memory)
 	fmt.Printf("  Spot Savings: $%.0f/month (70%% discount)\n", estimate.SpotSavings*24*30.44)
-	
+
 	fmt.Printf("\n💡 Next Steps:\n")
 	fmt.Printf("  1. Deploy with: aws-research-wizard deploy --domain %s --instance %s\n", selectedDomain.Name, selectedInstance)
 	fmt.Printf("  2. Monitor with: aws-research-wizard monitor\n")
@@ -123,7 +123,7 @@ func createListCommand() *cobra.Command {
 			}
 
 			fmt.Printf("Available Research Domains (%d total):\n\n", len(domains))
-			
+
 			for name, domain := range domains {
 				fmt.Printf("📚 %s\n", name)
 				fmt.Printf("   %s\n", domain.Description)
@@ -158,20 +158,20 @@ func createInfoCommand() *cobra.Command {
 
 			fmt.Printf("🔬 Domain: %s\n\n", domain.Name)
 			fmt.Printf("Description: %s\n\n", domain.Description)
-			
+
 			fmt.Printf("Target Users: %s\n", domain.TargetUsers)
-			
+
 			fmt.Printf("\nSpack Package Categories (%d):\n", len(domain.SpackPackages))
 			for category, packages := range domain.SpackPackages {
 				fmt.Printf("  • %s: %v\n", category, packages)
 			}
-			
+
 			fmt.Printf("\nAWS Instance Recommendations:\n")
 			for _, rec := range domain.AWSInstanceRecommendations {
 				fmt.Printf("  • %s: %s (%d vCPUs, %d GB) - $%.3f/hour\n",
 					rec.UseCase, rec.InstanceType, rec.VCPUs, rec.MemoryGB, rec.CostPerHour)
 			}
-			
+
 			fmt.Printf("\nEstimated Costs:\n")
 			fmt.Printf("  • Compute: $%.0f/month\n", domain.EstimatedCost.Compute)
 			fmt.Printf("  • Storage: $%.0f/month\n", domain.EstimatedCost.Storage)

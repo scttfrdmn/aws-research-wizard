@@ -58,22 +58,22 @@ build-legacy: deps
 build-all: deps
 	@echo "Building unified binary for multiple platforms..."
 	@mkdir -p $(BUILD_DIR)
-	
+
 	# Linux AMD64
 	GOOS=linux GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_UNIFIED)-linux-amd64 ./cmd
-	
+
 	# Linux ARM64
 	GOOS=linux GOARCH=arm64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_UNIFIED)-linux-arm64 ./cmd
-	
+
 	# macOS AMD64
 	GOOS=darwin GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_UNIFIED)-darwin-amd64 ./cmd
-	
+
 	# macOS ARM64 (Apple Silicon)
 	GOOS=darwin GOARCH=arm64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_UNIFIED)-darwin-arm64 ./cmd
-	
+
 	# Windows AMD64
 	GOOS=windows GOARCH=amd64 $(GOBUILD) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_UNIFIED)-windows-amd64.exe ./cmd
-	
+
 	@echo "Built unified binaries for multiple platforms in $(BUILD_DIR)/"
 
 # Install to local bin
@@ -84,7 +84,7 @@ install: build
 	@echo "Installed unified binary to ~/bin/:"
 	@echo "  aws-research-wizard (unified tool)"
 	@echo "  - aws-research-wizard config (configuration tool)"
-	@echo "  - aws-research-wizard deploy (deployment tool)" 
+	@echo "  - aws-research-wizard deploy (deployment tool)"
 	@echo "  - aws-research-wizard monitor (monitoring dashboard)"
 	@echo "Add ~/bin to your PATH if not already included"
 

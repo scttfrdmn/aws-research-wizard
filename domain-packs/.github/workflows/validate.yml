@@ -1,0 +1,46 @@
+name: Domain Pack Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install Spack
+      run: |
+        git clone https://github.com/spack/spack.git
+        echo "$GITHUB_WORKSPACE/spack/bin" >> $GITHUB_PATH
+    
+    - name: Install validation tools
+      run: |
+        pip install pyyaml jsonschema cerberus
+    
+    - name: Validate domain pack schemas
+      run: |
+        python tools/validate_domains.py --all
+    
+    - name: Test Spack environment creation
+      run: |
+        for domain in domains/*/; do
+          if [ -f "$domain/spack.yaml" ]; then
+            echo "Validating $domain"
+            spack env create test-env "$domain/spack.yaml" || exit 1
+            spack env remove -y test-env
+          fi
+        done
+    
+    - name: Validate AWS configurations
+      run: |
+        python tools/validate_aws_configs.py --all

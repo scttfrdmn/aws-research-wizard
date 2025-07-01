@@ -14,8 +14,8 @@ import (
 var generateCmd = &cobra.Command{
 	Use:   "generate [path]",
 	Short: "Generate optimized project configuration from data analysis",
-	Long: `Generate an optimized project configuration by analyzing your data and 
-applying research domain best practices. This command creates a complete 
+	Long: `Generate an optimized project configuration by analyzing your data and
+applying research domain best practices. This command creates a complete
 project.yaml file that can be used immediately with the workflow engine.
 
 The command performs:
@@ -56,18 +56,18 @@ var (
 func init() {
 	// Add generate command to data command
 	DataCmd.AddCommand(generateCmd)
-	
+
 	// Output and project settings
 	generateCmd.Flags().StringVarP(&generateOutputFile, "output", "o", "project.yaml", "Output file for generated configuration")
 	generateCmd.Flags().StringVar(&generateProjectName, "project-name", "", "Project name (auto-detected if not provided)")
 	generateCmd.Flags().StringVar(&generateOwner, "owner", "", "Project owner email")
 	generateCmd.Flags().StringVar(&generateBudget, "budget", "1000", "Monthly budget in USD")
-	
+
 	// Analysis hints
 	generateCmd.Flags().StringVar(&generateDomain, "domain", "", "Research domain hint (genomics, climate, ml, etc.)")
 	generateCmd.Flags().StringVar(&generateTemplate, "template", "optimized", "Configuration template (minimal, optimized, comprehensive)")
 	generateCmd.Flags().StringSliceVar(&generateDestinations, "destination", []string{}, "S3 destinations (format: name=s3://bucket/prefix)")
-	
+
 	// Behavior
 	generateCmd.Flags().BoolVarP(&generateVerbose, "verbose", "v", false, "Show detailed generation process")
 	generateCmd.Flags().BoolVar(&generateOverwrite, "overwrite", false, "Overwrite existing configuration file")
@@ -79,30 +79,30 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 	if len(args) > 0 {
 		analyzePath = args[0]
 	}
-	
+
 	// Convert to absolute path
 	absPath, err := filepath.Abs(analyzePath)
 	if err != nil {
 		return fmt.Errorf("failed to get absolute path: %w", err)
 	}
-	
+
 	// Check if path exists
 	if _, err := os.Stat(absPath); os.IsNotExist(err) {
 		return fmt.Errorf("path does not exist: %s", absPath)
 	}
-	
+
 	// Check output file
 	outputPath, err := filepath.Abs(generateOutputFile)
 	if err != nil {
 		return fmt.Errorf("failed to resolve output path: %w", err)
 	}
-	
+
 	if !generateOverwrite {
 		if _, err := os.Stat(outputPath); err == nil {
 			return fmt.Errorf("output file already exists: %s (use --overwrite to replace)", outputPath)
 		}
 	}
-	
+
 	fmt.Printf("🔧 AWS Research Wizard - Configuration Generator\n")
 	fmt.Printf("================================================\n\n")
 	fmt.Printf("📂 Analyzing data in: %s\n", absPath)
@@ -112,20 +112,20 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 		fmt.Printf("🔬 Domain hint: %s\n", generateDomain)
 	}
 	fmt.Println()
-	
+
 	// Step 1: Analyze data patterns
 	if generateVerbose {
 		fmt.Println("🔍 Step 1: Analyzing data patterns...")
 	}
-	
+
 	analyzer := data.NewPatternAnalyzer()
 	ctx := context.Background()
-	
+
 	pattern, err := analyzer.AnalyzePattern(ctx, absPath)
 	if err != nil {
 		return fmt.Errorf("pattern analysis failed: %w", err)
 	}
-	
+
 	// Apply domain hint if provided
 	if generateDomain != "" {
 		found := false
@@ -140,22 +140,22 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 			pattern.DomainHints.Confidence[generateDomain] = 0.9 // High confidence for user hint
 		}
 	}
-	
+
 	if generateVerbose {
 		fmt.Printf("   • Total files: %d\n", pattern.TotalFiles)
 		fmt.Printf("   • Total size: %s\n", pattern.TotalSizeHuman)
 		fmt.Printf("   • Detected domains: %v\n", pattern.DomainHints.DetectedDomains)
 		fmt.Printf("   • Small files under 1MB: %d\n", pattern.FileSizes.SmallFiles.CountUnder1MB)
 	}
-	
+
 	// Step 2: Generate recommendations
 	if generateVerbose {
 		fmt.Println("🚀 Step 2: Generating optimization recommendations...")
 	}
-	
+
 	costCalculator := data.NewS3CostCalculator("us-east-1")
 	recommendationEngine := data.NewRecommendationEngine(analyzer, costCalculator, nil, nil)
-	
+
 	recommendations, err := recommendationEngine.GenerateRecommendations(ctx, absPath)
 	if err != nil {
 		if generateVerbose {
@@ -163,7 +163,7 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 		}
 		// Continue without recommendations
 	}
-	
+
 	if generateVerbose && recommendations != nil {
 		fmt.Printf("   • Tool recommendations: %d\n", len(recommendations.ToolRecommendations))
 		fmt.Printf("   • Optimization suggestions: %d\n", len(recommendations.OptimizationSuggestions))
@@ -171,52 +171,52 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 			fmt.Printf("   • Potential savings: $%.2f/month\n", recommendations.CostAnalysis.PotentialSavings)
 		}
 	}
-	
+
 	// Step 3: Generate project configuration
 	if generateVerbose {
 		fmt.Println("📋 Step 3: Generating project configuration...")
 	}
-	
+
 	pcm := data.NewProjectConfigManager(filepath.Dir(outputPath))
-	
+
 	// Generate base configuration
 	projectConfig, err := pcm.GenerateConfig(pattern, recommendations)
 	if err != nil {
 		return fmt.Errorf("config generation failed: %w", err)
 	}
-	
+
 	// Apply user customizations
 	err = applyUserCustomizations(projectConfig, absPath)
 	if err != nil {
 		return fmt.Errorf("failed to apply customizations: %w", err)
 	}
-	
+
 	// Apply template modifications
 	err = applyTemplate(projectConfig, generateTemplate)
 	if err != nil {
 		return fmt.Errorf("failed to apply template: %w", err)
 	}
-	
+
 	if generateVerbose {
 		fmt.Printf("   • Project name: %s\n", projectConfig.Project.Name)
 		fmt.Printf("   • Data profiles: %d\n", len(projectConfig.DataProfiles))
 		fmt.Printf("   • Destinations: %d\n", len(projectConfig.Destinations))
 		fmt.Printf("   • Workflows: %d\n", len(projectConfig.Workflows))
 	}
-	
+
 	// Step 4: Save configuration
 	if generateVerbose {
 		fmt.Println("💾 Step 4: Saving configuration...")
 	}
-	
+
 	err = pcm.SaveConfig(projectConfig, outputPath)
 	if err != nil {
 		return fmt.Errorf("failed to save configuration: %w", err)
 	}
-	
+
 	// Success output
 	fmt.Printf("✅ Configuration generated successfully!\n\n")
-	
+
 	// Show summary
 	fmt.Println("📊 Configuration Summary")
 	fmt.Println("========================")
@@ -224,7 +224,7 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 	fmt.Printf("Data profiles: %d\n", len(projectConfig.DataProfiles))
 	fmt.Printf("Destinations: %d\n", len(projectConfig.Destinations))
 	fmt.Printf("Workflows: %d\n", len(projectConfig.Workflows))
-	
+
 	// Show key optimizations
 	if len(pattern.DomainHints.DetectedDomains) > 0 {
 		fmt.Printf("\n🎯 Applied Optimizations:\n")
@@ -233,21 +233,21 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 			fmt.Printf("• %s domain optimizations (%.1f%% confidence)\n", domain, confidence)
 		}
 	}
-	
+
 	if projectConfig.Optimization.CostOptimization.Enabled {
 		fmt.Printf("• Cost optimization enabled\n")
 		if projectConfig.Optimization.CostOptimization.AutoBundleSmallFiles {
 			fmt.Printf("• Small file bundling enabled\n")
 		}
 	}
-	
+
 	// Show next steps
 	fmt.Printf("\n🚀 Next Steps:\n")
 	fmt.Printf("1. Review and customize: %s\n", outputPath)
 	fmt.Printf("2. Test with dry-run: aws-research-wizard data workflow run --dry-run\n")
 	fmt.Printf("3. Execute workflows: aws-research-wizard data workflow run\n")
 	fmt.Printf("4. Monitor progress: aws-research-wizard data workflow status\n")
-	
+
 	return nil
 }
 
@@ -260,17 +260,17 @@ func applyUserCustomizations(config *data.ProjectConfig, dataPath string) error 
 		// Generate name from directory
 		config.Project.Name = filepath.Base(dataPath) + "-project"
 	}
-	
+
 	// Owner
 	if generateOwner != "" {
 		config.Project.Owner = generateOwner
 	}
-	
+
 	// Budget
 	if generateBudget != "" {
 		config.Project.Budget = generateBudget
 	}
-	
+
 	// Add custom destinations
 	for _, dest := range generateDestinations {
 		err := addCustomDestination(config, dest)
@@ -278,7 +278,7 @@ func applyUserCustomizations(config *data.ProjectConfig, dataPath string) error 
 			return fmt.Errorf("invalid destination format '%s': %w", dest, err)
 		}
 	}
-	
+
 	return nil
 }
 
@@ -289,18 +289,18 @@ func addCustomDestination(config *data.ProjectConfig, destSpec string) error {
 	if len(parts) != 2 {
 		return fmt.Errorf("expected format 'name=s3://bucket/prefix'")
 	}
-	
+
 	name, uri := parts[0], parts[1]
 	if name == "" || uri == "" {
 		return fmt.Errorf("name and URI cannot be empty")
 	}
-	
+
 	// Add to destinations
 	config.Destinations[name] = data.Destination{
 		Name: name,
 		URI:  uri,
 	}
-	
+
 	return nil
 }
 
@@ -313,11 +313,11 @@ func splitOnFirst(s, delimiter string) []string {
 			break
 		}
 	}
-	
+
 	if idx == len(s) {
 		return []string{s}
 	}
-	
+
 	return []string{s[:idx], s[idx+len(delimiter):]}
 }
 
@@ -340,7 +340,7 @@ func applyMinimalTemplate(config *data.ProjectConfig) error {
 	// Disable most optimizations for simplicity
 	config.Optimization.CostOptimization.Enabled = false
 	config.Optimization.PerformanceOptimization.Enabled = false
-	
+
 	// Use simple engines
 	for i := range config.Workflows {
 		workflow := &config.Workflows[i]
@@ -350,14 +350,14 @@ func applyMinimalTemplate(config *data.ProjectConfig) error {
 		// Clear complex preprocessing/postprocessing
 		workflow.PreProcessing = []data.ProcessingStep{}
 		workflow.PostProcessing = []data.ProcessingStep{}
-		
+
 		// Simple configuration
 		workflow.Configuration = data.WorkflowConfiguration{
 			Concurrency: 4,
 			PartSize:    "64MB",
 		}
 	}
-	
+
 	return nil
 }
 
@@ -367,7 +367,7 @@ func applyOptimizedTemplate(config *data.ProjectConfig) error {
 	// Enable key optimizations without complexity
 	config.Optimization.CostOptimization.Enabled = true
 	config.Optimization.PerformanceOptimization.Enabled = true
-	
+
 	return nil
 }
 
@@ -378,26 +378,26 @@ func applyComprehensiveTemplate(config *data.ProjectConfig) error {
 	config.Optimization.CostOptimization.AutoBundleSmallFiles = true
 	config.Optimization.CostOptimization.AutoCompression = true
 	config.Optimization.CostOptimization.AutoStorageClass = true
-	
+
 	config.Optimization.PerformanceOptimization.Enabled = true
 	config.Optimization.PerformanceOptimization.AutoConcurrency = true
 	config.Optimization.PerformanceOptimization.NetworkOptimization = true
-	
+
 	// Add comprehensive monitoring
 	for i := range config.Workflows {
 		workflow := &config.Workflows[i]
-		
+
 		// Add comprehensive validation
 		workflow.PreProcessing = append(workflow.PreProcessing, data.ProcessingStep{
 			Name: "comprehensive_validation",
 			Type: "validation",
 			Parameters: map[string]string{
-				"check_integrity": "true",
+				"check_integrity":   "true",
 				"check_permissions": "true",
-				"estimate_costs": "true",
+				"estimate_costs":    "true",
 			},
 		})
-		
+
 		// Add comprehensive verification
 		workflow.PostProcessing = append(workflow.PostProcessing, data.ProcessingStep{
 			Name: "comprehensive_verification",
@@ -409,6 +409,6 @@ func applyComprehensiveTemplate(config *data.ProjectConfig) error {
 			},
 		})
 	}
-	
+
 	return nil
 }

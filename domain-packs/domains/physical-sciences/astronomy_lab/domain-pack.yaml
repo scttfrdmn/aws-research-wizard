@@ -1,0 +1,94 @@
+aws_config:
+  instance_types:
+    gpu: g5.xlarge
+    hpc: c6i.4xlarge
+    large: m6i.2xlarge
+    medium: m6i.xlarge
+    memory: r6i.2xlarge
+    small: m6i.large
+  network:
+    efa_enabled: true
+    enhanced_networking: true
+    placement_group: true
+  storage:
+    iops: 3000
+    size_gb: 500
+    throughput: 125
+    type: gp3
+categories:
+- Astronomy
+- Astrophysics
+- Cosmology
+- Planetary Science
+cost_estimates:
+  data_analysis: $10-35/day (survey data processing)
+  idle: $0/day (astronomy software cached)
+  large_surveys: $200-800/day (LSST-scale processing)
+  monthly_estimate: $400-2500/month for astronomy research group
+  simulations: $50-200/day (cosmological N-body)
+  storage: $2.30/month per 100GB astronomical data
+description: Astronomical data analysis, cosmological simulations, and telescope data
+  processing
+documentation:
+  best_practices: docs/astronomy_&_astrophysics_laboratory_best_practices.md
+  getting_started: docs/astronomy_&_astrophysics_laboratory_quickstart.md
+  tutorials: docs/astronomy_&_astrophysics_laboratory_tutorials.md
+maintainers:
+- email: aws-research-wizard@example.com
+  name: AWS Research Wizard
+  organization: AWS Research Computing
+name: Astronomy & Astrophysics Laboratory
+spack_config:
+  compiler: gcc@11.4.0
+  optimization: -O3
+  packages:
+  - ds9@8.4.1
+  - wcslib@8.2.2 %gcc@11.4.0
+  - cfitsio@4.3.0 %gcc@11.4.0
+  - fitsverify@4.22
+  - sextractor@2.28.0 %gcc@11.4.0
+  - swarp@2.41.5 %gcc@11.4.0
+  - psfex@3.24.1 %gcc@11.4.0
+  - gadget4@0.6 %gcc@11.4.0 +mpi+openmp
+  - arepo@1.0 %gcc@11.4.0 +mpi
+  - ramses@1.0 %gcc@11.4.0 +mpi+openmp
+  - rockstar@0.99.9 %gcc@11.4.0 +mpi
+  - subfind@2.0.1 %gcc@11.4.0 +mpi
+  - python@3.11.4 %gcc@11.4.0 +optimizations
+  - py-astropy@5.3.1
+  - py-numpy@1.25.1 ^openblas@0.3.23
+  - py-scipy@1.11.1
+  - py-matplotlib@3.7.2
+  - py-pandas@2.0.3
+  - py-h5py@3.9.0
+  - py-healpy@1.16.2
+  - py-photutils@1.8.0
+  - py-astroquery@0.4.6
+  - py-specutils@1.11.0
+  - py-scikit-image@0.21.0
+  - py-opencv@4.8.0
+  - py-pillow@10.0.0
+  - py-imageio@2.31.1
+  - swarp@2.41.5 %gcc@11.4.0
+  - topcat@4.8.11
+  - stilts@3.4.11
+  - gaia@2.3.2
+  - aladin@12.0
+  target: neoverse_v1
+version: 1.0.0
+workflows:
+- description: Sample Large-scale survey data processing (LSST, Euclid) workflow
+  expected_output: Processed research data
+  input_data: s3://aws-open-data/
+  name: Large-scale survey data processing (LSST, Euclid)
+  script: workflows/large-scale_survey_data_processing_(lsst,_euclid).sh
+- description: Sample Cosmological N-body simulations workflow
+  expected_output: Processed research data
+  input_data: s3://aws-open-data/
+  name: Cosmological N-body simulations
+  script: workflows/cosmological_n-body_simulations.sh
+- description: Sample Exoplanet detection and characterization workflow
+  expected_output: Processed research data
+  input_data: s3://aws-open-data/
+  name: Exoplanet detection and characterization
+  script: workflows/exoplanet_detection_and_characterization.sh

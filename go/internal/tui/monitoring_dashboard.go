@@ -46,20 +46,20 @@ func NewMonitoringDashboard(client *aws.Client, monitoring *aws.MonitoringManage
 
 // DashboardModel represents the monitoring dashboard state
 type DashboardModel struct {
-	dashboard         *MonitoringDashboard
-	instances         []aws.InstanceInfo
-	costs             []aws.CostData
-	alarms            []aws.AlarmInfo
-	metrics           map[string]*aws.InstanceMetrics
-	lastUpdate        time.Time
-	refreshTicker     *time.Ticker
-	selectedTab       int
-	instanceTable     table.Model
-	costTable         table.Model
-	alarmTable        table.Model
-	quitting          bool
-	loading           bool
-	error             string
+	dashboard     *MonitoringDashboard
+	instances     []aws.InstanceInfo
+	costs         []aws.CostData
+	alarms        []aws.AlarmInfo
+	metrics       map[string]*aws.InstanceMetrics
+	lastUpdate    time.Time
+	refreshTicker *time.Ticker
+	selectedTab   int
+	instanceTable table.Model
+	costTable     table.Model
+	alarmTable    table.Model
+	quitting      bool
+	loading       bool
+	error         string
 }
 
 // Tab definitions
@@ -90,7 +90,7 @@ func (md *MonitoringDashboard) Run(ctx context.Context) error {
 
 	// Start the TUI
 	p := tea.NewProgram(model, tea.WithAltScreen())
-	
+
 	// Handle refresh ticker in a goroutine
 	go func() {
 		for range model.refreshTicker.C {
@@ -391,8 +391,8 @@ func (dm *DashboardModel) View() string {
 
 	// Header
 	header := titleStyle.Render("📊 AWS Research Wizard - Real-time Monitoring")
-	status := fmt.Sprintf("Region: %s | Last Update: %s", 
-		dm.dashboard.config.Region, 
+	status := fmt.Sprintf("Region: %s | Last Update: %s",
+		dm.dashboard.config.Region,
 		dm.lastUpdate.Format("15:04:05"))
 
 	// Loading indicator
@@ -449,20 +449,20 @@ func (dm *DashboardModel) View() string {
 
 func (dm *DashboardModel) renderInstancesTab() string {
 	summary := fmt.Sprintf("EC2 Instances (%d total)", len(dm.instances))
-	
+
 	// Instance state summary
 	states := make(map[string]int)
 	for _, instance := range dm.instances {
 		states[instance.State]++
 	}
-	
+
 	var stateSummary []string
 	for state, count := range states {
 		stateSummary = append(stateSummary, fmt.Sprintf("%s: %d", state, count))
 	}
-	
+
 	summary += " | " + strings.Join(stateSummary, ", ")
-	
+
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		summary,
@@ -484,7 +484,7 @@ func (dm *DashboardModel) renderCostsTab() string {
 		totalCost += cost.Amount
 	}
 
-	summary := fmt.Sprintf("Cost Summary - Last 7 Days | Total: $%.2f | Daily Avg: $%.2f", 
+	summary := fmt.Sprintf("Cost Summary - Last 7 Days | Total: $%.2f | Daily Avg: $%.2f",
 		totalCost, totalCost/7)
 
 	return lipgloss.JoinVertical(
@@ -535,22 +535,22 @@ func (dm *DashboardModel) renderMetricsTab() string {
 
 	for instanceID, metrics := range dm.metrics {
 		content = append(content, fmt.Sprintf("Instance: %s", instanceID))
-		
+
 		// Latest CPU utilization
 		if len(metrics.CPUUtilization) > 0 {
 			latest := metrics.CPUUtilization[len(metrics.CPUUtilization)-1]
-			content = append(content, fmt.Sprintf("  CPU: %.1f%% at %s", 
+			content = append(content, fmt.Sprintf("  CPU: %.1f%% at %s",
 				latest.Value, latest.Timestamp.Format("15:04:05")))
 		}
-		
+
 		// Latest network metrics
 		if len(metrics.NetworkIn) > 0 && len(metrics.NetworkOut) > 0 {
 			netIn := metrics.NetworkIn[len(metrics.NetworkIn)-1]
 			netOut := metrics.NetworkOut[len(metrics.NetworkOut)-1]
-			content = append(content, fmt.Sprintf("  Network: In %.1f MB, Out %.1f MB", 
+			content = append(content, fmt.Sprintf("  Network: In %.1f MB, Out %.1f MB",
 				netIn.Value/1024/1024, netOut.Value/1024/1024))
 		}
-		
+
 		content = append(content, "")
 	}
 

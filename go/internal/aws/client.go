@@ -16,14 +16,14 @@ import (
 
 // Client provides comprehensive AWS service access
 type Client struct {
-	cfg             aws.Config
-	EC2             *ec2.Client
-	CloudFormation  *cloudformation.Client
-	CloudWatch      *cloudwatch.Client
-	CostExplorer    *costexplorer.Client
-	IAM             *iam.Client
-	S3              *s3.Client
-	Region          string
+	cfg            aws.Config
+	EC2            *ec2.Client
+	CloudFormation *cloudformation.Client
+	CloudWatch     *cloudwatch.Client
+	CostExplorer   *costexplorer.Client
+	IAM            *iam.Client
+	S3             *s3.Client
+	Region         string
 }
 
 // NewClient creates a new AWS client with all required services
@@ -62,7 +62,7 @@ func (c *Client) GetAccountID(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to get account ID: %w", err)
 	}
-	
+
 	// Extract account ID from ARN
 	arn := *result.User.Arn
 	// ARN format: arn:aws:iam::ACCOUNT-ID:user/username
@@ -77,11 +77,11 @@ func (c *Client) GetAccountID(ctx context.Context) (string, error) {
 	if start < len(arn) {
 		parts = append(parts, arn[start:])
 	}
-	
+
 	if len(parts) >= 5 {
 		return parts[4], nil
 	}
-	
+
 	return "", fmt.Errorf("failed to parse account ID from ARN: %s", arn)
 }
 
@@ -91,11 +91,11 @@ func (c *Client) GetAvailabilityZones(ctx context.Context) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to describe availability zones: %w", err)
 	}
-	
+
 	zones := make([]string, 0, len(result.AvailabilityZones))
 	for _, zone := range result.AvailabilityZones {
 		zones = append(zones, *zone.ZoneName)
 	}
-	
+
 	return zones, nil
 }

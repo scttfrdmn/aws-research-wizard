@@ -11,111 +11,111 @@ import (
 
 // RecommendationEngine provides intelligent optimization suggestions
 type RecommendationEngine struct {
-	patternAnalyzer  *PatternAnalyzer
-	costCalculator   *S3CostCalculator
-	engineRegistry   *EngineRegistry
-	configManager    *ConfigManager
+	patternAnalyzer *PatternAnalyzer
+	costCalculator  *S3CostCalculator
+	engineRegistry  *EngineRegistry
+	configManager   *ConfigManager
 }
 
 // RecommendationResult contains all recommendations for a dataset
 type RecommendationResult struct {
-	AnalysisID       string                    `json:"analysis_id"`
-	DataPath         string                    `json:"data_path"`
-	Timestamp        time.Time                 `json:"timestamp"`
-	
+	AnalysisID string    `json:"analysis_id"`
+	DataPath   string    `json:"data_path"`
+	Timestamp  time.Time `json:"timestamp"`
+
 	// Analysis results
-	DataPattern      *DataPattern             `json:"data_pattern"`
-	CostAnalysis     *CostAnalysis            `json:"cost_analysis"`
-	
+	DataPattern  *DataPattern  `json:"data_pattern"`
+	CostAnalysis *CostAnalysis `json:"cost_analysis"`
+
 	// Recommendations
-	ToolRecommendations    []ToolRecommendation    `json:"tool_recommendations"`
+	ToolRecommendations     []ToolRecommendation     `json:"tool_recommendations"`
 	OptimizationSuggestions []OptimizationSuggestion `json:"optimization_suggestions"`
-	WarningAlerts          []WarningAlert          `json:"warning_alerts"`
-	
+	WarningAlerts           []WarningAlert           `json:"warning_alerts"`
+
 	// Summary
 	TopRecommendation      *OptimizationSuggestion `json:"top_recommendation"`
 	EstimatedSavings       float64                 `json:"estimated_total_savings"`
 	ImplementationPriority []string                `json:"implementation_priority"`
-	
+
 	// Configuration generation
-	GeneratedConfig        *ProjectConfig          `json:"generated_config,omitempty"`
+	GeneratedConfig *ProjectConfig `json:"generated_config,omitempty"`
 }
 
 // ToolRecommendation suggests optimal tools for specific tasks
 type ToolRecommendation struct {
-	Task            string             `json:"task"`
-	RecommendedTool string             `json:"recommended_tool"`
-	AlternativeTools []string          `json:"alternative_tools"`
-	Reasoning       string             `json:"reasoning"`
-	Confidence      float64            `json:"confidence"`
-	Configuration   map[string]interface{} `json:"configuration"`
-	ExpectedPerformance PerformanceEstimate `json:"expected_performance"`
+	Task                string                 `json:"task"`
+	RecommendedTool     string                 `json:"recommended_tool"`
+	AlternativeTools    []string               `json:"alternative_tools"`
+	Reasoning           string                 `json:"reasoning"`
+	Confidence          float64                `json:"confidence"`
+	Configuration       map[string]interface{} `json:"configuration"`
+	ExpectedPerformance PerformanceEstimate    `json:"expected_performance"`
 }
 
 // OptimizationSuggestion represents a specific optimization opportunity
 type OptimizationSuggestion struct {
-	ID              string             `json:"id"`
-	Type            string             `json:"type"` // "bundling", "compression", "storage_class", "tool_chain"
-	Title           string             `json:"title"`
-	Description     string             `json:"description"`
-	Impact          ImpactAssessment   `json:"impact"`
-	Implementation  Implementation     `json:"implementation"`
-	Prerequisites   []string           `json:"prerequisites"`
-	Metadata        map[string]interface{} `json:"metadata"`
+	ID             string                 `json:"id"`
+	Type           string                 `json:"type"` // "bundling", "compression", "storage_class", "tool_chain"
+	Title          string                 `json:"title"`
+	Description    string                 `json:"description"`
+	Impact         ImpactAssessment       `json:"impact"`
+	Implementation Implementation         `json:"implementation"`
+	Prerequisites  []string               `json:"prerequisites"`
+	Metadata       map[string]interface{} `json:"metadata"`
 }
 
 // WarningAlert represents potential problems or anti-patterns
 type WarningAlert struct {
-	Severity    string    `json:"severity"` // "critical", "warning", "info"
-	Category    string    `json:"category"` // "cost", "performance", "reliability"
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Impact      string    `json:"impact"`
-	Solution    string    `json:"solution"`
-	LearnMoreURL string   `json:"learn_more_url,omitempty"`
+	Severity     string `json:"severity"` // "critical", "warning", "info"
+	Category     string `json:"category"` // "cost", "performance", "reliability"
+	Title        string `json:"title"`
+	Description  string `json:"description"`
+	Impact       string `json:"impact"`
+	Solution     string `json:"solution"`
+	LearnMoreURL string `json:"learn_more_url,omitempty"`
 }
 
 // ImpactAssessment quantifies the impact of an optimization
 type ImpactAssessment struct {
-	CostSavingsMonthly    float64   `json:"cost_savings_monthly"`
-	CostSavingsPercent    float64   `json:"cost_savings_percent"`
-	PerformanceImprovement float64  `json:"performance_improvement_percent"`
-	TimeToTransfer        string    `json:"time_to_transfer"`
-	RiskLevel             string    `json:"risk_level"` // "low", "medium", "high"
-	Confidence            float64   `json:"confidence"`
+	CostSavingsMonthly     float64 `json:"cost_savings_monthly"`
+	CostSavingsPercent     float64 `json:"cost_savings_percent"`
+	PerformanceImprovement float64 `json:"performance_improvement_percent"`
+	TimeToTransfer         string  `json:"time_to_transfer"`
+	RiskLevel              string  `json:"risk_level"` // "low", "medium", "high"
+	Confidence             float64 `json:"confidence"`
 }
 
 // Implementation describes how to implement a recommendation
 type Implementation struct {
-	Complexity      string           `json:"complexity"` // "simple", "moderate", "complex"
-	EstimatedTime   string           `json:"estimated_time"`
-	Steps           []string         `json:"steps"`
-	Commands        []string         `json:"commands,omitempty"`
-	ConfigChanges   map[string]interface{} `json:"config_changes,omitempty"`
-	ToolsRequired   []string         `json:"tools_required"`
-	Automation      AutomationInfo   `json:"automation"`
+	Complexity    string                 `json:"complexity"` // "simple", "moderate", "complex"
+	EstimatedTime string                 `json:"estimated_time"`
+	Steps         []string               `json:"steps"`
+	Commands      []string               `json:"commands,omitempty"`
+	ConfigChanges map[string]interface{} `json:"config_changes,omitempty"`
+	ToolsRequired []string               `json:"tools_required"`
+	Automation    AutomationInfo         `json:"automation"`
 }
 
 // AutomationInfo describes automation possibilities
 type AutomationInfo struct {
-	Automatable     bool     `json:"automatable"`
-	ScriptGenerated bool     `json:"script_generated"`
-	ConfigGenerated bool     `json:"config_generated"`
-	MonitoringSetup bool     `json:"monitoring_setup"`
+	Automatable     bool `json:"automatable"`
+	ScriptGenerated bool `json:"script_generated"`
+	ConfigGenerated bool `json:"config_generated"`
+	MonitoringSetup bool `json:"monitoring_setup"`
 }
 
 // PerformanceEstimate provides performance predictions
 type PerformanceEstimate struct {
-	TransferSpeed       string    `json:"transfer_speed"`
-	TransferTime        string    `json:"transfer_time"`
-	NetworkEfficiency   float64   `json:"network_efficiency"`
-	ConcurrencyOptimal  int       `json:"concurrency_optimal"`
-	PartSizeOptimal     string    `json:"part_size_optimal"`
+	TransferSpeed      string  `json:"transfer_speed"`
+	TransferTime       string  `json:"transfer_time"`
+	NetworkEfficiency  float64 `json:"network_efficiency"`
+	ConcurrencyOptimal int     `json:"concurrency_optimal"`
+	PartSizeOptimal    string  `json:"part_size_optimal"`
 }
 
 // NewRecommendationEngine creates a new recommendation engine
-func NewRecommendationEngine(patternAnalyzer *PatternAnalyzer, costCalculator *S3CostCalculator, 
-							 engineRegistry *EngineRegistry, configManager *ConfigManager) *RecommendationEngine {
+func NewRecommendationEngine(patternAnalyzer *PatternAnalyzer, costCalculator *S3CostCalculator,
+	engineRegistry *EngineRegistry, configManager *ConfigManager) *RecommendationEngine {
 	return &RecommendationEngine{
 		patternAnalyzer: patternAnalyzer,
 		costCalculator:  costCalculator,
@@ -127,9 +127,9 @@ func NewRecommendationEngine(patternAnalyzer *PatternAnalyzer, costCalculator *S
 // GenerateRecommendations analyzes data and generates comprehensive recommendations
 func (re *RecommendationEngine) GenerateRecommendations(ctx context.Context, dataPath string) (*RecommendationResult, error) {
 	result := &RecommendationResult{
-		AnalysisID:    fmt.Sprintf("rec-%d", time.Now().Unix()),
-		DataPath:      dataPath,
-		Timestamp:     time.Now(),
+		AnalysisID: fmt.Sprintf("rec-%d", time.Now().Unix()),
+		DataPath:   dataPath,
+		Timestamp:  time.Now(),
 	}
 
 	// Step 1: Analyze data patterns
@@ -235,9 +235,9 @@ func (re *RecommendationEngine) recommendUploadTool(pattern *DataPattern) ToolRe
 		reasoning = "Small files should be bundled first to reduce S3 request costs"
 		confidence = 0.85
 		config = map[string]interface{}{
-			"bundle_size":   "100MB",
-			"bundle_count":  100,
-			"concurrency":   10,
+			"bundle_size":  "100MB",
+			"bundle_count": 100,
+			"concurrency":  10,
 		}
 	} else {
 		// General purpose - rclone for reliability
@@ -268,7 +268,7 @@ func (re *RecommendationEngine) recommendUploadTool(pattern *DataPattern) ToolRe
 // recommendBundlingTool recommends tools for bundling small files
 func (re *RecommendationEngine) recommendBundlingTool(pattern *DataPattern) ToolRecommendation {
 	smallFileCount := pattern.FileSizes.SmallFiles.CountUnder1MB
-	
+
 	var tool string
 	var reasoning string
 
@@ -301,7 +301,7 @@ func (re *RecommendationEngine) recommendCompressionTool(pattern *DataPattern) T
 	// Analyze file types for compression potential
 	hasTextFiles := false
 	hasCompressedFiles := false
-	
+
 	for ext, typeInfo := range pattern.FileTypes {
 		if typeInfo.Compressible {
 			hasTextFiles = true
@@ -313,7 +313,7 @@ func (re *RecommendationEngine) recommendCompressionTool(pattern *DataPattern) T
 
 	tool := "gzip"
 	reasoning := "Standard gzip compression for text-based files"
-	
+
 	if hasTextFiles && !hasCompressedFiles {
 		tool = "gzip"
 		reasoning = "Gzip compression recommended for text-based research data"
@@ -334,7 +334,7 @@ func (re *RecommendationEngine) recommendCompressionTool(pattern *DataPattern) T
 // recommendMonitoringTool recommends monitoring solutions
 func (re *RecommendationEngine) recommendMonitoringTool(pattern *DataPattern) ToolRecommendation {
 	totalSizeGB := float64(pattern.TotalSize) / (1024 * 1024 * 1024)
-	
+
 	if totalSizeGB > 1000 {
 		return ToolRecommendation{
 			Task:             "monitoring",
@@ -392,7 +392,7 @@ func (re *RecommendationEngine) generateOptimizationSuggestions(pattern *DataPat
 func (re *RecommendationEngine) createBundlingSuggestion(pattern *DataPattern, costAnalysis *CostAnalysis) OptimizationSuggestion {
 	smallFileCount := pattern.FileSizes.SmallFiles.CountUnder1MB
 	currentCost := costAnalysis.Scenarios[0].MonthlyCosts.Total
-	
+
 	// Find bundled scenario cost
 	var bundledCost float64
 	for _, scenario := range costAnalysis.Scenarios {
@@ -401,7 +401,7 @@ func (re *RecommendationEngine) createBundlingSuggestion(pattern *DataPattern, c
 			break
 		}
 	}
-	
+
 	savings := currentCost - bundledCost
 	savingsPercent := (savings / currentCost) * 100
 
@@ -513,9 +513,9 @@ func (re *RecommendationEngine) createStorageClassSuggestion(pattern *DataPatter
 func (re *RecommendationEngine) createCompressionSuggestion(pattern *DataPattern, costAnalysis *CostAnalysis) OptimizationSuggestion {
 	// Estimate compression savings
 	totalSize := float64(pattern.TotalSize)
-	compressedSize := totalSize * 0.7 // Assume 30% compression
+	compressedSize := totalSize * 0.7                                             // Assume 30% compression
 	storageSavings := (totalSize - compressedSize) / (1024 * 1024 * 1024) * 0.023 // $0.023 per GB
-	
+
 	return OptimizationSuggestion{
 		ID:          "enable-compression",
 		Type:        "compression",
@@ -601,12 +601,12 @@ func (re *RecommendationEngine) generateWarningAlerts(pattern *DataPattern, cost
 		}
 
 		alerts = append(alerts, WarningAlert{
-			Severity:    severity,
-			Category:    "cost",
-			Title:       "High Small File Count Detected",
-			Description: fmt.Sprintf("Found %d files under 1MB which will result in high S3 request costs", pattern.FileSizes.SmallFiles.CountUnder1MB),
-			Impact:      fmt.Sprintf("Estimated extra cost: $%.2f/month", pattern.FileSizes.SmallFiles.PotentialSavings),
-			Solution:    "Bundle small files using Suitcase or tar before uploading",
+			Severity:     severity,
+			Category:     "cost",
+			Title:        "High Small File Count Detected",
+			Description:  fmt.Sprintf("Found %d files under 1MB which will result in high S3 request costs", pattern.FileSizes.SmallFiles.CountUnder1MB),
+			Impact:       fmt.Sprintf("Estimated extra cost: $%.2f/month", pattern.FileSizes.SmallFiles.PotentialSavings),
+			Solution:     "Bundle small files using Suitcase or tar before uploading",
 			LearnMoreURL: "https://docs.aws.amazon.com/s3/latest/userguide/optimizing-performance.html",
 		})
 	}
@@ -648,34 +648,34 @@ func (re *RecommendationEngine) shouldRecommendCompression(pattern *DataPattern)
 			compressibleSize += typeInfo.TotalSize
 		}
 	}
-	
+
 	// Recommend compression if >50% of data is compressible
 	return float64(compressibleSize)/float64(pattern.TotalSize) > 0.5
 }
 
 func (re *RecommendationEngine) estimatePerformance(pattern *DataPattern, tool string, config map[string]interface{}) PerformanceEstimate {
 	totalSizeGB := float64(pattern.TotalSize) / (1024 * 1024 * 1024)
-	
+
 	// Base transfer speeds (MB/s) by tool
 	baseSpeeds := map[string]float64{
-		"s5cmd":     80.0,
-		"rclone":    60.0,
-		"aws-cli":   25.0,
-		"suitcase":  40.0,
+		"s5cmd":    80.0,
+		"rclone":   60.0,
+		"aws-cli":  25.0,
+		"suitcase": 40.0,
 	}
-	
+
 	speed := baseSpeeds[tool]
 	if speed == 0 {
 		speed = 50.0 // Default
 	}
-	
+
 	// Adjust for concurrency
 	if concurrency, ok := config["concurrency"].(int); ok && concurrency > 1 {
 		speed *= math.Min(float64(concurrency), 20) / 10 // Max 2x improvement
 	}
-	
+
 	transferTimeHours := totalSizeGB * 1024 / speed / 3600
-	
+
 	return PerformanceEstimate{
 		TransferSpeed:      fmt.Sprintf("%.0f MB/s", speed),
 		TransferTime:       fmt.Sprintf("%.1f hours", transferTimeHours),
@@ -689,7 +689,7 @@ func (re *RecommendationEngine) identifyTopRecommendation(suggestions []Optimiza
 	if len(suggestions) == 0 {
 		return nil
 	}
-	
+
 	// Return the one with highest cost savings
 	return &suggestions[0]
 }
@@ -722,15 +722,15 @@ func (re *RecommendationEngine) generateProjectConfig(pattern *DataPattern, resu
 		DataProfiles: make(map[string]DataProfile),
 		Workflows:    make([]Workflow, 0),
 	}
-	
+
 	// Add data profile
 	config.DataProfiles["main_dataset"] = DataProfile{
-		Path:        result.DataPath,
-		FileCount:   pattern.TotalFiles,
-		AvgFileSize: formatBytes(pattern.FileSizes.MeanSize),
+		Path:          result.DataPath,
+		FileCount:     pattern.TotalFiles,
+		AvgFileSize:   formatBytes(pattern.FileSizes.MeanSize),
 		AccessPattern: "write_once_read_many", // Default assumption
 	}
-	
+
 	// Add workflow based on top recommendation
 	if result.TopRecommendation != nil {
 		workflow := Workflow{
@@ -741,6 +741,6 @@ func (re *RecommendationEngine) generateProjectConfig(pattern *DataPattern, resu
 		}
 		config.Workflows = append(config.Workflows, workflow)
 	}
-	
+
 	return config
 }

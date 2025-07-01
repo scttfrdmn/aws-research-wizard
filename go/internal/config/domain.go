@@ -12,19 +12,19 @@ import (
 
 // DomainPack represents a research domain configuration
 type DomainPack struct {
-	Name                      string                       `yaml:"name"`
-	Description               string                       `yaml:"description"`
-	PrimaryDomains            []string                     `yaml:"primary_domains"`
-	TargetUsers               string                       `yaml:"target_users"`
-	SpackPackages             map[string]interface{}       `yaml:"spack_packages"`
-	SystemPackages            map[string]interface{}       `yaml:"system_packages"`
-	PythonPackages            map[string]interface{}       `yaml:"python_packages"`
-	RPackages                 map[string]interface{}       `yaml:"r_packages"`
-	JuliaPackages             map[string]interface{}       `yaml:"julia_packages"`
+	Name                       string                            `yaml:"name"`
+	Description                string                            `yaml:"description"`
+	PrimaryDomains             []string                          `yaml:"primary_domains"`
+	TargetUsers                string                            `yaml:"target_users"`
+	SpackPackages              map[string]interface{}            `yaml:"spack_packages"`
+	SystemPackages             map[string]interface{}            `yaml:"system_packages"`
+	PythonPackages             map[string]interface{}            `yaml:"python_packages"`
+	RPackages                  map[string]interface{}            `yaml:"r_packages"`
+	JuliaPackages              map[string]interface{}            `yaml:"julia_packages"`
 	AWSInstanceRecommendations map[string]InstanceRecommendation `yaml:"aws_instance_recommendations"`
-	EstimatedCost             EstimatedCost                `yaml:"estimated_cost"`
-	WorkflowOrchestration     WorkflowOrchestration        `yaml:"workflow_orchestration"`
-	AWSIntegration            AWSIntegration               `yaml:"aws_integration"`
+	EstimatedCost              EstimatedCost                     `yaml:"estimated_cost"`
+	WorkflowOrchestration      WorkflowOrchestration             `yaml:"workflow_orchestration"`
+	AWSIntegration             AWSIntegration                    `yaml:"aws_integration"`
 }
 
 // InstanceRecommendation represents AWS instance recommendations
@@ -81,31 +81,31 @@ func NewConfigLoader(configRoot string) *ConfigLoader {
 func (cl *ConfigLoader) LoadAllDomains() (map[string]*DomainPack, error) {
 	domains := make(map[string]*DomainPack)
 	domainsPath := filepath.Join(cl.configRoot, "configs", "domains")
-	
+
 	err := filepath.WalkDir(domainsPath, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
-		
+
 		if d.IsDir() || !strings.HasSuffix(path, ".yaml") {
 			return nil
 		}
-		
+
 		domain, err := cl.LoadDomain(path)
 		if err != nil {
 			return fmt.Errorf("failed to load domain %s: %w", path, err)
 		}
-		
+
 		domainName := strings.TrimSuffix(d.Name(), ".yaml")
 		domains[domainName] = domain
-		
+
 		return nil
 	})
-	
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to walk domains directory: %w", err)
 	}
-	
+
 	return domains, nil
 }
 
@@ -115,13 +115,13 @@ func (cl *ConfigLoader) LoadDomain(path string) (*DomainPack, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file: %w", err)
 	}
-	
+
 	var domain DomainPack
 	err = yaml.Unmarshal(data, &domain)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal YAML: %w", err)
 	}
-	
+
 	return &domain, nil
 }
 
@@ -131,11 +131,11 @@ func (cl *ConfigLoader) GetDomainNames() ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	names := make([]string, 0, len(domains))
 	for name := range domains {
 		names = append(names, name)
 	}
-	
+
 	return names, nil
 }

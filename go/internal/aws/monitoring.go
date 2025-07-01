@@ -33,13 +33,13 @@ type MetricDataPoint struct {
 
 // InstanceMetrics contains metrics for an EC2 instance
 type InstanceMetrics struct {
-	InstanceID        string
-	CPUUtilization    []MetricDataPoint
-	NetworkIn         []MetricDataPoint
-	NetworkOut        []MetricDataPoint
-	DiskReadOps       []MetricDataPoint
-	DiskWriteOps      []MetricDataPoint
-	StatusCheck       []MetricDataPoint
+	InstanceID     string
+	CPUUtilization []MetricDataPoint
+	NetworkIn      []MetricDataPoint
+	NetworkOut     []MetricDataPoint
+	DiskReadOps    []MetricDataPoint
+	DiskWriteOps   []MetricDataPoint
+	StatusCheck    []MetricDataPoint
 }
 
 // GetInstanceMetrics retrieves CloudWatch metrics for an EC2 instance
@@ -133,12 +133,12 @@ func (mm *MonitoringManager) getMetricStatistics(ctx context.Context, instanceID
 
 // CostData represents cost information
 type CostData struct {
-	Service     string
-	Amount      float64
-	Unit        string
-	Currency    string
-	StartDate   string
-	EndDate     string
+	Service   string
+	Amount    float64
+	Unit      string
+	Currency  string
+	StartDate string
+	EndDate   string
 }
 
 // GetCostData retrieves cost data from Cost Explorer
@@ -248,7 +248,7 @@ func (mm *MonitoringManager) CreateAlarm(ctx context.Context, alarmName, descrip
 // ListAlarms lists CloudWatch alarms
 func (mm *MonitoringManager) ListAlarms(ctx context.Context, alarmNamePrefix string) ([]AlarmInfo, error) {
 	input := &cloudwatch.DescribeAlarmsInput{}
-	
+
 	if alarmNamePrefix != "" {
 		input.AlarmNamePrefix = aws.String(alarmNamePrefix)
 	}
@@ -261,14 +261,14 @@ func (mm *MonitoringManager) ListAlarms(ctx context.Context, alarmNamePrefix str
 	alarms := make([]AlarmInfo, 0, len(result.MetricAlarms))
 	for _, alarm := range result.MetricAlarms {
 		alarmInfo := AlarmInfo{
-			AlarmName:        *alarm.AlarmName,
-			MetricName:       *alarm.MetricName,
-			Namespace:        *alarm.Namespace,
-			Statistic:        string(alarm.Statistic),
-			Threshold:        *alarm.Threshold,
-			ComparisonOp:     string(alarm.ComparisonOperator),
-			State:            string(alarm.StateValue),
-			ActionsEnabled:   *alarm.ActionsEnabled,
+			AlarmName:      *alarm.AlarmName,
+			MetricName:     *alarm.MetricName,
+			Namespace:      *alarm.Namespace,
+			Statistic:      string(alarm.Statistic),
+			Threshold:      *alarm.Threshold,
+			ComparisonOp:   string(alarm.ComparisonOperator),
+			State:          string(alarm.StateValue),
+			ActionsEnabled: *alarm.ActionsEnabled,
 		}
 
 		if alarm.AlarmDescription != nil {

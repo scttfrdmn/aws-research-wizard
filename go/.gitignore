@@ -1,0 +1,19 @@
+# Compiled binaries and build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+aws-research-wizard
+aws-research-wizard-*
+main
+dist/
+*.sarif
+coverage.out
+*.tar.gz
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store

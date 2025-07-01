@@ -12,41 +12,41 @@ import (
 
 // ErrorRecoveryManager handles comprehensive error recovery strategies
 type ErrorRecoveryManager struct {
-	strategies       map[string]RecoveryStrategy
-	circuitBreakers  map[string]*CircuitBreaker
-	errorClassifier  *ErrorClassifier
-	mu               sync.RWMutex
+	strategies      map[string]RecoveryStrategy
+	circuitBreakers map[string]*CircuitBreaker
+	errorClassifier *ErrorClassifier
+	mu              sync.RWMutex
 }
 
 // RecoveryStrategy defines how to handle specific types of errors
 type RecoveryStrategy struct {
-	Name                 string        `json:"name"`
-	MaxRetryAttempts     int           `json:"max_retry_attempts"`
-	BaseRetryDelay       time.Duration `json:"base_retry_delay"`
-	MaxRetryDelay        time.Duration `json:"max_retry_delay"`
-	ExponentialBackoff   bool          `json:"exponential_backoff"`
-	BackoffMultiplier    float64       `json:"backoff_multiplier"`
-	RetryableErrors      []string      `json:"retryable_errors"`
-	RecoveryActions      []string      `json:"recovery_actions"`
+	Name                 string                `json:"name"`
+	MaxRetryAttempts     int                   `json:"max_retry_attempts"`
+	BaseRetryDelay       time.Duration         `json:"base_retry_delay"`
+	MaxRetryDelay        time.Duration         `json:"max_retry_delay"`
+	ExponentialBackoff   bool                  `json:"exponential_backoff"`
+	BackoffMultiplier    float64               `json:"backoff_multiplier"`
+	RetryableErrors      []string              `json:"retryable_errors"`
+	RecoveryActions      []string              `json:"recovery_actions"`
 	CircuitBreakerConfig *CircuitBreakerConfig `json:"circuit_breaker_config"`
 }
 
 // CircuitBreakerConfig defines circuit breaker parameters
 type CircuitBreakerConfig struct {
-	ErrorThreshold     int           `json:"error_threshold"`
-	TimeWindow         time.Duration `json:"time_window"`
-	RecoveryTimeout    time.Duration `json:"recovery_timeout"`
-	HalfOpenMaxCalls   int           `json:"half_open_max_calls"`
+	ErrorThreshold   int           `json:"error_threshold"`
+	TimeWindow       time.Duration `json:"time_window"`
+	RecoveryTimeout  time.Duration `json:"recovery_timeout"`
+	HalfOpenMaxCalls int           `json:"half_open_max_calls"`
 }
 
 // CircuitBreaker implements the circuit breaker pattern
 type CircuitBreaker struct {
-	config       CircuitBreakerConfig
-	state        CircuitBreakerState
-	errorCount   int
-	lastFailTime time.Time
+	config        CircuitBreakerConfig
+	state         CircuitBreakerState
+	errorCount    int
+	lastFailTime  time.Time
 	halfOpenCalls int
-	mu           sync.RWMutex
+	mu            sync.RWMutex
 }
 
 // CircuitBreakerState represents the current state of a circuit breaker
@@ -60,27 +60,27 @@ const (
 
 // ErrorClassifier categorizes errors for appropriate recovery strategies
 type ErrorClassifier struct {
-	networkErrors    []*regexp.Regexp
-	rateLimitErrors  []*regexp.Regexp
-	authErrors       []*regexp.Regexp
-	storageErrors    []*regexp.Regexp
-	configErrors     []*regexp.Regexp
-	temporaryErrors  []*regexp.Regexp
-	permanentErrors  []*regexp.Regexp
+	networkErrors   []*regexp.Regexp
+	rateLimitErrors []*regexp.Regexp
+	authErrors      []*regexp.Regexp
+	storageErrors   []*regexp.Regexp
+	configErrors    []*regexp.Regexp
+	temporaryErrors []*regexp.Regexp
+	permanentErrors []*regexp.Regexp
 }
 
 // ErrorCategory represents different types of errors
 type ErrorCategory string
 
 const (
-	ErrorCategoryNetwork    ErrorCategory = "network"
-	ErrorCategoryRateLimit  ErrorCategory = "rate_limit"
-	ErrorCategoryAuth       ErrorCategory = "authentication"
-	ErrorCategoryStorage    ErrorCategory = "storage"
-	ErrorCategoryConfig     ErrorCategory = "configuration"
-	ErrorCategoryTemporary  ErrorCategory = "temporary"
-	ErrorCategoryPermanent  ErrorCategory = "permanent"
-	ErrorCategoryUnknown    ErrorCategory = "unknown"
+	ErrorCategoryNetwork   ErrorCategory = "network"
+	ErrorCategoryRateLimit ErrorCategory = "rate_limit"
+	ErrorCategoryAuth      ErrorCategory = "authentication"
+	ErrorCategoryStorage   ErrorCategory = "storage"
+	ErrorCategoryConfig    ErrorCategory = "configuration"
+	ErrorCategoryTemporary ErrorCategory = "temporary"
+	ErrorCategoryPermanent ErrorCategory = "permanent"
+	ErrorCategoryUnknown   ErrorCategory = "unknown"
 )
 
 // RecoveryResult holds the outcome of a recovery attempt
@@ -100,10 +100,10 @@ func NewErrorRecoveryManager() *ErrorRecoveryManager {
 		circuitBreakers: make(map[string]*CircuitBreaker),
 		errorClassifier: NewErrorClassifier(),
 	}
-	
+
 	// Initialize default recovery strategies
 	erm.initializeDefaultStrategies()
-	
+
 	return erm
 }
 
@@ -126,7 +126,7 @@ func (erm *ErrorRecoveryManager) initializeDefaultStrategies() {
 			HalfOpenMaxCalls: 2,
 		},
 	}
-	
+
 	// Rate limiting strategy - longer delays, fewer retries
 	erm.strategies["rate_limit"] = RecoveryStrategy{
 		Name:               "Rate Limit Recovery",
@@ -144,7 +144,7 @@ func (erm *ErrorRecoveryManager) initializeDefaultStrategies() {
 			HalfOpenMaxCalls: 1,
 		},
 	}
-	
+
 	// Authentication strategy - limited retries with immediate escalation
 	erm.strategies["authentication"] = RecoveryStrategy{
 		Name:               "Authentication Error Recovery",
@@ -162,7 +162,7 @@ func (erm *ErrorRecoveryManager) initializeDefaultStrategies() {
 			HalfOpenMaxCalls: 1,
 		},
 	}
-	
+
 	// Storage/S3 strategy - moderate retry with storage-specific recovery
 	erm.strategies["storage"] = RecoveryStrategy{
 		Name:               "Storage Error Recovery",
@@ -180,7 +180,7 @@ func (erm *ErrorRecoveryManager) initializeDefaultStrategies() {
 			HalfOpenMaxCalls: 2,
 		},
 	}
-	
+
 	// Configuration strategy - no retries, immediate escalation
 	erm.strategies["configuration"] = RecoveryStrategy{
 		Name:               "Configuration Error Recovery",
@@ -192,7 +192,7 @@ func (erm *ErrorRecoveryManager) initializeDefaultStrategies() {
 		RetryableErrors:    []string{}, // Configuration errors are not retryable
 		RecoveryActions:    []string{"validate_configuration", "check_file_paths", "verify_settings"},
 	}
-	
+
 	// Default/fallback strategy
 	erm.strategies["default"] = RecoveryStrategy{
 		Name:               "Default Error Recovery",
@@ -223,7 +223,7 @@ func (erm *ErrorRecoveryManager) ExecuteWithRecovery(
 		RecoveryActions: []string{},
 		Suggestions:     []string{},
 	}
-	
+
 	for attempt := 0; attempt < 10; attempt++ { // Max 10 attempts across all strategies
 		// Check circuit breaker
 		if cb := erm.getCircuitBreaker(operationName); cb != nil {
@@ -233,10 +233,10 @@ func (erm *ErrorRecoveryManager) ExecuteWithRecovery(
 				break
 			}
 		}
-		
+
 		// Execute operation
 		err := operation()
-		
+
 		if err == nil {
 			// Success - record success in circuit breaker
 			if cb := erm.getCircuitBreaker(operationName); cb != nil {
@@ -247,41 +247,41 @@ func (erm *ErrorRecoveryManager) ExecuteWithRecovery(
 			result.TotalDuration = time.Since(startTime)
 			return result
 		}
-		
+
 		// Record error in circuit breaker
 		if cb := erm.getCircuitBreaker(operationName); cb != nil {
 			cb.RecordError()
 		}
-		
+
 		result.LastError = err
 		result.AttemptCount = attempt + 1
-		
+
 		// Classify error and get recovery strategy
 		category := erm.errorClassifier.ClassifyError(err)
 		strategy := erm.getRecoveryStrategy(string(category))
-		
+
 		// Check if we should retry
 		if attempt >= strategy.MaxRetryAttempts {
 			break
 		}
-		
+
 		// Check if error is retryable
 		if !erm.isRetryableError(err, strategy) {
-			result.Suggestions = append(result.Suggestions, 
+			result.Suggestions = append(result.Suggestions,
 				fmt.Sprintf("Error is not retryable: %v", err))
 			break
 		}
-		
+
 		// Calculate retry delay
 		delay := erm.calculateRetryDelay(attempt, strategy)
-		
-		result.RecoveryActions = append(result.RecoveryActions, 
-			fmt.Sprintf("Attempt %d: Retrying after %v due to %s error", 
+
+		result.RecoveryActions = append(result.RecoveryActions,
+			fmt.Sprintf("Attempt %d: Retrying after %v due to %s error",
 				attempt+1, delay, category))
-		
+
 		// Add recovery suggestions
 		result.Suggestions = append(result.Suggestions, strategy.RecoveryActions...)
-		
+
 		// Wait before retry (with context cancellation)
 		select {
 		case <-ctx.Done():
@@ -292,14 +292,14 @@ func (erm *ErrorRecoveryManager) ExecuteWithRecovery(
 			// Continue to next attempt
 		}
 	}
-	
+
 	result.TotalDuration = time.Since(startTime)
-	
+
 	// Add final suggestions if all retries failed
 	if !result.Success {
 		result.Suggestions = append(result.Suggestions, erm.generateFailureSuggestions(result.LastError)...)
 	}
-	
+
 	return result
 }
 
@@ -343,9 +343,9 @@ func (ec *ErrorClassifier) ClassifyError(err error) ErrorCategory {
 	if err == nil {
 		return ErrorCategoryUnknown
 	}
-	
+
 	errMsg := strings.ToLower(err.Error())
-	
+
 	// Check each category in order of specificity
 	if ec.matchesPatterns(errMsg, ec.configErrors) {
 		return ErrorCategoryConfig
@@ -368,7 +368,7 @@ func (ec *ErrorClassifier) ClassifyError(err error) ErrorCategory {
 	if ec.matchesPatterns(errMsg, ec.temporaryErrors) {
 		return ErrorCategoryTemporary
 	}
-	
+
 	return ErrorCategoryUnknown
 }
 
@@ -386,7 +386,7 @@ func (ec *ErrorClassifier) matchesPatterns(errMsg string, patterns []*regexp.Reg
 func (erm *ErrorRecoveryManager) getRecoveryStrategy(category string) RecoveryStrategy {
 	erm.mu.RLock()
 	defer erm.mu.RUnlock()
-	
+
 	if strategy, exists := erm.strategies[category]; exists {
 		return strategy
 	}
@@ -397,11 +397,11 @@ func (erm *ErrorRecoveryManager) getRecoveryStrategy(category string) RecoverySt
 func (erm *ErrorRecoveryManager) getCircuitBreaker(operationName string) *CircuitBreaker {
 	erm.mu.Lock()
 	defer erm.mu.Unlock()
-	
+
 	if cb, exists := erm.circuitBreakers[operationName]; exists {
 		return cb
 	}
-	
+
 	// Create new circuit breaker with default config
 	strategy := erm.strategies["default"]
 	if strategy.CircuitBreakerConfig != nil {
@@ -409,7 +409,7 @@ func (erm *ErrorRecoveryManager) getCircuitBreaker(operationName string) *Circui
 		erm.circuitBreakers[operationName] = cb
 		return cb
 	}
-	
+
 	return nil
 }
 
@@ -418,14 +418,14 @@ func (erm *ErrorRecoveryManager) isRetryableError(err error, strategy RecoverySt
 	if len(strategy.RetryableErrors) == 0 {
 		return false
 	}
-	
+
 	errMsg := strings.ToLower(err.Error())
 	for _, retryablePattern := range strategy.RetryableErrors {
 		if strings.Contains(errMsg, strings.ToLower(retryablePattern)) {
 			return true
 		}
 	}
-	
+
 	return false
 }
 
@@ -434,18 +434,18 @@ func (erm *ErrorRecoveryManager) calculateRetryDelay(attempt int, strategy Recov
 	if strategy.BaseRetryDelay == 0 {
 		return 0
 	}
-	
+
 	delay := strategy.BaseRetryDelay
-	
+
 	if strategy.ExponentialBackoff && attempt > 0 {
 		multiplier := math.Pow(strategy.BackoffMultiplier, float64(attempt))
 		delay = time.Duration(float64(delay) * multiplier)
 	}
-	
+
 	if strategy.MaxRetryDelay > 0 && delay > strategy.MaxRetryDelay {
 		delay = strategy.MaxRetryDelay
 	}
-	
+
 	return delay
 }
 
@@ -454,10 +454,10 @@ func (erm *ErrorRecoveryManager) generateFailureSuggestions(err error) []string 
 	if err == nil {
 		return []string{}
 	}
-	
+
 	category := erm.errorClassifier.ClassifyError(err)
 	suggestions := []string{}
-	
+
 	switch category {
 	case ErrorCategoryNetwork:
 		suggestions = []string{
@@ -502,7 +502,7 @@ func (erm *ErrorRecoveryManager) generateFailureSuggestions(err error) []string 
 			"Try running the operation with verbose logging enabled",
 		}
 	}
-	
+
 	return suggestions
 }
 
@@ -518,7 +518,7 @@ func NewCircuitBreaker(config CircuitBreakerConfig) *CircuitBreaker {
 func (cb *CircuitBreaker) AllowRequest() bool {
 	cb.mu.Lock()
 	defer cb.mu.Unlock()
-	
+
 	switch cb.state {
 	case CircuitBreakerClosed:
 		return true
@@ -540,7 +540,7 @@ func (cb *CircuitBreaker) AllowRequest() bool {
 func (cb *CircuitBreaker) RecordSuccess() {
 	cb.mu.Lock()
 	defer cb.mu.Unlock()
-	
+
 	switch cb.state {
 	case CircuitBreakerClosed:
 		cb.errorCount = 0
@@ -557,10 +557,10 @@ func (cb *CircuitBreaker) RecordSuccess() {
 func (cb *CircuitBreaker) RecordError() {
 	cb.mu.Lock()
 	defer cb.mu.Unlock()
-	
+
 	cb.errorCount++
 	cb.lastFailTime = time.Now()
-	
+
 	switch cb.state {
 	case CircuitBreakerClosed:
 		if cb.errorCount >= cb.config.ErrorThreshold {

@@ -54,7 +54,7 @@ var (
 func init() {
 	// Add recover command to data command
 	DataCmd.AddCommand(recoverCmd)
-	
+
 	// Flags
 	recoverCmd.Flags().BoolVar(&recoverList, "list", false, "List recoverable workflow executions")
 	recoverCmd.Flags().StringVar(&recoverStrategy, "strategy", "auto", "Recovery strategy (auto, manual, retry)")
@@ -67,24 +67,24 @@ func init() {
 func runRecover(cmd *cobra.Command, args []string) error {
 	fmt.Printf("🛠️  AWS Research Wizard - Workflow Recovery\n")
 	fmt.Printf("==========================================\n\n")
-	
+
 	if recoverList {
 		return listRecoverableWorkflows()
 	}
-	
+
 	if len(args) == 0 {
 		return fmt.Errorf("workflow execution ID required. Use --list to see recoverable workflows")
 	}
-	
+
 	executionID := args[0]
-	
+
 	fmt.Printf("🔄 Recovering workflow execution: %s\n", executionID)
 	fmt.Printf("Strategy: %s\n", recoverStrategy)
 	if recoverDryRun {
 		fmt.Printf("Mode: Dry-run (planning only)\n")
 	}
 	fmt.Println()
-	
+
 	// Create recovery context
 	ctx := context.Background()
 	recoveryPlan := &WorkflowRecoveryPlan{
@@ -94,27 +94,27 @@ func runRecover(cmd *cobra.Command, args []string) error {
 		Steps:           []RecoveryStep{},
 		Recommendations: []string{},
 	}
-	
+
 	// Analyze failed workflow
 	err := analyzeFailedWorkflow(ctx, executionID, recoveryPlan)
 	if err != nil {
 		return fmt.Errorf("failed to analyze workflow: %w", err)
 	}
-	
+
 	// Generate recovery plan
 	err = generateRecoveryPlan(ctx, recoveryPlan)
 	if err != nil {
 		return fmt.Errorf("failed to generate recovery plan: %w", err)
 	}
-	
+
 	// Display recovery plan
 	displayRecoveryPlan(recoveryPlan)
-	
+
 	if recoverDryRun {
 		fmt.Printf("\n🎯 Dry-run completed. Use without --dry-run to execute recovery.\n")
 		return nil
 	}
-	
+
 	// Execute recovery if not dry-run
 	if recoverInteractive {
 		return executeInteractiveRecovery(ctx, recoveryPlan)
@@ -125,42 +125,42 @@ func runRecover(cmd *cobra.Command, args []string) error {
 
 // WorkflowRecoveryPlan defines a comprehensive recovery plan
 type WorkflowRecoveryPlan struct {
-	ExecutionID      string         `json:"execution_id"`
-	Strategy         string         `json:"strategy"`
-	StartTime        time.Time      `json:"start_time"`
-	EndTime          time.Time      `json:"end_time"`
-	Duration         time.Duration  `json:"duration"`
-	FailureAnalysis  *FailureAnalysis `json:"failure_analysis"`
-	Steps            []RecoveryStep `json:"steps"`
-	Recommendations  []string       `json:"recommendations"`
-	RiskAssessment   *RiskAssessment `json:"risk_assessment"`
-	Success          bool           `json:"success"`
-	Error            error          `json:"error,omitempty"`
+	ExecutionID     string           `json:"execution_id"`
+	Strategy        string           `json:"strategy"`
+	StartTime       time.Time        `json:"start_time"`
+	EndTime         time.Time        `json:"end_time"`
+	Duration        time.Duration    `json:"duration"`
+	FailureAnalysis *FailureAnalysis `json:"failure_analysis"`
+	Steps           []RecoveryStep   `json:"steps"`
+	Recommendations []string         `json:"recommendations"`
+	RiskAssessment  *RiskAssessment  `json:"risk_assessment"`
+	Success         bool             `json:"success"`
+	Error           error            `json:"error,omitempty"`
 }
 
 // FailureAnalysis contains detailed analysis of the workflow failure
 type FailureAnalysis struct {
-	FailedStep       string            `json:"failed_step"`
-	ErrorType        string            `json:"error_type"`
-	ErrorMessage     string            `json:"error_message"`
-	RetryAttempts    int               `json:"retry_attempts"`
-	FailureTime      time.Time         `json:"failure_time"`
-	CompletedSteps   []string          `json:"completed_steps"`
-	RemainingSteps   []string          `json:"remaining_steps"`
-	RecoveryOptions  []string          `json:"recovery_options"`
-	ErrorMetadata    map[string]interface{} `json:"error_metadata"`
+	FailedStep      string                 `json:"failed_step"`
+	ErrorType       string                 `json:"error_type"`
+	ErrorMessage    string                 `json:"error_message"`
+	RetryAttempts   int                    `json:"retry_attempts"`
+	FailureTime     time.Time              `json:"failure_time"`
+	CompletedSteps  []string               `json:"completed_steps"`
+	RemainingSteps  []string               `json:"remaining_steps"`
+	RecoveryOptions []string               `json:"recovery_options"`
+	ErrorMetadata   map[string]interface{} `json:"error_metadata"`
 }
 
 // RecoveryStep represents a single step in the recovery process
 type RecoveryStep struct {
-	Name         string        `json:"name"`
-	Type         string        `json:"type"` // "remediation", "retry", "resume", "validation"
-	Description  string        `json:"description"`
-	Status       string        `json:"status"` // "pending", "running", "completed", "failed"
-	Duration     time.Duration `json:"duration"`
-	Error        error         `json:"error,omitempty"`
-	AutoExecute  bool          `json:"auto_execute"`
-	UserAction   string        `json:"user_action,omitempty"`
+	Name        string        `json:"name"`
+	Type        string        `json:"type"` // "remediation", "retry", "resume", "validation"
+	Description string        `json:"description"`
+	Status      string        `json:"status"` // "pending", "running", "completed", "failed"
+	Duration    time.Duration `json:"duration"`
+	Error       error         `json:"error,omitempty"`
+	AutoExecute bool          `json:"auto_execute"`
+	UserAction  string        `json:"user_action,omitempty"`
 }
 
 // RiskAssessment evaluates the risks of recovery actions
@@ -176,7 +176,7 @@ type RiskAssessment struct {
 func listRecoverableWorkflows() error {
 	fmt.Printf("📋 Recoverable Workflow Executions\n")
 	fmt.Printf("═══════════════════════════════════\n\n")
-	
+
 	// Simulate listing recoverable workflows
 	recoverableWorkflows := []struct {
 		ID           string
@@ -189,26 +189,26 @@ func listRecoverableWorkflows() error {
 		{"wf_1234567891", "climate_sync", "bundle_step", "permission_denied", true},
 		{"wf_1234567892", "ml_backup", "validation_step", "config_error", false},
 	}
-	
+
 	if len(recoverableWorkflows) == 0 {
 		fmt.Printf("No recoverable workflow executions found.\n")
 		return nil
 	}
-	
+
 	fmt.Printf("%-15s %-20s %-15s %-20s %s\n", "ID", "Workflow", "Failed At", "Failure Type", "Recoverable")
-	fmt.Printf("%-15s %-20s %-15s %-20s %s\n", 
-		strings.Repeat("─", 15), strings.Repeat("─", 20), strings.Repeat("─", 15), 
+	fmt.Printf("%-15s %-20s %-15s %-20s %s\n",
+		strings.Repeat("─", 15), strings.Repeat("─", 20), strings.Repeat("─", 15),
 		strings.Repeat("─", 20), strings.Repeat("─", 11))
-	
+
 	for _, wf := range recoverableWorkflows {
 		recoverable := "Yes"
 		if !wf.Recoverable {
 			recoverable = "No"
 		}
-		fmt.Printf("%-15s %-20s %-15s %-20s %s\n", 
+		fmt.Printf("%-15s %-20s %-15s %-20s %s\n",
 			wf.ID, wf.WorkflowName, wf.FailedAt, wf.FailureType, recoverable)
 	}
-	
+
 	fmt.Printf("\nUse 'aws-research-wizard data recover <ID>' to recover a specific workflow.\n")
 	return nil
 }
@@ -216,7 +216,7 @@ func listRecoverableWorkflows() error {
 // analyzeFailedWorkflow analyzes the failed workflow to understand the failure
 func analyzeFailedWorkflow(ctx context.Context, executionID string, plan *WorkflowRecoveryPlan) error {
 	fmt.Printf("🔍 Analyzing failed workflow...\n")
-	
+
 	// Simulate workflow failure analysis
 	plan.FailureAnalysis = &FailureAnalysis{
 		FailedStep:      "transfer_step",
@@ -233,20 +233,20 @@ func analyzeFailedWorkflow(ctx context.Context, executionID string, plan *Workfl
 			"retry_strategy":  "exponential_backoff",
 		},
 	}
-	
+
 	fmt.Printf("   • Failed step: %s\n", plan.FailureAnalysis.FailedStep)
 	fmt.Printf("   • Error type: %s\n", plan.FailureAnalysis.ErrorType)
 	fmt.Printf("   • Retry attempts: %d\n", plan.FailureAnalysis.RetryAttempts)
 	fmt.Printf("   • Completed steps: %d\n", len(plan.FailureAnalysis.CompletedSteps))
 	fmt.Printf("   • Remaining steps: %d\n", len(plan.FailureAnalysis.RemainingSteps))
-	
+
 	return nil
 }
 
 // generateRecoveryPlan creates a comprehensive recovery plan
 func generateRecoveryPlan(ctx context.Context, plan *WorkflowRecoveryPlan) error {
 	fmt.Printf("\n📋 Generating recovery plan...\n")
-	
+
 	// Generate recovery steps based on failure analysis and strategy
 	switch plan.Strategy {
 	case "auto", "auto-retry":
@@ -258,17 +258,17 @@ func generateRecoveryPlan(ctx context.Context, plan *WorkflowRecoveryPlan) error
 	default:
 		plan.Steps = generateAutoRetrySteps(plan.FailureAnalysis)
 	}
-	
+
 	// Generate recommendations
 	plan.Recommendations = generateRecoveryRecommendations(plan.FailureAnalysis)
-	
+
 	// Assess recovery risks
 	plan.RiskAssessment = assessRecoveryRisks(plan.FailureAnalysis, plan.Steps)
-	
+
 	fmt.Printf("   • Recovery steps: %d\n", len(plan.Steps))
 	fmt.Printf("   • Risk level: %s\n", plan.RiskAssessment.OverallRisk)
 	fmt.Printf("   • Recommended: %t\n", plan.RiskAssessment.RecommendAction)
-	
+
 	return nil
 }
 
@@ -300,7 +300,7 @@ func generateAutoRetrySteps(analysis *FailureAnalysis) []RecoveryStep {
 			AutoExecute: true,
 		},
 	}
-	
+
 	return steps
 }
 
@@ -329,7 +329,7 @@ func generateManualRecoverySteps(analysis *FailureAnalysis) []RecoveryStep {
 			UserAction:  "Execute resume command when ready",
 		},
 	}
-	
+
 	return steps
 }
 
@@ -348,7 +348,7 @@ func generateRetrySteps(analysis *FailureAnalysis) []RecoveryStep {
 // generateRecoveryRecommendations creates recovery recommendations
 func generateRecoveryRecommendations(analysis *FailureAnalysis) []string {
 	recommendations := []string{}
-	
+
 	switch analysis.ErrorType {
 	case "network_timeout":
 		recommendations = append(recommendations,
@@ -378,7 +378,7 @@ func generateRecoveryRecommendations(analysis *FailureAnalysis) []string {
 			"Consider running diagnostics to identify issues",
 		)
 	}
-	
+
 	return recommendations
 }
 
@@ -390,7 +390,7 @@ func assessRecoveryRisks(analysis *FailureAnalysis, steps []RecoveryStep) *RiskA
 		Prerequisites:   []string{},
 		RecommendAction: true,
 	}
-	
+
 	// Assess risk based on error type and recovery strategy
 	switch analysis.ErrorType {
 	case "network_timeout":
@@ -413,7 +413,7 @@ func assessRecoveryRisks(analysis *FailureAnalysis, steps []RecoveryStep) *RiskA
 		assessment.RiskFactors = []string{"unknown error cause"}
 		assessment.Prerequisites = []string{"investigate error cause"}
 	}
-	
+
 	return assessment
 }
 
@@ -425,7 +425,7 @@ func displayRecoveryPlan(plan *WorkflowRecoveryPlan) {
 	fmt.Printf("Strategy: %s\n", plan.Strategy)
 	fmt.Printf("Risk Level: %s\n", plan.RiskAssessment.OverallRisk)
 	fmt.Println()
-	
+
 	// Show failure details
 	fmt.Printf("💥 Failure Analysis:\n")
 	fmt.Printf("  • Failed step: %s\n", plan.FailureAnalysis.FailedStep)
@@ -433,7 +433,7 @@ func displayRecoveryPlan(plan *WorkflowRecoveryPlan) {
 	fmt.Printf("  • Completed: %d steps\n", len(plan.FailureAnalysis.CompletedSteps))
 	fmt.Printf("  • Remaining: %d steps\n", len(plan.FailureAnalysis.RemainingSteps))
 	fmt.Println()
-	
+
 	// Show recovery steps
 	fmt.Printf("🔧 Recovery Steps:\n")
 	for i, step := range plan.Steps {
@@ -449,7 +449,7 @@ func displayRecoveryPlan(plan *WorkflowRecoveryPlan) {
 		}
 	}
 	fmt.Println()
-	
+
 	// Show recommendations
 	if len(plan.Recommendations) > 0 {
 		fmt.Printf("💡 Recommendations:\n")
@@ -458,7 +458,7 @@ func displayRecoveryPlan(plan *WorkflowRecoveryPlan) {
 		}
 		fmt.Println()
 	}
-	
+
 	// Show risk assessment
 	if plan.RiskAssessment.OverallRisk != "low" {
 		fmt.Printf("⚠️  Risk Assessment:\n")
@@ -480,35 +480,35 @@ func executeAutomaticRecovery(ctx context.Context, plan *WorkflowRecoveryPlan) e
 	if !plan.RiskAssessment.RecommendAction && !recoverForce {
 		return fmt.Errorf("recovery not recommended due to high risk. Use --force to override")
 	}
-	
+
 	fmt.Printf("🚀 Executing automatic recovery...\n\n")
-	
+
 	for i, step := range plan.Steps {
 		if !step.AutoExecute {
 			fmt.Printf("Step %d: %s - SKIPPED (manual step)\n", i+1, step.Name)
 			continue
 		}
-		
+
 		fmt.Printf("Step %d: %s - RUNNING\n", i+1, step.Name)
 		startTime := time.Now()
-		
+
 		// Simulate step execution
 		time.Sleep(200 * time.Millisecond)
-		
+
 		duration := time.Since(startTime)
 		fmt.Printf("Step %d: %s - COMPLETED (%.2fs)\n", i+1, step.Name, duration.Seconds())
-		
+
 		plan.Steps[i].Status = "completed"
 		plan.Steps[i].Duration = duration
 	}
-	
+
 	plan.Success = true
 	plan.EndTime = time.Now()
 	plan.Duration = plan.EndTime.Sub(plan.StartTime)
-	
+
 	fmt.Printf("\n✅ Recovery completed successfully in %v\n", plan.Duration)
 	fmt.Printf("💡 The workflow should now continue from where it failed.\n")
-	
+
 	return nil
 }
 
@@ -516,10 +516,10 @@ func executeAutomaticRecovery(ctx context.Context, plan *WorkflowRecoveryPlan) e
 func executeInteractiveRecovery(ctx context.Context, plan *WorkflowRecoveryPlan) error {
 	fmt.Printf("🤖 Interactive Recovery Mode\n")
 	fmt.Printf("═══════════════════════════\n\n")
-	
+
 	fmt.Printf("This mode will guide you through each recovery step.\n")
 	fmt.Printf("You can choose to execute, skip, or modify each step.\n\n")
-	
+
 	for i, step := range plan.Steps {
 		fmt.Printf("Step %d/%d: %s\n", i+1, len(plan.Steps), step.Name)
 		fmt.Printf("Description: %s\n", step.Description)
@@ -527,18 +527,18 @@ func executeInteractiveRecovery(ctx context.Context, plan *WorkflowRecoveryPlan)
 			fmt.Printf("Required action: %s\n", step.UserAction)
 		}
 		fmt.Printf("Auto-executable: %t\n", step.AutoExecute)
-		
+
 		// In a real implementation, this would prompt for user input
 		fmt.Printf("Action: [E]xecute, [S]kip, [M]odify, [Q]uit? E\n")
-		
+
 		// Simulate execution
 		fmt.Printf("Executing step...\n")
 		time.Sleep(100 * time.Millisecond)
 		fmt.Printf("✅ Step completed\n\n")
-		
+
 		plan.Steps[i].Status = "completed"
 	}
-	
+
 	fmt.Printf("🎉 Interactive recovery completed!\n")
 	return nil
 }

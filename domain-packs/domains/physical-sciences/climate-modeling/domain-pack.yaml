@@ -1,0 +1,64 @@
+name: climate-modeling
+description: "Weather prediction and climate simulation tools"
+version: "1.0.0"
+categories: ["physical-sciences"]
+
+maintainers:
+  - name: "AWS Research Wizard Team"
+    email: "research-wizard@example.com"
+    organization: "AWS Research Computing"
+
+spack_config:
+  packages:
+    - "wrf@4.5.1 %gcc@11.4.0 +mpi+openmp"
+    - "cesm@2.1.3 %gcc@11.4.0 +mpi"
+    - "netcdf-c@4.9.2 %gcc@11.4.0 +mpi+parallel-netcdf"
+    - "netcdf-fortran@4.6.0 %gcc@11.4.0"
+    - "hdf5@1.14.1 %gcc@11.4.0 +mpi+fortran"
+    - "nco@5.1.5 %gcc@11.4.0 +netcdf"
+    - "cdo@2.2.0 %gcc@11.4.0 +netcdf+hdf5"
+    - "grib-api@1.28.0 %gcc@11.4.0"
+    - "eccodes@2.30.2 %gcc@11.4.0"
+    - "openmpi@4.1.5 %gcc@11.4.0 +pmi+slurm"
+    - "fftw@3.3.10 %gcc@11.4.0 +mpi+openmp"
+  compiler: "gcc@11.4.0"
+  target: "x86_64_v3"
+  optimization: "-O3 -march=native -ffast-math"
+
+aws_config:
+  instance_types:
+    small: "c6i.4xlarge"    # 16 vCPU, 32 GB RAM - $0.68/hr
+    medium: "c6i.12xlarge"  # 48 vCPU, 96 GB RAM - $2.04/hr
+    large: "c6a.48xlarge"   # 96 vCPU, 384 GB RAM - $4.15/hr
+  storage:
+    type: "gp3"
+    size_gb: 2000
+    iops: 16000
+    throughput: 1000
+  network:
+    placement_group: true
+    enhanced_networking: true
+    efa_enabled: true
+
+workflows:
+  - name: "weather_forecast"
+    description: "Regional weather forecasting with WRF"
+    script: "workflows/wrf_forecast.sh"
+    input_data: "s3://aws-research-data/weather/gfs/"
+    expected_output: "Weather forecast grids in NetCDF format"
+    
+  - name: "climate_simulation"
+    description: "Long-term climate modeling with CESM"
+    script: "workflows/cesm_climate.sh"
+    input_data: "s3://aws-research-data/climate/forcing/"
+    expected_output: "Climate model outputs and analysis"
+
+cost_estimates:
+  small_workload: "$15-45/day"
+  medium_workload: "$50-150/day"
+  large_workload: "$70-250/day"
+
+documentation:
+  getting_started: "docs/climate_quickstart.md"
+  tutorials: "docs/tutorials/"
+  best_practices: "docs/mpi_optimization.md"

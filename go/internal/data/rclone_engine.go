@@ -17,10 +17,10 @@ import (
 // RcloneEngine implements TransferEngine for rclone
 type RcloneEngine struct {
 	*BaseTransferEngine
-	executablePath string
-	configPath     string
+	executablePath  string
+	configPath      string
 	activeTransfers map[string]*rcloneTransfer
-	mu             sync.RWMutex
+	mu              sync.RWMutex
 }
 
 // rcloneTransfer tracks an active rclone transfer
@@ -36,20 +36,20 @@ type rcloneTransfer struct {
 
 // RcloneStats represents rclone's JSON statistics output
 type RcloneStats struct {
-	Bytes         int64   `json:"bytes"`
-	Checks        int64   `json:"checks"`
-	Deletes       int64   `json:"deletes"`
-	Elapsed       float64 `json:"elapsedTime"`
-	Errors        int64   `json:"errors"`
-	FatalError    bool    `json:"fatalError"`
-	Renames       int64   `json:"renames"`
-	RetryError    bool    `json:"retryError"`
-	Speed         float64 `json:"speed"`
-	TotalBytes    int64   `json:"totalBytes"`
-	TotalChecks   int64   `json:"totalChecks"`
-	Transfers     int64   `json:"transfers"`
-	TransferTime  float64 `json:"transferTime"`
-	Transferring  []RcloneTransferringFile `json:"transferring"`
+	Bytes        int64                    `json:"bytes"`
+	Checks       int64                    `json:"checks"`
+	Deletes      int64                    `json:"deletes"`
+	Elapsed      float64                  `json:"elapsedTime"`
+	Errors       int64                    `json:"errors"`
+	FatalError   bool                     `json:"fatalError"`
+	Renames      int64                    `json:"renames"`
+	RetryError   bool                     `json:"retryError"`
+	Speed        float64                  `json:"speed"`
+	TotalBytes   int64                    `json:"totalBytes"`
+	TotalChecks  int64                    `json:"totalChecks"`
+	Transfers    int64                    `json:"transfers"`
+	TransferTime float64                  `json:"transferTime"`
+	Transferring []RcloneTransferringFile `json:"transferring"`
 }
 
 // RcloneTransferringFile represents a file being transferred
@@ -77,14 +77,14 @@ func NewRcloneEngine(executablePath, configPath string) *RcloneEngine {
 		SupportsValidation:     true,
 		SupportsBandwidthLimit: true,
 		SupportsRetry:          true,
-		OptimalFileSizeMin:     1024,                          // 1KB
-		OptimalFileSizeMax:     1024 * 1024 * 1024 * 1024,    // 1TB
+		OptimalFileSizeMin:     1024,                      // 1KB
+		OptimalFileSizeMax:     1024 * 1024 * 1024 * 1024, // 1TB
 		MaxConcurrency:         32,
 		CloudOptimized:         []string{"aws", "gcp", "azure", "multi-cloud"},
 	}
 
 	base := NewBaseTransferEngine("rclone", "multi-cloud", capabilities)
-	
+
 	engine := &RcloneEngine{
 		BaseTransferEngine: base,
 		executablePath:     executablePath,
@@ -120,7 +120,7 @@ func (e *RcloneEngine) Upload(ctx context.Context, req *TransferRequest) (*Trans
 
 	// Build rclone copy command
 	args := e.buildCopyArgs(req, "copy")
-	
+
 	// Execute transfer
 	return e.executeTransfer(ctx, req, args)
 }
@@ -134,7 +134,7 @@ func (e *RcloneEngine) Download(ctx context.Context, req *TransferRequest) (*Tra
 
 	// Build rclone copy command
 	args := e.buildCopyArgs(req, "copy")
-	
+
 	// Execute transfer
 	return e.executeTransfer(ctx, req, args)
 }
@@ -148,11 +148,11 @@ func (e *RcloneEngine) Sync(ctx context.Context, req *SyncRequest) (*TransferRes
 		Destination:      req.Destination,
 		ProgressCallback: req.ProgressCallback,
 		Context:          req.Context,
-		Options:          TransferOptions{
-			Overwrite:     true, // sync typically overwrites
-			Concurrency:   req.Options.Concurrency,
+		Options: TransferOptions{
+			Overwrite:      true, // sync typically overwrites
+			Concurrency:    req.Options.Concurrency,
 			BandwidthLimit: req.Options.BandwidthLimit,
-			ToolSpecific:  map[string]interface{}{
+			ToolSpecific: map[string]interface{}{
 				"sync_options": req.Options,
 			},
 		},
@@ -160,7 +160,7 @@ func (e *RcloneEngine) Sync(ctx context.Context, req *SyncRequest) (*TransferRes
 
 	// Build rclone sync command
 	args := e.buildSyncArgs(transferReq, &req.Options)
-	
+
 	// Execute transfer
 	return e.executeTransfer(ctx, transferReq, args)
 }
@@ -299,7 +299,7 @@ func (e *RcloneEngine) executeTransfer(ctx context.Context, req *TransferRequest
 	statsArgs = append(statsArgs, "--stats-file-name-length", "0", "--use-json-log")
 
 	cmd := exec.CommandContext(ctx, e.executablePath, statsArgs...)
-	
+
 	// Set up pipes for output monitoring
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -313,8 +313,8 @@ func (e *RcloneEngine) executeTransfer(ctx context.Context, req *TransferRequest
 
 	// Create transfer tracking
 	transfer := &rcloneTransfer{
-		id:   req.ID,
-		cmd:  cmd,
+		id:  req.ID,
+		cmd: cmd,
 		progress: &TransferProgress{
 			StartTime: startTime,
 		},
@@ -360,7 +360,7 @@ func (e *RcloneEngine) executeTransfer(ctx context.Context, req *TransferRequest
 		for scanner.Scan() {
 			line := scanner.Text()
 			errorOutput.WriteString(line + "\n")
-			
+
 			// Some rclone output goes to stderr, try to parse it too
 			e.parseProgressLine(line, transfer)
 		}
@@ -403,7 +403,7 @@ func (e *RcloneEngine) executeTransfer(ctx context.Context, req *TransferRequest
 	if transfer.callback != nil {
 		transfer.callback(*transfer.progress)
 	}
-	
+
 	// Get final statistics from rclone stats
 	if transfer.stats.TotalBytes > 0 {
 		result.BytesTransferred = transfer.stats.Bytes
@@ -424,7 +424,7 @@ func (e *RcloneEngine) executeTransfer(ctx context.Context, req *TransferRequest
 // monitorProgress monitors rclone output for progress information
 func (e *RcloneEngine) monitorProgress(reader io.Reader, transfer *rcloneTransfer) {
 	scanner := bufio.NewScanner(reader)
-	
+
 	for scanner.Scan() {
 		line := scanner.Text()
 		e.parseProgressLine(line, transfer)
@@ -441,31 +441,31 @@ func (e *RcloneEngine) parseProgressLine(line string, transfer *rcloneTransfer) 
 		var stats RcloneStats
 		if err := json.Unmarshal([]byte(line), &stats); err == nil {
 			transfer.stats = &stats
-			
+
 			// Update progress from stats
 			if stats.TotalBytes > 0 {
 				transfer.progress.TotalBytes = stats.TotalBytes
 				transfer.progress.BytesTransferred = stats.Bytes
 				transfer.progress.Percentage = float64(stats.Bytes) / float64(stats.TotalBytes) * 100.0
 			}
-			
+
 			if stats.Speed > 0 {
 				transfer.progress.Speed = int64(stats.Speed)
-				
+
 				// Calculate ETA
 				if stats.TotalBytes > stats.Bytes && stats.Speed > 0 {
 					remaining := stats.TotalBytes - stats.Bytes
 					transfer.progress.ETA = time.Duration(float64(remaining)/stats.Speed) * time.Second
 				}
 			}
-			
+
 			transfer.progress.LastUpdate = time.Now()
-			
+
 			// Call progress callback
 			if transfer.callback != nil {
 				transfer.callback(*transfer.progress)
 			}
-			
+
 			return
 		}
 	}
@@ -473,7 +473,7 @@ func (e *RcloneEngine) parseProgressLine(line string, transfer *rcloneTransfer) 
 	// Fallback: try to parse traditional rclone progress output
 	// Example: "Transferred:   	  234.567 MiB / 1.234 GiB, 19%, 12.345 MiB/s, ETA 1m23s"
 	transferredRegex := regexp.MustCompile(`Transferred:\s+([0-9.]+)\s+(\w+)\s+/\s+([0-9.]+)\s+(\w+),\s+(\d+)%,\s+([0-9.]+)\s+(\w+)/s`)
-	
+
 	if matches := transferredRegex.FindStringSubmatch(line); len(matches) == 8 {
 		transferred, _ := strconv.ParseFloat(matches[1], 64)
 		transferredUnit := matches[2]
@@ -482,24 +482,24 @@ func (e *RcloneEngine) parseProgressLine(line string, transfer *rcloneTransfer) 
 		percentage, _ := strconv.ParseFloat(matches[5], 64)
 		speed, _ := strconv.ParseFloat(matches[6], 64)
 		speedUnit := matches[7]
-		
+
 		// Convert to bytes
 		transferredBytes := convertToBytes(transferred, transferredUnit)
 		totalBytes := convertToBytes(total, totalUnit)
 		speedBytes := convertToBytes(speed, speedUnit)
-		
+
 		transfer.progress.BytesTransferred = transferredBytes
 		transfer.progress.TotalBytes = totalBytes
 		transfer.progress.Percentage = percentage
 		transfer.progress.Speed = speedBytes
 		transfer.progress.LastUpdate = time.Now()
-		
+
 		// Calculate ETA
 		if speedBytes > 0 && totalBytes > transferredBytes {
 			remaining := totalBytes - transferredBytes
 			transfer.progress.ETA = time.Duration(float64(remaining)/float64(speedBytes)) * time.Second
 		}
-		
+
 		// Call progress callback
 		if transfer.callback != nil {
 			transfer.callback(*transfer.progress)
@@ -529,15 +529,15 @@ func convertToBytes(value float64, unit string) int64 {
 func (e *RcloneEngine) GetProgress(ctx context.Context, transferID string) (*TransferProgress, error) {
 	e.mu.RLock()
 	defer e.mu.RUnlock()
-	
+
 	transfer, exists := e.activeTransfers[transferID]
 	if !exists {
 		return nil, fmt.Errorf("transfer not found: %s", transferID)
 	}
-	
+
 	transfer.mu.RLock()
 	defer transfer.mu.RUnlock()
-	
+
 	// Return a copy of the progress
 	progress := *transfer.progress
 	return &progress, nil
@@ -548,18 +548,18 @@ func (e *RcloneEngine) Cancel(ctx context.Context, transferID string) error {
 	e.mu.RLock()
 	transfer, exists := e.activeTransfers[transferID]
 	e.mu.RUnlock()
-	
+
 	if !exists {
 		return fmt.Errorf("transfer not found: %s", transferID)
 	}
-	
+
 	// Kill the process
 	if transfer.cmd != nil && transfer.cmd.Process != nil {
 		if err := transfer.cmd.Process.Kill(); err != nil {
 			return fmt.Errorf("failed to kill rclone process: %w", err)
 		}
 	}
-	
+
 	return nil
 }
 
@@ -568,12 +568,12 @@ func (e *RcloneEngine) Validate() error {
 	if e.executablePath == "" {
 		return fmt.Errorf("executable path not set")
 	}
-	
+
 	// Check if executable exists and is executable
 	if _, err := exec.LookPath(e.executablePath); err != nil {
 		return fmt.Errorf("rclone executable not found: %w", err)
 	}
-	
+
 	return nil
 }
 
@@ -581,7 +581,7 @@ func (e *RcloneEngine) Validate() error {
 func (e *RcloneEngine) GetActiveTransfers() map[string]*TransferProgress {
 	e.mu.RLock()
 	defer e.mu.RUnlock()
-	
+
 	transfers := make(map[string]*TransferProgress)
 	for id, transfer := range e.activeTransfers {
 		transfer.mu.RLock()
@@ -589,7 +589,7 @@ func (e *RcloneEngine) GetActiveTransfers() map[string]*TransferProgress {
 		transfer.mu.RUnlock()
 		transfers[id] = &progress
 	}
-	
+
 	return transfers
 }
 
@@ -620,13 +620,13 @@ func (e *RcloneEngine) GetVersion(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to get rclone version: %w", err)
 	}
-	
+
 	// Parse version from output
 	lines := strings.Split(string(output), "\n")
 	if len(lines) > 0 {
 		return strings.TrimSpace(lines[0]), nil
 	}
-	
+
 	return strings.TrimSpace(string(output)), nil
 }
 
@@ -636,16 +636,16 @@ func (e *RcloneEngine) ListRemotes(ctx context.Context) ([]string, error) {
 	if e.configPath != "" {
 		args = append([]string{"--config", e.configPath}, args...)
 	}
-	
+
 	cmd := exec.CommandContext(ctx, e.executablePath, args...)
 	output, err := cmd.Output()
 	if err != nil {
 		return nil, fmt.Errorf("failed to list rclone remotes: %w", err)
 	}
-	
+
 	lines := strings.Split(strings.TrimSpace(string(output)), "\n")
 	remotes := make([]string, 0, len(lines))
-	
+
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		if line != "" {
@@ -656,7 +656,7 @@ func (e *RcloneEngine) ListRemotes(ctx context.Context) ([]string, error) {
 			remotes = append(remotes, line)
 		}
 	}
-	
+
 	return remotes, nil
 }
 
@@ -666,11 +666,11 @@ func (e *RcloneEngine) TestRemote(ctx context.Context, remote string) error {
 	if e.configPath != "" {
 		args = append([]string{"--config", e.configPath}, args...)
 	}
-	
+
 	cmd := exec.CommandContext(ctx, e.executablePath, args...)
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to test remote %s: %w", remote, err)
 	}
-	
+
 	return nil
 }

@@ -28,7 +28,7 @@ and instance type recommendations.
 
 Available operations:
 - List all available research domains
-- Show detailed domain information  
+- Show detailed domain information
 - Interactive domain selection with cost analysis
 - Instance type recommendations and optimization`,
 		Run: func(cmd *cobra.Command, args []string) {
@@ -118,7 +118,7 @@ func runInteractiveConfig(cmd *cobra.Command, configRoot string, simple bool) {
 	fmt.Printf("  Cost: $%.3f/hour ($%.0f/month)\n", estimate.HourlyCost, estimate.MonthlyCost)
 	fmt.Printf("  Specs: %d vCPUs, %s RAM\n", estimate.VCPUs, estimate.Memory)
 	fmt.Printf("  Spot Savings: $%.0f/month (70%% discount)\n", estimate.SpotSavings*24*30.44)
-	
+
 	fmt.Printf("\n💡 Next Steps:\n")
 	fmt.Printf("  1. Deploy with: aws-research-wizard deploy --domain %s --instance %s\n", selectedDomain.Name, selectedInstance)
 	fmt.Printf("  2. Monitor with: aws-research-wizard monitor\n")
@@ -141,7 +141,7 @@ func createListCommand(configRoot *string) *cobra.Command {
 			}
 
 			fmt.Printf("Available Research Domains (%d total):\n\n", len(domains))
-			
+
 			for name, domain := range domains {
 				fmt.Printf("📚 %s\n", name)
 				fmt.Printf("   %s\n", domain.Description)
@@ -176,20 +176,20 @@ func createInfoCommand(configRoot *string) *cobra.Command {
 
 			fmt.Printf("🔬 Domain: %s\n\n", domain.Name)
 			fmt.Printf("Description: %s\n\n", domain.Description)
-			
+
 			fmt.Printf("Target Users: %s\n", domain.TargetUsers)
-			
+
 			fmt.Printf("\nSpack Package Categories (%d):\n", len(domain.SpackPackages))
 			for category, packages := range domain.SpackPackages {
 				fmt.Printf("  • %s: %v\n", category, packages)
 			}
-			
+
 			fmt.Printf("\nAWS Instance Recommendations:\n")
 			for _, rec := range domain.AWSInstanceRecommendations {
 				fmt.Printf("  • %s: %s (%d vCPUs, %d GB) - $%.3f/hour\n",
 					rec.UseCase, rec.InstanceType, rec.VCPUs, rec.MemoryGB, rec.CostPerHour)
 			}
-			
+
 			fmt.Printf("\nEstimated Costs:\n")
 			fmt.Printf("  • Compute: $%.0f/month\n", domain.EstimatedCost.Compute)
 			fmt.Printf("  • Storage: $%.0f/month\n", domain.EstimatedCost.Storage)
@@ -255,7 +255,7 @@ func createSearchCommand(configRoot *string) *cobra.Command {
 				// Simple case-insensitive search in name and description
 				nameMatch := containsIgnoreCase(name, query)
 				descMatch := containsIgnoreCase(domain.Description, query)
-				
+
 				if nameMatch || descMatch {
 					found++
 					fmt.Printf("📚 %s\n", name)
@@ -298,8 +298,8 @@ func findConfigRoot() string {
 }
 
 func containsIgnoreCase(s, substr string) bool {
-	return len(s) >= len(substr) && 
-		   len(substr) > 0 && 
-		   strings.ToLower(s) != strings.ToLower(s) || 
-		   strings.Contains(strings.ToLower(s), strings.ToLower(substr))
+	return len(s) >= len(substr) &&
+		len(substr) > 0 &&
+		strings.ToLower(s) != strings.ToLower(s) ||
+		strings.Contains(strings.ToLower(s), strings.ToLower(substr))
 }
