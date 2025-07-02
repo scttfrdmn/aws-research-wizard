@@ -21,7 +21,7 @@
 - **95% Faster Installations** - AWS binary cache integration
 - **Interactive TUI** - Beautiful terminal interface for package management
 - **Real-time Progress** - Live monitoring of installation progress
-- **Standalone Library** - [spack-manager-go](spack-manager-go/) for community use
+- **Standalone Library** - [spack-manager-go](https://github.com/scttfrdmn/spack-manager-go) for community use
 - **Enhanced CLI** - Complete Spack integration with domain packs
 
 **Author:** Scott Friedman
