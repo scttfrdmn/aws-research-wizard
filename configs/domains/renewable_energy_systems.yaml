@@ -1,0 +1,291 @@
+name: "Renewable Energy Systems"
+category: "engineering"
+description: "Comprehensive renewable energy research and development platform"
+version: "1.0"
+
+# Research Domain Configuration
+domain:
+  research_areas:
+    - "Solar Energy Research & Photovoltaic Systems"
+    - "Wind Energy Research & Turbine Modeling"
+    - "Energy Storage Systems & Battery Technology"
+    - "Grid Integration & Smart Grid Analytics"
+    - "Hydroelectric Systems & Resource Assessment"
+    - "Geothermal Research & Heat Pump Systems"
+    - "Biomass & Bioenergy Production"
+    - "Energy Systems Modeling & Optimization"
+    - "Smart Grid Analytics & Demand Response"
+
+  primary_applications:
+    - "Solar PV system design and optimization"
+    - "Wind turbine performance and wake modeling"
+    - "Battery and energy storage system analysis"
+    - "Grid integration and stability studies"
+    - "Renewable resource assessment and forecasting"
+    - "Energy system techno-economic analysis"
+    - "Microgrid and smart grid optimization"
+    - "Life cycle assessment of renewable technologies"
+
+  data_types:
+    - "Solar irradiance and weather station data"
+    - "Wind resource measurements and LiDAR data"
+    - "Power grid operational and market data"
+    - "Energy storage performance and degradation data"
+    - "Building energy consumption profiles"
+    - "Geographic and topographic data for siting"
+    - "Economic and policy data"
+    - "Life cycle inventory databases"
+
+# Software Stack
+software:
+  core_packages:
+    - "python"
+    - "python-numpy"
+    - "python-pandas"
+    - "python-scipy"
+    - "python-matplotlib"
+    - "python-seaborn"
+    - "python-plotly"
+    - "python-scikit-learn"
+    - "python-tensorflow"
+    - "python-pytorch"
+    - "r-base"
+    - "julia"
+    - "octave"
+
+  specialized_tools:
+    # Solar Energy
+    - "python-pvlib"          # Photovoltaic modeling
+    - "python-pvfactors"      # PV system modeling
+    - "python-rdtools"        # Renewable energy data analysis
+    - "sam"                   # System Advisor Model (NREL)
+    - "pvsyst"                # PV system simulation
+    - "helioscope"            # Solar design software
+
+    # Wind Energy
+    - "python-windpowerlib"   # Wind power calculations
+    - "python-floris"         # Wind farm wake modeling
+    - "wasp"                  # Wind resource assessment
+    - "windpro"               # Wind energy planning
+    - "openfast"              # Wind turbine simulation
+    - "sowfa"                 # Wind farm simulation
+
+    # Energy Storage
+    - "python-pybamm"         # Battery modeling
+    - "python-cantera"        # Chemical kinetics
+    - "comsol"                # Multiphysics simulation
+    - "homer"                 # Microgrid design
+    - "python-pyomo"          # Optimization modeling
+
+    # Grid Integration
+    - "python-pandapower"     # Power system analysis
+    - "python-pypsa"          # Power system optimization
+    - "python-matpower"       # Power system simulation
+    - "gridlab-d"             # Grid simulation
+    - "plexos"                # Energy market modeling
+    - "powerworld"            # Power system analysis
+
+    # Optimization & Modeling
+    - "python-cvxpy"          # Convex optimization
+    - "python-gurobipy"       # Commercial optimization
+    - "gams"                  # Mathematical programming
+    - "energyplan"            # Energy system analysis
+    - "trnsys"                # Thermal system simulation
+
+    # Geographic & Weather
+    - "python-geopandas"
+    - "python-xarray"
+    - "python-netcdf4"
+    - "python-h5py"
+    - "python-cartopy"
+    - "gdal"
+    - "python-rasterio"
+
+  simulation_software:
+    - "ansys-fluent"          # CFD simulation
+    - "openfoam"              # Open source CFD
+    - "star-ccm+"             # CFD and simulation
+    - "simulink"              # System modeling
+
+# Infrastructure Requirements
+infrastructure:
+  instance_types:
+    small: "c6i.large"        # Basic energy analysis
+    medium: "c6i.xlarge"      # Standard renewable modeling
+    large: "c6i.4xlarge"      # Resource assessment studies
+    xlarge: "hpc6a.12xlarge"  # Large-scale system optimization
+    cluster: "hpc6a.24xlarge" # Regional energy modeling
+    gpu: "g5.2xlarge"         # ML and neural network training
+    gpu_cluster: "p4d.24xlarge" # Large-scale ML optimization
+
+  storage:
+    root_volume: 200          # GB - OS and software
+    data_volume: 2000         # GB - Weather and grid data
+    scratch_volume: 1000      # GB - Simulation workspace
+
+  networking:
+    enhanced_networking: true
+    placement_group: true     # For distributed optimization
+    efa_enabled: true         # For HPC workloads
+
+# Cost Analysis
+cost:
+  monthly_estimates:
+    small:
+      instance: 120           # c6i.large
+      storage: 180
+      data_transfer: 40
+      total: 340
+
+    medium:
+      instance: 240           # c6i.xlarge
+      storage: 250
+      data_transfer: 60
+      total: 550
+
+    large:
+      instance: 960           # c6i.4xlarge
+      storage: 350
+      data_transfer: 90
+      total: 1400
+
+    xlarge:
+      instance: 2400          # hpc6a.12xlarge
+      storage: 500
+      data_transfer: 150
+      total: 3050
+
+    gpu:
+      instance: 1200          # g5.2xlarge
+      storage: 300
+      data_transfer: 80
+      total: 1580
+
+  spot_savings: 0.70          # 70% savings with spot instances
+  reserved_savings: 0.50      # 50% savings with reserved instances
+
+# Data Specifications
+data:
+  typical_datasets:
+    - name: "Solar Resource Database"
+      size: "50-500 GB"
+      description: "NSRDB, satellite-derived solar irradiance data"
+
+    - name: "Wind Resource Data"
+      size: "100-1000 GB"
+      description: "Wind speed, direction, and turbulence measurements"
+
+    - name: "Grid Operations Data"
+      size: "200-2000 GB"
+      description: "Electricity market, demand, and generation data"
+
+    - name: "Weather Reanalysis"
+      size: "500-5000 GB"
+      description: "ERA5, MERRA-2 historical weather data"
+
+    - name: "Building Energy Data"
+      size: "10-100 GB"
+      description: "Energy consumption profiles and smart meter data"
+
+  aws_open_data:
+    - name: "NSRDB Solar Data"
+      bucket: "nrel-pds-nsrdb"
+      description: "National Solar Radiation Database"
+
+    - name: "Wind Integration Datasets"
+      bucket: "nrel-pds-wtk"
+      description: "Wind Integration National Dataset Toolkit"
+
+    - name: "NOAA Weather Data"
+      bucket: "noaa-gfs-bdp-pds"
+      description: "Global Forecast System weather data"
+
+    - name: "ERA5 Reanalysis"
+      bucket: "era5-pds"
+      description: "ECMWF ERA5 atmospheric reanalysis"
+
+# Example Workflows
+workflows:
+  - name: "Solar Farm Optimization"
+    description: "Design and optimize utility-scale solar installations"
+    steps:
+      - "Import solar resource and weather data"
+      - "Perform site assessment and shading analysis"
+      - "Optimize PV system configuration"
+      - "Calculate energy yield and economics"
+      - "Generate technical and financial reports"
+
+  - name: "Wind Farm Wake Modeling"
+    description: "Model wind turbine wake effects and optimize layout"
+    steps:
+      - "Process wind resource measurements"
+      - "Model turbine wake interactions"
+      - "Optimize turbine placement"
+      - "Calculate annual energy production"
+      - "Assess grid integration requirements"
+
+  - name: "Grid Integration Study"
+    description: "Analyze renewable energy grid integration impacts"
+    steps:
+      - "Import grid operational and renewable generation data"
+      - "Model grid stability and power quality"
+      - "Assess energy storage requirements"
+      - "Optimize dispatch and market participation"
+      - "Generate integration recommendations"
+
+  - name: "Energy Storage Optimization"
+    description: "Design and optimize energy storage systems"
+    steps:
+      - "Analyze load profiles and renewable generation"
+      - "Model battery performance and degradation"
+      - "Optimize sizing and control strategies"
+      - "Calculate economic and technical benefits"
+      - "Generate system specifications"
+
+# Security and Compliance
+security:
+  compliance_frameworks:
+    - "NERC CIP (Critical Infrastructure Protection)"
+    - "IEEE 1547 (Grid Interconnection Standards)"
+    - "IEC 61850 (Power Utility Automation)"
+    - "ISO 50001 (Energy Management Systems)"
+    - "DOE Cybersecurity Framework"
+
+  data_encryption: true
+  access_controls: true
+  audit_logging: true
+
+# Optimization Settings
+optimization:
+  auto_scaling:
+    enabled: true
+    min_instances: 1
+    max_instances: 50
+    target_cpu: 80
+
+  cost_optimization:
+    spot_instances: true
+    scheduled_shutdown: true
+    idle_timeout: 60          # minutes
+    data_lifecycle: true
+    gpu_scheduling: true      # Smart GPU usage scheduling
+
+  performance:
+    ebs_optimized: true
+    enhanced_networking: true
+    efa_enabled: true
+    placement_group: true
+    parallel_optimization: true
+
+  hpc_optimization:
+    mpi_enabled: true
+    shared_storage: true
+    job_queuing: true
+    distributed_computing: true
+
+  data_management:
+    backup_enabled: true
+    backup_retention: 90      # days
+    automated_snapshots: true
+    data_compression: true
+    intelligent_tiering: true

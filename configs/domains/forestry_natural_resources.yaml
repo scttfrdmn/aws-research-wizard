@@ -1,0 +1,265 @@
+name: "Forestry & Natural Resources"
+category: "environmental-sciences"
+description: "Comprehensive forestry and natural resource management platform"
+version: "1.0"
+
+# Research Domain Configuration
+domain:
+  research_areas:
+    - "Forest Inventory & Mensuration"
+    - "Forest Growth Modeling & Yield Prediction"
+    - "Forest Ecology & Biodiversity"
+    - "Wildlife Management & Conservation"
+    - "Fire Management & Risk Assessment"
+    - "Carbon Sequestration & Climate Modeling"
+    - "Watershed Management & Hydrology"
+    - "Forest Economics & Resource Optimization"
+    - "Remote Sensing & Forest Monitoring"
+
+  primary_applications:
+    - "Forest inventory and growth modeling"
+    - "Wildlife habitat assessment and management"
+    - "Wildfire risk prediction and management"
+    - "Carbon stock assessment and monitoring"
+    - "Watershed analysis and water resource management"
+    - "Forest economic valuation and optimization"
+    - "LiDAR and satellite forest monitoring"
+    - "Biodiversity conservation planning"
+
+  data_types:
+    - "LiDAR point clouds and forest structure data"
+    - "Satellite imagery (Landsat, Sentinel, MODIS)"
+    - "Forest inventory plot data"
+    - "Wildlife tracking and telemetry data"
+    - "Meteorological and climate data"
+    - "Soil and hydrology measurements"
+    - "Economic and market data"
+    - "Species occurrence and biodiversity data"
+
+# Software Stack
+software:
+  core_packages:
+    - "r-base"
+    - "python"
+    - "python-numpy"
+    - "python-pandas"
+    - "python-scipy"
+    - "python-matplotlib"
+    - "python-geopandas"
+    - "python-rasterio"
+    - "python-fiona"
+    - "gdal"
+    - "proj"
+    - "geos"
+
+  specialized_tools:
+    # Forest Analysis R Packages
+    - "r-forestr"
+    - "r-forestgapstats"
+    - "r-forestr"
+    - "r-inventoryr"
+    - "r-rforestry"
+    - "r-randomforest"
+
+    # LiDAR Processing
+    - "pdal"              # Point Data Abstraction Library
+    - "liddr"             # LiDAR R package
+    - "python-laspy"      # Python LAS file processing
+    - "python-pdal"       # Python PDAL bindings
+    - "fusion"            # LiDAR processing software
+    - "lastools"          # LiDAR data processing
+
+    # Remote Sensing
+    - "r-raster"
+    - "r-terra"
+    - "r-sf"
+    - "r-leaflet"
+    - "python-earthengine-api"
+    - "python-sentinelsat"
+    - "python-landsat-util"
+
+    # Forest Growth Models
+    - "r-fvs"             # Forest Vegetation Simulator
+    - "organon"           # Forest growth model
+    - "python-pycrown"    # Tree crown analysis
+
+    # Wildlife & Ecology
+    - "r-movebank"
+    - "r-amt"             # Animal movement tools
+    - "r-ctmm"            # Continuous-time movement models
+    - "r-vegan"           # Community ecology
+    - "r-biodivercityr"
+
+    # Fire Modeling
+    - "r-burnr"
+    - "farsite"           # Fire area simulator
+    - "flammap"           # Fire mapping software
+    - "behaveplus"        # Fire behavior prediction
+
+    # Hydrology
+    - "r-hydrostats"
+    - "r-waterdata"
+    - "swat"              # Soil and Water Assessment Tool
+    - "hec-ras"           # Hydrologic engineering
+
+  gis_software:
+    - "qgis"
+    - "grass"
+    - "saga"
+    - "postgis"
+    - "spatialite"
+
+# Infrastructure Requirements
+infrastructure:
+  instance_types:
+    small: "c6i.large"        # Basic forest analysis
+    medium: "c6i.xlarge"      # Standard forest modeling
+    large: "r6i.4xlarge"      # Large-scale forest assessment
+    xlarge: "hpc6a.12xlarge"  # Regional forest modeling
+    cluster: "hpc6a.24xlarge" # Landscape-scale analysis
+
+  storage:
+    root_volume: 150          # GB - OS and software
+    data_volume: 1000         # GB - LiDAR and satellite data
+    scratch_volume: 500       # GB - Processing workspace
+
+  networking:
+    enhanced_networking: true
+    placement_group: true     # For distributed processing
+    efa_enabled: true         # For HPC workloads
+
+# Cost Analysis
+cost:
+  monthly_estimates:
+    small:
+      instance: 120           # c6i.large
+      storage: 150
+      data_transfer: 50
+      total: 320
+
+    medium:
+      instance: 240           # c6i.xlarge
+      storage: 200
+      data_transfer: 75
+      total: 515
+
+    large:
+      instance: 960           # r6i.4xlarge
+      storage: 300
+      data_transfer: 100
+      total: 1360
+
+    xlarge:
+      instance: 2400          # hpc6a.12xlarge
+      storage: 400
+      data_transfer: 150
+      total: 2950
+
+  spot_savings: 0.70          # 70% savings with spot instances
+  reserved_savings: 0.50      # 50% savings with reserved instances
+
+# Data Specifications
+data:
+  typical_datasets:
+    - name: "Forest Inventory Plots"
+      size: "10-100 GB"
+      description: "National Forest Inventory plot measurements"
+
+    - name: "LiDAR Point Clouds"
+      size: "100-5000 GB"
+      description: "Airborne LiDAR forest structure data"
+
+    - name: "Satellite Imagery Time Series"
+      size: "50-2000 GB"
+      description: "Landsat, Sentinel, MODIS forest monitoring"
+
+    - name: "Wildlife Telemetry Data"
+      size: "5-50 GB"
+      description: "GPS collar and tag tracking data"
+
+    - name: "Climate and Weather Data"
+      size: "20-200 GB"
+      description: "Meteorological stations and gridded climate data"
+
+  aws_open_data:
+    - name: "Landsat Collection"
+      bucket: "landsat-pds"
+      description: "Landsat satellite imagery archive"
+
+    - name: "Sentinel-2 Collection"
+      bucket: "sentinel-s2-l1c"
+      description: "Sentinel-2 multispectral imagery"
+
+    - name: "USFS Forest Inventory"
+      bucket: "usfs-fia-data"
+      description: "Forest Inventory and Analysis program data"
+
+    - name: "MODIS Land Products"
+      bucket: "modis-pds"
+      description: "MODIS land cover and vegetation indices"
+
+# Example Workflows
+workflows:
+  - name: "Forest Carbon Assessment"
+    description: "Estimate forest carbon stocks using LiDAR and field data"
+    steps:
+      - "Process LiDAR point clouds for tree height and biomass"
+      - "Integrate field inventory measurements"
+      - "Apply allometric equations for carbon estimation"
+      - "Map carbon stocks across forest landscape"
+      - "Generate carbon assessment reports"
+
+  - name: "Wildfire Risk Modeling"
+    description: "Assess wildfire risk and behavior prediction"
+    steps:
+      - "Analyze fuel load from satellite imagery"
+      - "Process weather and climate data"
+      - "Model fire behavior using FARSITE/FlamMap"
+      - "Generate risk maps and evacuation plans"
+      - "Create fire management recommendations"
+
+  - name: "Wildlife Habitat Assessment"
+    description: "Evaluate habitat quality and connectivity"
+    steps:
+      - "Process habitat structure from LiDAR data"
+      - "Analyze wildlife movement patterns"
+      - "Model habitat suitability"
+      - "Assess landscape connectivity"
+      - "Generate conservation management plans"
+
+# Security and Compliance
+security:
+  compliance_frameworks:
+    - "NEPA (National Environmental Policy Act)"
+    - "ESA (Endangered Species Act)"
+    - "NFMA (National Forest Management Act)"
+    - "ISO 14001 (Environmental Management)"
+
+  data_encryption: true
+  access_controls: true
+  audit_logging: true
+
+# Optimization Settings
+optimization:
+  auto_scaling:
+    enabled: true
+    min_instances: 1
+    max_instances: 20
+    target_cpu: 75
+
+  cost_optimization:
+    spot_instances: true
+    scheduled_shutdown: true
+    idle_timeout: 45          # minutes
+    data_lifecycle: true      # Move old data to cheaper storage
+
+  performance:
+    ebs_optimized: true
+    enhanced_networking: true
+    efa_enabled: true         # For distributed processing
+    placement_group: true
+
+  data_management:
+    backup_enabled: true
+    backup_retention: 30      # days
+    automated_snapshots: true

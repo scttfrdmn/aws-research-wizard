@@ -28,37 +28,40 @@
 **Copyright:** © 2025 Scott Friedman
 **License:** MIT
 
+> **⚠️ Note**: The Python implementation has been deprecated as of July 2, 2025. See `python-legacy/DEPRECATED.md` for migration details. All new development uses the Go implementation.
+
 ## 🎯 Overview
 
 The AWS Research Wizard provides pre-configured research packs with integrated AWS Open Data access, high-performance computing optimizations, and automated workflow execution capabilities. It bridges the gap between research computing needs and optimal AWS infrastructure deployment across 18 scientific domains with access to 50+ petabytes of real research data.
 
-### 🔄 Dual Implementation Approach
+### 🚀 Go-First Architecture
 
-**Two complementary implementations for different use cases:**
+**Primary implementation in Go with superior performance and features:**
 
-| Feature | **Go Implementation** | **Python Implementation** |
-|---------|----------------------|---------------------------|
-| **Distribution** | Single binary (20MB) | Full environment (500MB+) |
-| **Startup Time** | < 0.1s | ~3s |
-| **Use Case** | Quick queries, HPC jobs, SSH access | Advanced analysis, tutorials, monitoring |
-| **Installation** | Download & run | pip install + dependencies |
-| **Best For** | Production deployment, automation | Development, research workflows |
+| Feature | **Go Implementation** | **Legacy Python** |
+|---------|----------------------|-------------------|
+| **Distribution** | Single binary (20MB) | ⚠️ DEPRECATED |
+| **Startup Time** | < 0.1s | ⚠️ DEPRECATED |
+| **Use Case** | All production and development use cases | ⚠️ DEPRECATED |
+| **Installation** | Download & run | ⚠️ DEPRECATED |
+| **Best For** | Everything - production, development, automation | ⚠️ DEPRECATED |
 
-**Quick Start Options:**
+**Quick Start:**
 ```bash
-# Go - Fast and lightweight
-./aws-research-wizard list
-./aws-research-wizard info genomics
+# Go implementation (recommended for all use cases)
+cd go/
+./aws-research-wizard config recommend --domain genomics
+./aws-research-wizard config tui
+./aws-research-wizard deploy start --domain genomics
 
-# Python - Full featured
-python python/tui_research_wizard.py
-python python/domain_tutorial_generator.py
+# Legacy Python (deprecated - see python-legacy/DEPRECATED.md)
+# python python-legacy/tui_research_wizard.py  # DO NOT USE
 ```
 
 ## 🚀 Key Features
 
 - **Multi-Domain Research Packs**: Pre-configured environments for 18 research domains
-- **Dual Implementation**: Go binary for deployment + Python for advanced features
+- **Go-First Implementation**: Single binary deployment with enterprise-grade features
 - **AWS Open Data Integration**: Access to 50+ petabytes of real research datasets
 - **Terminal User Interfaces**: 3 specialized TUI systems for configuration and monitoring
 - **HPC Optimization**: EFA (Elastic Fabric Adapter) and MPI optimizations for parallel computing
@@ -137,26 +140,30 @@ Our cost model uses **ephemeral/burst computing** patterns, not continuous 24/7 
 
 ## 🚀 Quick Start
 
-### Interactive Infrastructure Wizard
+### Interactive Configuration
 ```bash
-python3 research_infrastructure_wizard.py --interactive
+cd go/
+./aws-research-wizard config tui
 ```
 
 ### Command Line Recommendations
 ```bash
-python3 research_infrastructure_wizard.py \
-  --domain "genomics" \
-  --tools "gatk,bwa,star" \
+cd go/
+./aws-research-wizard config recommend \
+  --domain genomics \
   --size large \
-  --priority balanced \
-  --data-gb 500 \
+  --budget 1000 \
   --users 3 \
   --output recommendation.json
 ```
 
-### Deploy Spack-Powered Environment
+### Deploy Research Environment
 ```bash
-./deploy-research-solution.sh genomics_spack_lab my-lab standard
+cd go/
+./aws-research-wizard deploy start \
+  --domain genomics \
+  --instance c5.xlarge \
+  --enable-spack
 ```
 
 ## 📚 Documentation

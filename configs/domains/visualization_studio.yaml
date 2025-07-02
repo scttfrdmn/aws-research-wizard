@@ -1,0 +1,311 @@
+name: "Scientific Visualization Studio"
+category: "computer-science"
+description: "Comprehensive scientific visualization and interactive analysis platform"
+version: "1.0"
+
+# Research Domain Configuration
+domain:
+  research_areas:
+    - "General Purpose Scientific Visualization"
+    - "HPC Visualization & Large-Scale Rendering"
+    - "Interactive Jupyter Visualization Development"
+    - "Collaborative Research Visualization"
+    - "GPU-Accelerated Visualization"
+    - "Medical Imaging & Volume Visualization"
+    - "Geospatial & Environmental Visualization"
+    - "Molecular & Materials Visualization"
+
+  primary_applications:
+    - "Large-scale scientific data visualization"
+    - "Interactive dashboard development"
+    - "Virtual reality and immersive visualization"
+    - "Real-time data streaming visualization"
+    - "Collaborative scientific communication"
+    - "Publication-quality figure generation"
+    - "Web-based visualization deployment"
+    - "Multi-dimensional data exploration"
+
+  data_types:
+    - "Scientific simulation output (NetCDF, HDF5)"
+    - "Medical imaging data (DICOM, NIfTI)"
+    - "Geospatial raster and vector data"
+    - "Molecular structure files (PDB, XYZ)"
+    - "Time series and streaming data"
+    - "High-resolution imagery and microscopy"
+    - "Point clouds and mesh data"
+    - "Multi-dimensional arrays and tensors"
+
+# Software Stack
+software:
+  core_packages:
+    - "python"
+    - "python-numpy"
+    - "python-pandas"
+    - "python-scipy"
+    - "python-matplotlib"
+    - "python-seaborn"
+    - "python-plotly"
+    - "python-bokeh"
+    - "python-altair"
+    - "r-base"
+    - "r-ggplot2"
+    - "r-plotly"
+    - "julia"
+    - "nodejs"
+    - "d3js"
+
+  specialized_tools:
+    # Core Visualization Libraries
+    - "paraview"              # Parallel visualization application
+    - "visit"                 # Scientific visualization tool
+    - "vtk"                   # Visualization Toolkit
+    - "mayavi"                # 3D scientific visualization
+    - "python-pyvista"        # 3D plotting and mesh analysis
+    - "python-vispy"          # Interactive scientific visualization
+    - "python-holoviews"      # Data visualization framework
+    - "python-datashader"     # Large data visualization
+    - "python-panel"          # App development framework
+
+    # Interactive & Web Visualization
+    - "jupyter-lab"
+    - "jupyter-widgets"
+    - "python-ipywidgets"
+    - "python-voila"          # Convert notebooks to web apps
+    - "python-streamlit"      # Web app framework
+    - "python-dash"           # Interactive web applications
+    - "python-flask"
+    - "python-fastapi"
+    - "observablehq"          # Collaborative visualization
+
+    # GPU-Accelerated Visualization
+    - "python-cupy"           # GPU arrays
+    - "python-rapids"         # GPU-accelerated data science
+    - "python-cucim"          # GPU image processing
+    - "blender"               # 3D creation suite
+    - "paraview-gpu"          # GPU-accelerated ParaView
+    - "python-taichi"         # GPU programming
+
+    # Domain-Specific Visualization
+    - "python-napari"         # Multi-dimensional image viewer
+    - "python-itk"            # Medical image processing
+    - "python-simpleitk"      # Medical image analysis
+    - "python-pymol"          # Molecular visualization
+    - "python-nglview"        # Jupyter molecular visualization
+    - "python-folium"         # Geospatial visualization
+    - "python-geoviews"       # Geographic data visualization
+    - "python-cartopy"        # Geospatial data processing
+
+    # Data Processing
+    - "python-xarray"         # N-dimensional data
+    - "python-dask"           # Parallel computing
+    - "python-zarr"           # Chunked arrays
+    - "python-netcdf4"        # Scientific data format
+    - "python-h5py"           # HDF5 interface
+    - "python-gdal"           # Geospatial data
+    - "python-rasterio"       # Raster data I/O
+    - "ffmpeg"                # Video processing
+
+  development_tools:
+    - "git"
+    - "docker"
+    - "kubernetes"
+    - "vscode"
+    - "jupyter-lab"
+    - "conda"
+    - "pip"
+
+# Infrastructure Requirements
+infrastructure:
+  instance_types:
+    small: "g4dn.xlarge"      # Basic GPU visualization
+    medium: "g4dn.2xlarge"    # Standard scientific visualization
+    large: "g4dn.4xlarge"     # Large dataset visualization
+    xlarge: "g5.8xlarge"      # High-performance GPU visualization
+    cluster: "g5.12xlarge"    # Multi-GPU visualization cluster
+    hpc: "p4d.24xlarge"       # Maximum performance visualization
+    cpu_only: "c6i.4xlarge"  # CPU-only visualization tasks
+
+  storage:
+    root_volume: 200          # GB - OS and software
+    data_volume: 2000         # GB - Visualization datasets
+    scratch_volume: 1000      # GB - Rendering workspace
+    shared_storage: 5000      # GB - Collaborative datasets
+
+  networking:
+    enhanced_networking: true
+    placement_group: true     # For distributed rendering
+    high_bandwidth: true      # For large data transfer
+
+# Cost Analysis
+cost:
+  monthly_estimates:
+    small:
+      instance: 360           # g4dn.xlarge
+      storage: 200
+      data_transfer: 50
+      total: 610
+
+    medium:
+      instance: 720           # g4dn.2xlarge
+      storage: 300
+      data_transfer: 75
+      total: 1095
+
+    large:
+      instance: 1440          # g4dn.4xlarge
+      storage: 400
+      data_transfer: 100
+      total: 1940
+
+    xlarge:
+      instance: 2880          # g5.8xlarge
+      storage: 600
+      data_transfer: 150
+      total: 3630
+
+    cluster:
+      instance: 4320          # g5.12xlarge
+      storage: 800
+      data_transfer: 200
+      total: 5320
+
+    hpc:
+      instance: 21600         # p4d.24xlarge
+      storage: 1000
+      data_transfer: 300
+      total: 22900
+
+  spot_savings: 0.70          # 70% savings with spot instances
+  reserved_savings: 0.60      # 60% savings with reserved instances
+
+# Data Specifications
+data:
+  typical_datasets:
+    - name: "Climate Model Output"
+      size: "100-10000 GB"
+      description: "NetCDF climate simulation results"
+
+    - name: "Medical Imaging Studies"
+      size: "50-5000 GB"
+      description: "DICOM medical imaging datasets"
+
+    - name: "Satellite Earth Observation"
+      size: "200-20000 GB"
+      description: "Multi-spectral satellite imagery"
+
+    - name: "Molecular Dynamics Simulations"
+      size: "100-1000 GB"
+      description: "Protein and material simulation trajectories"
+
+    - name: "Microscopy and Imaging"
+      size: "50-500 GB"
+      description: "High-resolution scientific imaging data"
+
+  aws_open_data:
+    - name: "Landsat Imagery"
+      bucket: "landsat-pds"
+      description: "Global satellite imagery for visualization"
+
+    - name: "NOAA Weather Data"
+      bucket: "noaa-gfs-bdp-pds"
+      description: "Weather and climate visualization data"
+
+    - name: "NASA Earth Data"
+      bucket: "nasa-eosdis-data"
+      description: "Earth observation and space science data"
+
+# Example Workflows
+workflows:
+  - name: "Interactive Data Dashboard"
+    description: "Create interactive web-based visualization dashboard"
+    steps:
+      - "Import and process scientific datasets"
+      - "Design interactive visualization components"
+      - "Develop responsive web interface"
+      - "Deploy collaborative dashboard"
+      - "Set up real-time data updates"
+
+  - name: "Large-Scale Rendering"
+    description: "Render high-resolution scientific visualizations"
+    steps:
+      - "Load large-scale simulation data"
+      - "Configure parallel rendering pipeline"
+      - "Generate high-quality visualizations"
+      - "Create animation sequences"
+      - "Export publication-ready outputs"
+
+  - name: "VR/AR Visualization"
+    description: "Create immersive virtual reality experiences"
+    steps:
+      - "Process 3D scientific data"
+      - "Design VR interaction interfaces"
+      - "Optimize for real-time rendering"
+      - "Deploy to VR platforms"
+      - "Enable collaborative VR sessions"
+
+  - name: "Collaborative Visualization"
+    description: "Set up shared visualization environment"
+    steps:
+      - "Configure multi-user visualization server"
+      - "Set up collaborative data access"
+      - "Enable real-time collaboration features"
+      - "Deploy web-based interface"
+      - "Manage user access and permissions"
+
+# Security and Compliance
+security:
+  compliance_frameworks:
+    - "SOC 2 Type II"
+    - "HIPAA" # For medical imaging
+    - "FERPA" # For educational research
+    - "GDPR" # For EU data
+
+  data_encryption: true
+  access_controls: true
+  audit_logging: true
+  network_isolation: true
+
+# Optimization Settings
+optimization:
+  auto_scaling:
+    enabled: true
+    min_instances: 1
+    max_instances: 10
+    target_gpu: 80
+    scale_on_queue: true
+
+  cost_optimization:
+    spot_instances: true
+    scheduled_shutdown: true
+    idle_timeout: 30          # minutes
+    gpu_scheduling: true      # Optimize GPU usage
+    preemptible_rendering: true
+
+  performance:
+    ebs_optimized: true
+    enhanced_networking: true
+    gpu_optimization: true
+    nvlink_enabled: true      # For multi-GPU systems
+    high_memory_instances: true
+
+  rendering_optimization:
+    distributed_rendering: true
+    gpu_memory_optimization: true
+    parallel_processing: true
+    cache_optimization: true
+    compression_enabled: true
+
+  collaboration:
+    shared_workspaces: true
+    version_control: true
+    real_time_sync: true
+    multi_user_support: true
+    web_deployment: true
+
+  data_management:
+    backup_enabled: true
+    backup_retention: 30      # days
+    automated_snapshots: true
+    data_compression: true
+    intelligent_tiering: true
+    cdn_acceleration: true    # For web delivery
