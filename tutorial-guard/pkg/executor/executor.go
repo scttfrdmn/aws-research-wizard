@@ -827,6 +827,20 @@ func (e *TutorialExecutor) generateErrorSummary(results []StepResult) *ErrorSumm
 	}
 }
 
+// SetHooks configures execution hooks for monitoring and custom behavior
+func (e *TutorialExecutor) SetHooks(hooks *ExecutionHooks) {
+	e.mutex.Lock()
+	defer e.mutex.Unlock()
+	e.hooks = hooks
+}
+
+// GetHooks returns the current execution hooks
+func (e *TutorialExecutor) GetHooks() *ExecutionHooks {
+	e.mutex.RLock()
+	defer e.mutex.RUnlock()
+	return e.hooks
+}
+
 // NewExecutionReporter creates a new execution reporter
 func NewExecutionReporter(config ReportingConfig) *ExecutionReporter {
 	return &ExecutionReporter{
