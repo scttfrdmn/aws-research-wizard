@@ -175,13 +175,14 @@ const (
 
 // AIRequest represents a request to an AI provider
 type AIRequest struct {
-	Type        RequestType       `json:"type"`
-	Content     string            `json:"content"`
-	Context     TutorialContext   `json:"context"`
-	Priority    Priority          `json:"priority"`
-	MaxTokens   int               `json:"max_tokens"`
-	Temperature float64           `json:"temperature"`
-	Metadata    map[string]string `json:"metadata"`
+	Type            RequestType       `json:"type"`
+	Content         string            `json:"content"`
+	Context         TutorialContext   `json:"context"`
+	Priority        Priority          `json:"priority"`
+	MaxTokens       int               `json:"max_tokens"`
+	Temperature     float64           `json:"temperature"`
+	EstimatedTokens int               `json:"estimated_tokens"`
+	Metadata        map[string]string `json:"metadata"`
 }
 
 // RequestType defines types of AI requests

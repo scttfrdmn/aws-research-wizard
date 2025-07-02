@@ -1,3 +1,11 @@
+/*
+ * Spack Manager Go: Advanced Spack Package Management
+ * Copyright © 2025 Scott Friedman. All rights reserved.
+ *
+ * This software is proprietary and confidential. Unauthorized copying,
+ * distribution, or use is strictly prohibited.
+ */
+
 package manager
 
 import (

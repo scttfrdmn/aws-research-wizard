@@ -119,12 +119,12 @@ type TestResult struct {
      max_instances: 5
      max_instance_types: ["t3.micro", "t3.small"]
      max_duration: "2h"
-   
+
    storage:
      max_s3_buckets: 10
      max_ebs_volumes: 5
      max_storage_gb: 100
-   
+
    networking:
      max_vpcs: 2
      max_subnets: 4

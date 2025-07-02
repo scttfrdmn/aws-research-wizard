@@ -1,6 +1,10 @@
 # 🚀 Spack Manager Go
 
+**PROPRIETARY SOFTWARE - CONFIDENTIAL**
+
 A modern, interactive Go-based interface for managing Spack package installations with real-time progress tracking and beautiful Terminal UI.
+
+> **NOTICE**: This is proprietary software owned by Scott Friedman. This software contains confidential and proprietary information. Unauthorized copying, distribution, or use is strictly prohibited.
 
 ## ✨ Features
 
@@ -269,7 +273,9 @@ curl -I https://cache.spack.io
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is proprietary software owned by Scott Friedman. See the [LICENSE](LICENSE) file for complete terms and restrictions.
+
+**All rights reserved. No public license is granted.**
 
 ## 🙏 Acknowledgments
 
