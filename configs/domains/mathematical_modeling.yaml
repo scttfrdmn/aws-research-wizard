@@ -1,0 +1,159 @@
+name: Mathematical Modeling Laboratory
+description: Numerical analysis, optimization, mathematical simulation, and computational mathematics research
+primary_domains:
+- Mathematical Modeling
+- Numerical Analysis
+- Optimization
+- Computational Mathematics
+target_users: Applied mathematicians, numerical analysts, optimization researchers (1-15 users)
+spack_packages:
+  numerical_libraries:
+  - openblas@0.3.23 %gcc@11.4.0 threads=openmp
+  - lapack@3.11.0 %gcc@11.4.0
+  - scalapack@2.2.0 %gcc@11.4.0
+  - fftw@3.3.10 %gcc@11.4.0 +mpi+openmp
+  - gsl@2.7.1 %gcc@11.4.0
+  ode_pde_solvers:
+  - petsc@3.19.4 %gcc@11.4.0 +mpi+hdf5
+  - trilinos@13.4.1 %gcc@11.4.0 +mpi
+  - sundials@6.6.0 %gcc@11.4.0 +mpi+openmp
+  - slepc@3.19.1 %gcc@11.4.0
+  - hypre@2.28.0 %gcc@11.4.0 +mpi+openmp
+  optimization:
+  - ipopt@3.14.13 %gcc@11.4.0
+  - coin-or-cbc@2.10.10 %gcc@11.4.0
+  - nlopt@2.7.1 %gcc@11.4.0 +python
+  - glpk@5.0 %gcc@11.4.0
+  - cplex@22.1.1
+  finite_element:
+  - deal-ii@9.5.1 %gcc@11.4.0 +mpi+hdf5
+  - fenics@2019.1.0 %gcc@11.4.0 +mpi
+  - freefem@4.12 %gcc@11.4.0 +mpi
+  - ngsolve@6.2.2304 %gcc@11.4.0 +mpi
+  symbolic_math:
+  - sympy@1.12
+  - sage@10.1 %gcc@11.4.0 +python
+  - maxima@5.47.0 %gcc@11.4.0
+  python_stack:
+  - python@3.11.4 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-numpy@1.25.1 ^openblas@0.3.23 threads=openmp
+  - py-scipy@1.11.1 ^openblas@0.3.23
+  - py-matplotlib@3.7.2
+  - py-jupyter@1.0.0
+  - py-jupyterlab@4.0.3
+  - py-pandas@2.0.3
+  - py-sympy@1.12
+  - py-cvxpy@1.4.1
+  - py-scikit-optimize@0.9.0
+  visualization:
+  - paraview@5.11.1 %gcc@11.4.0 +opengl+mpi+python
+  - visit@3.3.3 %gcc@11.4.0 +mpi+opengl
+  - gnuplot@5.4.8 %gcc@11.4.0
+  - py-plotly@5.15.0
+  - py-mayavi@4.8.1
+  machine_learning:
+  - scikit-learn@1.3.0
+  - tensorflow@2.13.0
+  - pytorch@2.0.1
+  statistical_computing:
+  - r@4.3.1 %gcc@11.4.0 +X+external-lapack ^openblas@0.3.23
+  - octave@8.3.0 %gcc@11.4.0 +fftw+hdf5
+  - julia@1.9.2 %gcc@11.4.0
+  development:
+  - cmake@3.27.4 %gcc@11.4.0
+  - git@2.41.0 %gcc@11.4.0 +man+nls
+  - gcc@11.4.0
+  - openmpi@4.1.5 %gcc@11.4.0 +atomics
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.2xlarge
+    vcpus: 8
+    memory_gb: 16
+    storage_gb: 200
+    cost_per_hour: 0.34
+    use_case: Algorithm development and small-scale problems
+  standard_computation:
+    instance_type: c6i.8xlarge
+    vcpus: 32
+    memory_gb: 64
+    storage_gb: 500
+    cost_per_hour: 1.36
+    use_case: Medium-scale numerical simulations
+  memory_intensive:
+    instance_type: r6i.8xlarge
+    vcpus: 32
+    memory_gb: 256
+    storage_gb: 1000
+    cost_per_hour: 2.05
+    use_case: Large matrix computations and optimization
+  hpc_cluster:
+    instance_type: hpc6a.48xlarge
+    vcpus: 96
+    memory_gb: 384
+    storage_gb: 2000
+    cost_per_hour: 2.88
+    use_case: Massive parallel mathematical simulations
+estimated_cost:
+  compute: 600
+  storage: 100
+  data_transfer: 50
+  total: 750
+research_capabilities:
+- Partial differential equation solving (finite element, finite difference)
+- Large-scale linear algebra and eigenvalue problems
+- Nonlinear optimization and constrained optimization
+- Stochastic modeling and Monte Carlo methods
+- Numerical integration and approximation methods
+- Graph theory and network analysis algorithms
+- Time series analysis and forecasting models
+- Dynamical systems and chaos theory simulations
+- Statistical modeling and hypothesis testing
+- Operations research and decision optimization
+aws_data_sources:
+- NIST Mathematical Functions - Reference implementations and test data
+- MATLAB Central File Exchange - Mathematical algorithm repository
+- Wolfram Demonstrations - Interactive mathematical examples
+- Mathematical Optimization Society - Benchmark problems and datasets
+demo_workflows:
+- name: PDE Solving Demo
+  description: Solve 2D heat equation using finite element method
+  dataset: Synthetic boundary value problem
+  expected_runtime: 30-60 minutes
+  cost_estimate: 2.5
+- name: Optimization Demo
+  description: Solve large-scale nonlinear optimization problem
+  dataset: Portfolio optimization or engineering design problem
+  expected_runtime: 1-2 hours
+  cost_estimate: 4.0
+- name: Monte Carlo Simulation Demo
+  description: High-dimensional integration using Monte Carlo methods
+  dataset: Financial risk simulation or physics particle simulation
+  expected_runtime: 2-4 hours
+  cost_estimate: 8.0
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 16
+  placement_strategy: cluster
+  network_backend: efa
+scaling_profiles:
+  serial_computation:
+    nodes: 1
+    efficiency: 100
+    use_case: Single-threaded algorithms and development
+  parallel_computation:
+    nodes: 2-4
+    efficiency: 95
+    use_case: MPI-parallel simulations and linear algebra
+  large_scale_hpc:
+    nodes: 8-16
+    efficiency: 88
+    use_case: Massive numerical simulations and optimization
+aws_integration:
+  datasets_available: 4
+  demo_workflows_available: 3
+  total_data_volume_tb: 100
+  integration_date: '2025-01-03'
+  data_access_patterns:
+    cost_optimized: Use S3 for mathematical datasets and solution archives
+    performance_optimized: Local NVMe for active computations and temporary files
+    security: Encrypted storage for proprietary mathematical models

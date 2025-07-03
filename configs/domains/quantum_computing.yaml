@@ -1,0 +1,149 @@
+name: Quantum Computing Research Laboratory
+description: Quantum algorithm development, quantum simulation, and quantum machine learning research
+primary_domains:
+- Quantum Computing
+- Quantum Information Science
+- Quantum Algorithms
+- Quantum Machine Learning
+target_users: Quantum researchers, quantum algorithm developers, quantum physicists (1-10 users)
+spack_packages:
+  quantum_frameworks:
+  - qiskit@0.45.0
+  - cirq@1.3.0
+  - pennylane@0.32.0
+  - pyquil@4.1.1
+  - mitiq@0.28.0
+  quantum_simulation:
+  - qutip@4.7.3 %gcc@11.4.0 +python
+  - quantum-espresso@7.2 %gcc@11.4.0 +mpi+openmp
+  - psi4@1.7.0 %gcc@11.4.0 +python+mpi
+  - openfermion@1.6.0
+  - stim@1.12.0
+  optimization:
+  - cvxpy@1.4.1
+  - networkx@3.1
+  - ortools@9.7.2996
+  - dimod@0.12.9
+  - dwave-ocean-sdk@6.8.0
+  machine_learning:
+  - tensorflow@2.13.0 +cuda
+  - pytorch@2.0.1 +cuda
+  - jax@0.4.14 +cuda
+  - tensorflow-quantum@0.7.3
+  - pennylane-lightning@0.32.0
+  python_stack:
+  - python@3.11.4 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-numpy@1.25.1 ^openblas@0.3.23 threads=openmp
+  - py-scipy@1.11.1 ^openblas@0.3.23
+  - py-matplotlib@3.7.2
+  - py-jupyter@1.0.0
+  - py-jupyterlab@4.0.3
+  - py-pandas@2.0.3
+  - py-sympy@1.12
+  visualization:
+  - py-plotly@5.15.0
+  - py-seaborn@0.12.2
+  - bloch3d@1.0.0
+  classical_hpc:
+  - openmpi@4.1.5 %gcc@11.4.0 +atomics
+  - fftw@3.3.10 %gcc@11.4.0 +mpi+openmp
+  - scalapack@2.2.0 %gcc@11.4.0
+  - petsc@3.19.4 %gcc@11.4.0 +mpi
+  development:
+  - cmake@3.27.4 %gcc@11.4.0
+  - git@2.41.0 %gcc@11.4.0 +man+nls
+  - gcc@11.4.0
+  - llvm@16.0.6 %gcc@11.4.0 +python
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.2xlarge
+    vcpus: 8
+    memory_gb: 16
+    storage_gb: 200
+    cost_per_hour: 0.34
+    use_case: Algorithm development and small-scale simulations
+  standard_simulation:
+    instance_type: r6i.4xlarge
+    vcpus: 16
+    memory_gb: 128
+    storage_gb: 500
+    cost_per_hour: 1.02
+    use_case: Medium-scale quantum system simulations
+  large_simulation:
+    instance_type: r6i.8xlarge
+    vcpus: 32
+    memory_gb: 256
+    storage_gb: 1000
+    cost_per_hour: 2.05
+    use_case: Large quantum circuits and many-body simulations
+  gpu_ml:
+    instance_type: p3.8xlarge
+    vcpus: 32
+    memory_gb: 244
+    storage_gb: 2000
+    cost_per_hour: 12.24
+    use_case: Quantum machine learning and hybrid algorithms
+estimated_cost:
+  compute: 900
+  storage: 100
+  data_transfer: 50
+  total: 1050
+research_capabilities:
+- Quantum algorithm design and implementation
+- Quantum circuit optimization and compilation
+- Variational quantum eigensolvers (VQE) for chemistry
+- Quantum approximate optimization algorithms (QAOA)
+- Quantum machine learning model development
+- Quantum error correction code research
+- Quantum simulation of many-body systems
+- Quantum cryptography and quantum key distribution
+- Quantum advantage benchmarking and validation
+- Hybrid classical-quantum algorithm development
+aws_data_sources:
+- Quantum Algorithm Zoo - Comprehensive quantum algorithm database
+- QuTiP Documentation - Quantum toolbox examples and tutorials
+- IBM Qiskit Textbook - Educational quantum computing resources
+- Google Cirq Examples - Quantum circuit design patterns
+demo_workflows:
+- name: VQE Chemistry Demo
+  description: Find ground state energy of small molecule using VQE algorithm
+  dataset: H2, LiH, or BeH2 molecular systems
+  expected_runtime: 1-2 hours
+  cost_estimate: 3.5
+- name: QAOA Optimization Demo
+  description: Solve Max-Cut problem using quantum approximate optimization
+  dataset: Small graph optimization problems
+  expected_runtime: 30-60 minutes
+  cost_estimate: 2.0
+- name: Quantum ML Demo
+  description: Train quantum neural network for classification task
+  dataset: Iris dataset or synthetic quantum data
+  expected_runtime: 1-3 hours
+  cost_estimate: 8.5
+mpi_optimizations:
+  efa_enabled: false
+  max_nodes: 1
+  placement_strategy: single
+  network_backend: enhanced
+scaling_profiles:
+  small_circuits:
+    nodes: 1
+    efficiency: 100
+    use_case: Circuits up to 20 qubits
+  medium_circuits:
+    nodes: 1
+    efficiency: 100
+    use_case: Circuits 20-30 qubits with state vector simulation
+  large_simulation:
+    nodes: 1
+    efficiency: 95
+    use_case: Many-body quantum systems with tensor networks
+aws_integration:
+  datasets_available: 4
+  demo_workflows_available: 3
+  total_data_volume_tb: 50
+  integration_date: '2025-01-03'
+  data_access_patterns:
+    cost_optimized: Use S3 for quantum algorithm libraries and results
+    performance_optimized: High-memory instances for large state vectors
+    security: Encrypted storage for proprietary quantum algorithms

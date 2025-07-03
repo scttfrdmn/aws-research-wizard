@@ -1,0 +1,149 @@
+name: Drug Discovery Laboratory
+description: Virtual screening, molecular docking, and ADMET prediction for computational drug discovery and pharmaceutical research
+primary_domains:
+- Drug Discovery
+- Pharmaceutical Sciences
+- Computational Chemistry
+- Cheminformatics
+target_users: Medicinal chemists, pharmaceutical researchers, drug discovery teams (1-25 users)
+spack_packages:
+  molecular_docking:
+  - autodock-vina@1.2.3 %gcc@11.4.0
+  - autodock@4.2.6 %gcc@11.4.0
+  - schrodinger-suite@2023.4
+  - gold@2022.3.0
+  virtual_screening:
+  - openeye-toolkit@2023.2.1
+  - rdkit@2023.03.2 %gcc@11.4.0 +python
+  - chembl-structure-pipeline@1.0.0
+  - fpocket@4.0.0 %gcc@11.4.0
+  admet_prediction:
+  - pkcsm@1.0.0
+  - admet-predictor@10.4.0
+  - toxtree@3.1.0
+  molecular_modeling:
+  - pymol@2.5.5 %gcc@11.4.0 +python
+  - vmd@1.9.3 %gcc@11.4.0 +opengl
+  - chimera@1.16 %gcc@11.4.0
+  - openmm@8.0.0 %gcc@11.4.0 +python+cuda
+  cheminformatics:
+  - openbabel@3.1.1 %gcc@11.4.0 +python
+  - indigo@1.15.0
+  - cdk@2.8.0
+  - chemaxon-jchem@23.15.0
+  machine_learning:
+  - tensorflow@2.13.0 +cuda
+  - pytorch@2.0.1 +cuda
+  - scikit-learn@1.3.0
+  - deepchem@2.7.1
+  workflow_management:
+  - nextflow@23.04.1 +java
+  - snakemake@7.32.4 +python
+  - knime@5.1.0
+  python_stack:
+  - python@3.11.4 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-numpy@1.25.1 ^openblas@0.3.23 threads=openmp
+  - py-scipy@1.11.1 ^openblas@0.3.23
+  - py-pandas@2.0.3
+  - py-matplotlib@3.7.2
+  - py-jupyter@1.0.0
+  - py-jupyterlab@4.0.3
+  - py-rdkit@2023.03.2
+  databases:
+  - postgresql@15.4 %gcc@11.4.0
+  - mongodb@7.0.0 %gcc@11.4.0
+  - chembl-db@32.0
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.2xlarge
+    vcpus: 8
+    memory_gb: 16
+    storage_gb: 200
+    cost_per_hour: 0.34
+    use_case: Small molecule analysis and method development
+  standard_screening:
+    instance_type: c6i.8xlarge
+    vcpus: 32
+    memory_gb: 64
+    storage_gb: 1000
+    cost_per_hour: 1.36
+    use_case: Virtual screening of medium compound libraries
+  high_throughput:
+    instance_type: c6i.16xlarge
+    vcpus: 64
+    memory_gb: 128
+    storage_gb: 2000
+    cost_per_hour: 2.72
+    use_case: Large-scale virtual screening campaigns
+  gpu_ml_prediction:
+    instance_type: p3.8xlarge
+    vcpus: 32
+    memory_gb: 244
+    storage_gb: 4000
+    cost_per_hour: 12.24
+    use_case: Deep learning ADMET prediction and AI drug design
+estimated_cost:
+  compute: 1200
+  storage: 300
+  data_transfer: 100
+  total: 1600
+research_capabilities:
+- High-throughput virtual screening (millions of compounds)
+- Molecular docking and binding affinity prediction
+- ADMET property prediction (absorption, distribution, metabolism, excretion, toxicity)
+- Lead compound optimization workflows
+- Fragment-based drug design protocols
+- Structure-based drug design pipelines
+- Pharmacophore modeling and searching
+- Chemical space analysis and clustering
+- Bioactivity prediction using machine learning
+- Drug-target interaction prediction
+aws_data_sources:
+- ChEMBL Database - Bioactive molecules with drug-like properties
+- PubChem - Chemical information database
+- DrugBank - Comprehensive drug and drug target database
+- ZINC Database - Commercially available compounds for virtual screening
+- BindingDB - Binding affinity database
+demo_workflows:
+- name: Virtual Screening Demo
+  description: Screen compound library against protein target using AutoDock Vina
+  dataset: ZINC subset - 10,000 drug-like compounds
+  expected_runtime: 4-8 hours
+  cost_estimate: 15.0
+- name: ADMET Prediction Demo
+  description: Predict drug-like properties for lead compounds
+  dataset: ChEMBL compound set with known properties
+  expected_runtime: 1-2 hours
+  cost_estimate: 5.5
+- name: Lead Optimization Demo
+  description: Structure-activity relationship analysis workflow
+  dataset: Kinase inhibitor series from ChEMBL
+  expected_runtime: 2-4 hours
+  cost_estimate: 8.0
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 16
+  placement_strategy: cluster
+  network_backend: efa
+scaling_profiles:
+  small_library:
+    nodes: 1-2
+    efficiency: 100
+    use_case: Libraries under 100K compounds
+  medium_library:
+    nodes: 4-8
+    efficiency: 95
+    use_case: Libraries 100K - 1M compounds
+  large_library:
+    nodes: 8-16
+    efficiency: 90
+    use_case: Libraries over 1M compounds
+aws_integration:
+  datasets_available: 5
+  demo_workflows_available: 3
+  total_data_volume_tb: 500
+  integration_date: '2025-01-03'
+  data_access_patterns:
+    cost_optimized: Use S3 for compound libraries and results storage
+    performance_optimized: Local NVMe for active screening campaigns
+    security: Encrypted storage for proprietary compound data

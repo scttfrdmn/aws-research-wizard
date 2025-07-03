@@ -1,0 +1,139 @@
+name: Structural Biology Laboratory
+description: Molecular visualization, protein structure analysis, and molecular dynamics simulations for structural biology research
+primary_domains:
+- Structural Biology
+- Computational Biology
+- Protein Science
+- Molecular Dynamics
+target_users: Structural biologists, computational chemists, protein researchers (1-15 users)
+spack_packages:
+  visualization:
+  - pymol@2.5.5 %gcc@11.4.0 +python
+  - vmd@1.9.3 %gcc@11.4.0 +opengl
+  - chimera@1.16 %gcc@11.4.0
+  - chimerax@1.6.1
+  molecular_dynamics:
+  - gromacs@2023.2 %gcc@11.4.0 +mpi+openmp+cuda
+  - amber@22 %gcc@11.4.0 +mpi+openmp
+  - namd@3.0b6 %gcc@11.4.0 +mpi+cuda
+  - lammps@20230802 %gcc@11.4.0 +mpi+openmp+python
+  structure_analysis:
+  - mdanalysis@2.5.0
+  - mdtraj@1.9.9
+  - pytraj@2.0.6
+  - prody@2.4.1
+  - biopython@1.81
+  protein_folding:
+  - alphafold@2.3.2
+  - colabfold@1.5.2
+  - openmm@8.0.0 %gcc@11.4.0 +python+cuda
+  crystallography:
+  - ccp4@8.0.016 %gcc@11.4.0
+  - phenix@1.20.1
+  - coot@0.9.8 %gcc@11.4.0
+  - xds@20230630
+  python_stack:
+  - python@3.11.4 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-numpy@1.25.1 ^openblas@0.3.23 threads=openmp
+  - py-scipy@1.11.1 ^openblas@0.3.23
+  - py-matplotlib@3.7.2
+  - py-jupyter@1.0.0
+  - py-jupyterlab@4.0.3
+  - py-pandas@2.0.3
+  - py-scikit-learn@1.3.0
+  development:
+  - cmake@3.27.4 %gcc@11.4.0
+  - git@2.41.0 %gcc@11.4.0 +man+nls
+  - gcc@11.4.0
+  - openmpi@4.1.5 %gcc@11.4.0 +atomics+cuda
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.2xlarge
+    vcpus: 8
+    memory_gb: 16
+    storage_gb: 200
+    cost_per_hour: 0.34
+    use_case: Structure visualization and small molecule analysis
+  standard_md:
+    instance_type: c6i.8xlarge
+    vcpus: 32
+    memory_gb: 64
+    storage_gb: 500
+    cost_per_hour: 1.36
+    use_case: Standard molecular dynamics simulations
+  gpu_accelerated:
+    instance_type: p3.2xlarge
+    vcpus: 8
+    memory_gb: 61
+    storage_gb: 1000
+    cost_per_hour: 3.06
+    use_case: GPU-accelerated MD simulations and AlphaFold
+  large_systems:
+    instance_type: r6i.8xlarge
+    vcpus: 32
+    memory_gb: 256
+    storage_gb: 2000
+    cost_per_hour: 2.05
+    use_case: Large protein complexes and membrane systems
+estimated_cost:
+  compute: 500
+  storage: 150
+  data_transfer: 50
+  total: 700
+research_capabilities:
+- Protein structure visualization and analysis (PyMOL, ChimeraX)
+- Molecular dynamics simulations (GROMACS, AMBER, NAMD)
+- Protein folding prediction (AlphaFold, ColabFold)
+- X-ray crystallography data processing (CCP4, Phenix)
+- Cryo-EM structure determination workflows
+- Drug-target interaction modeling
+- Membrane protein simulation protocols
+- Protein stability and mutation analysis
+aws_data_sources:
+- Protein Data Bank - Public protein structure repository
+- AlphaFold Protein Structure Database - AI-predicted protein structures
+- ChEMBL Database - Bioactive molecule data
+- UniProt - Protein sequence and functional information
+demo_workflows:
+- name: Protein Structure Analysis Demo
+  description: Analyze protein structure using PyMOL and perform basic calculations
+  dataset: Protein Data Bank - lysozyme structure
+  expected_runtime: 30-60 minutes
+  cost_estimate: 1.5
+- name: Molecular Dynamics Demo
+  description: Run GROMACS simulation of protein in water
+  dataset: Small protein system from PDB
+  expected_runtime: 2-4 hours
+  cost_estimate: 12.5
+- name: AlphaFold Prediction Demo
+  description: Predict protein structure using ColabFold
+  dataset: User-provided protein sequence
+  expected_runtime: 1-3 hours
+  cost_estimate: 8.0
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 4
+  placement_strategy: cluster
+  network_backend: efa
+scaling_profiles:
+  single_protein:
+    nodes: 1
+    efficiency: 100
+    use_case: Individual protein analysis
+  md_production:
+    nodes: 1-2
+    efficiency: 95
+    use_case: Production MD simulations
+  large_complexes:
+    nodes: 2-4
+    efficiency: 85
+    use_case: Large protein complexes and membrane systems
+aws_integration:
+  datasets_available: 4
+  demo_workflows_available: 3
+  total_data_volume_tb: 250
+  integration_date: '2025-01-03'
+  data_access_patterns:
+    cost_optimized: Use S3 for structure storage and archival
+    performance_optimized: Local NVMe for active simulations
+    security: Encrypted trajectory storage for proprietary research

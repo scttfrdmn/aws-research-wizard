@@ -1,0 +1,150 @@
+name: Geoscience Research Laboratory
+description: Earthquake simulation, geological modeling, seismic analysis, and Earth system research
+primary_domains:
+- Geoscience
+- Seismology
+- Geological Modeling
+- Earth System Science
+target_users: Geoscientists, seismologists, geological engineers, Earth scientists (1-20 users)
+spack_packages:
+  seismic_analysis:
+  - obspy@1.4.0 %gcc@11.4.0 +python
+  - sac@102.0 %gcc@11.4.0
+  - seismic-unix@44R26 %gcc@11.4.0
+  - madagascar@3.0.1 %gcc@11.4.0 +openmp+mpi
+  geological_modeling:
+  - gempy@3.1.0
+  - pyvista@0.42.0
+  - discretize@0.10.0
+  - simpeg@0.20.0
+  visualization:
+  - paraview@5.11.1 %gcc@11.4.0 +opengl+mpi+python
+  - visit@3.3.3 %gcc@11.4.0 +mpi+opengl
+  - gmt@6.4.0 %gcc@11.4.0 +openmp
+  - gnuplot@5.4.8 %gcc@11.4.0
+  numerical_simulation:
+  - specfem3d@4.1.0 %gcc@11.4.0 +mpi+openmp
+  - sw4@3.0 %gcc@11.4.0 +mpi+openmp
+  - hercules@3.3 %gcc@11.4.0 +mpi
+  - salvus@0.12.15
+  geospatial:
+  - gdal@3.7.1 %gcc@11.4.0 +python
+  - proj@9.2.1 %gcc@11.4.0
+  - geos@3.11.2 %gcc@11.4.0
+  - netcdf-c@4.9.2 %gcc@11.4.0 +mpi
+  - hdf5@1.14.2 %gcc@11.4.0 +mpi+fortran
+  python_stack:
+  - python@3.11.4 %gcc@11.4.0 +optimizations+shared+ssl
+  - py-numpy@1.25.1 ^openblas@0.3.23 threads=openmp
+  - py-scipy@1.11.1 ^openblas@0.3.23
+  - py-matplotlib@3.7.2
+  - py-cartopy@0.21.1
+  - py-xarray@2023.7.0
+  - py-pandas@2.0.3
+  - py-jupyter@1.0.0
+  - py-jupyterlab@4.0.3
+  - py-obspy@1.4.0
+  machine_learning:
+  - scikit-learn@1.3.0
+  - tensorflow@2.13.0
+  - pytorch@2.0.1
+  development:
+  - cmake@3.27.4 %gcc@11.4.0
+  - git@2.41.0 %gcc@11.4.0 +man+nls
+  - gcc@11.4.0
+  - openmpi@4.1.5 %gcc@11.4.0 +atomics
+  - fftw@3.3.10 %gcc@11.4.0 +mpi+openmp
+aws_instance_recommendations:
+  development:
+    instance_type: c6i.2xlarge
+    vcpus: 8
+    memory_gb: 16
+    storage_gb: 200
+    cost_per_hour: 0.34
+    use_case: Seismic data processing and geological modeling
+  standard_simulation:
+    instance_type: c6i.8xlarge
+    vcpus: 32
+    memory_gb: 64
+    storage_gb: 1000
+    cost_per_hour: 1.36
+    use_case: Regional earthquake simulations
+  large_scale:
+    instance_type: r6i.8xlarge
+    vcpus: 32
+    memory_gb: 256
+    storage_gb: 2000
+    cost_per_hour: 2.05
+    use_case: Large-scale seismic wave propagation modeling
+  hpc_cluster:
+    instance_type: hpc6a.48xlarge
+    vcpus: 96
+    memory_gb: 384
+    storage_gb: 4000
+    cost_per_hour: 2.88
+    use_case: Massive parallel earthquake simulations
+estimated_cost:
+  compute: 800
+  storage: 200
+  data_transfer: 100
+  total: 1100
+research_capabilities:
+- Earthquake simulation and seismic wave propagation modeling
+- Seismic waveform analysis and event detection
+- 3D geological structure modeling and visualization
+- Ground motion prediction and hazard assessment
+- Geophysical inversion and tomography
+- Fault rupture dynamics simulation
+- Tsunami modeling and coastal hazard assessment
+- Geodetic data analysis (GPS, InSAR)
+- Volcanic eruption modeling and monitoring
+- Mineral exploration and resource assessment
+aws_data_sources:
+- USGS Earthquake Catalog - Global earthquake data and seismic monitoring
+- IRIS Data Management Center - Seismological research facilities
+- Global Seismic Network - Real-time earthquake monitoring data
+- NASA Geodesy Data - Satellite geodetic measurements
+- OpenTopography - High-resolution topographic data
+demo_workflows:
+- name: Earthquake Analysis Demo
+  description: Process and analyze seismic waveforms from recent earthquake
+  dataset: USGS earthquake data - magnitude 6.0+ event
+  expected_runtime: 1-2 hours
+  cost_estimate: 4.0
+- name: 3D Geological Model Demo
+  description: Build 3D subsurface model from geological and geophysical data
+  dataset: Synthetic geological survey data
+  expected_runtime: 2-4 hours
+  cost_estimate: 8.5
+- name: Seismic Wave Simulation Demo
+  description: Simulate earthquake wave propagation using SPECFEM3D
+  dataset: Regional velocity model and earthquake source
+  expected_runtime: 4-8 hours
+  cost_estimate: 20.0
+mpi_optimizations:
+  efa_enabled: true
+  max_nodes: 32
+  placement_strategy: cluster
+  network_backend: efa
+scaling_profiles:
+  local_study:
+    nodes: 1-2
+    efficiency: 100
+    use_case: Local geological studies and small simulations
+  regional_simulation:
+    nodes: 4-8
+    efficiency: 95
+    use_case: Regional earthquake and geological modeling
+  large_scale_hpc:
+    nodes: 16-32
+    efficiency: 88
+    use_case: Large-scale seismic simulations and hazard modeling
+aws_integration:
+  datasets_available: 5
+  demo_workflows_available: 3
+  total_data_volume_tb: 1200
+  integration_date: '2025-01-03'
+  data_access_patterns:
+    cost_optimized: Use S3 for seismic archives and geological databases
+    performance_optimized: Local NVMe for active simulations and processing
+    security: Encrypted storage for sensitive geological survey data
