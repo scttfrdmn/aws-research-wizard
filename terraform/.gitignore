@@ -1,0 +1,20 @@
+# Terraform runtime files
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfplan
+.terraform.lock.hcl
+
+# Terraform variable files
+terraform.tfvars
+terraform.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+
+# Local SSH keys (should be generated locally)
+*.pem
+*.key
+
+# OS files
+.DS_Store
+Thumbs.db
