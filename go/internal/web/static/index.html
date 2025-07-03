@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Research Wizard - Enhanced GUI</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <div id="root">
+        <!-- React app will mount here -->
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading AWS Research Wizard...</p>
+        </div>
+    </div>
+
+    <!-- React Components -->
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Domain Selection Component
+        function DomainSelector({ onDomainSelect, selectedDomain }) {
+            const [domains, setDomains] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
+
+            useEffect(() => {
+                fetch('/api/domains')
+                    .then(response => response.json())
+                    .then(data => {
+                        setDomains(data.domains || []);
+                        setLoading(false);
+                    })
+                    .catch(err => {
+                        setError('Failed to load domains');
+                        setLoading(false);
+                    });
+            }, []);
+
+            if (loading) return <div className="loading">Loading domains...</div>;
+            if (error) return <div className="error">{error}</div>;
+
+            return (
+                <div className="domain-selector">
+                    <h2>🔬 Select Research Domain</h2>
+                    <div className="domain-grid">
+                        {domains.map(domain => (
+                            <div 
+                                key={domain.name}
+                                className={`domain-card ${selectedDomain === domain.name ? 'selected' : ''}`}
+                                onClick={() => onDomainSelect(domain.name)}
+                            >
+                                <h3>{domain.displayName}</h3>
+                                <p>{domain.description}</p>
+                                <div className="domain-categories">
+                                    {domain.categories && domain.categories.map(cat => (
+                                        <span key={cat} className="category-tag">{cat}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // Cost Calculator Component
+        function CostCalculator({ selectedDomain }) {
+            const [domainDetails, setDomainDetails] = useState(null);
+            const [selectedInstance, setSelectedInstance] = useState('medium');
+            const [loading, setLoading] = useState(false);
+
+            useEffect(() => {
+                if (selectedDomain) {
+                    setLoading(true);
+                    fetch(`/api/domains/${selectedDomain}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            setDomainDetails(data);
+                            setLoading(false);
+                        })
+                        .catch(err => {
+                            console.error('Failed to load domain details:', err);
+                            setLoading(false);
+                        });
+                }
+            }, [selectedDomain]);
+
+            if (!selectedDomain) {
+                return (
+                    <div className="cost-calculator">
+                        <h2>💰 Cost Calculator</h2>
+                        <p>Select a domain to see cost estimates</p>
+                    </div>
+                );
+            }
+
+            if (loading) return <div className="loading">Loading cost details...</div>;
+
+            return (
+                <div className="cost-calculator">
+                    <h2>💰 Cost Calculator</h2>
+                    <div className="domain-info">
+                        <h3>{domainDetails?.Name || selectedDomain}</h3>
+                        <p className="target-users">
+                            👥 {domainDetails?.Domain?.target_users || 'User information not available'}
+                        </p>
+                        <p className="monthly-cost">
+                            💵 Estimated Monthly Cost: ${domainDetails?.Domain?.monthly_cost || 'N/A'}
+                        </p>
+                    </div>
+                    
+                    <div className="instance-selector">
+                        <label htmlFor="instance-size">Instance Size:</label>
+                        <select 
+                            id="instance-size"
+                            value={selectedInstance}
+                            onChange={(e) => setSelectedInstance(e.target.value)}
+                        >
+                            <option value="small">Small (Development)</option>
+                            <option value="medium">Medium (Standard)</option>
+                            <option value="large">Large (Production)</option>
+                            <option value="xlarge">XLarge (High Performance)</option>
+                        </select>
+                    </div>
+
+                    <div className="cost-breakdown">
+                        <h4>Cost Breakdown</h4>
+                        <div className="cost-item">
+                            <span>Compute Instance:</span>
+                            <span>${domainDetails?.Infrastructure?.Cost?.monthly_estimates?.[selectedInstance]?.instance || 'N/A'}</span>
+                        </div>
+                        <div className="cost-item">
+                            <span>Storage:</span>
+                            <span>${domainDetails?.Infrastructure?.Cost?.monthly_estimates?.[selectedInstance]?.storage || 'N/A'}</span>
+                        </div>
+                        <div className="cost-item">
+                            <span>Data Transfer:</span>
+                            <span>${domainDetails?.Infrastructure?.Cost?.monthly_estimates?.[selectedInstance]?.data_transfer || 'N/A'}</span>
+                        </div>
+                        <div className="cost-item total">
+                            <span>Total Monthly:</span>
+                            <span>${domainDetails?.Infrastructure?.Cost?.monthly_estimates?.[selectedInstance]?.total || 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Main Application Component
+        function App() {
+            const [selectedDomain, setSelectedDomain] = useState(null);
+            const [currentView, setCurrentView] = useState('domains');
+
+            return (
+                <div className="app">
+                    <header className="app-header">
+                        <div className="header-content">
+                            <h1>🔬 AWS Research Wizard</h1>
+                            <p>Enhanced GUI - Phase 2 Foundation</p>
+                        </div>
+                        <nav className="main-nav">
+                            <button 
+                                className={currentView === 'domains' ? 'active' : ''}
+                                onClick={() => setCurrentView('domains')}
+                            >
+                                Domains
+                            </button>
+                            <button 
+                                className={currentView === 'costs' ? 'active' : ''}
+                                onClick={() => setCurrentView('costs')}
+                            >
+                                Cost Calculator
+                            </button>
+                        </nav>
+                    </header>
+
+                    <main className="app-main">
+                        {currentView === 'domains' && (
+                            <DomainSelector 
+                                onDomainSelect={setSelectedDomain}
+                                selectedDomain={selectedDomain}
+                            />
+                        )}
+                        {currentView === 'costs' && (
+                            <CostCalculator selectedDomain={selectedDomain} />
+                        )}
+                    </main>
+
+                    <footer className="app-footer">
+                        <p>AWS Research Wizard v2.1.0-alpha | Enhanced GUI Phase 2</p>
+                    </footer>
+                </div>
+            );
+        }
+
+        // Mount the React app
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

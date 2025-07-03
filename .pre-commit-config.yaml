@@ -9,20 +9,27 @@ repos:
       - id: check-json
       - id: check-added-large-files
 
-  # Go linting and formatting
+  # Go linting and formatting (configured for go subdirectory)
   - repo: https://github.com/dnephin/pre-commit-golang
     rev: v0.5.1
     hooks:
       - id: go-fmt
+        args: ['-w']
+        files: '^go/.*\.go$'
       - id: go-vet
+        args: ['-C', 'go']
+        files: '^go/.*\.go$'
       - id: go-mod-tidy
+        args: ['-C', 'go']
+        files: '^go/(go\.mod|go\.sum|.*\.go)$'
 
-  # Advanced Go linting
+  # Advanced Go linting (configured for go subdirectory)
   - repo: https://github.com/golangci/golangci-lint
     rev: v2.2.1
     hooks:
       - id: golangci-lint
-        args: [--timeout=5m]
+        args: ['run', '--timeout=5m', '--path-prefix=go/']
+        files: '^go/.*\.go$'
 
   # Security scanning will be handled by the comprehensive linting script
 
