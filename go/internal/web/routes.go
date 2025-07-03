@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -144,12 +145,85 @@ func (s *Server) handleVersion(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(version)
 }
 
-// Placeholder handlers for future development
+// handleDeploy manages deployment operations
 func (s *Server) handleDeploy(w http.ResponseWriter, r *http.Request) {
-	response := map[string]interface{}{
-		"message": "Deploy API endpoint - Coming in Phase 3",
-		"phase":   "3-deployment-monitoring",
+	switch r.Method {
+	case http.MethodPost:
+		s.handleDeploymentStart(w, r)
+	case http.MethodGet:
+		s.handleDeploymentStatus(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
+}
+
+func (s *Server) handleDeploymentStart(w http.ResponseWriter, r *http.Request) {
+	var deployRequest struct {
+		Domain string `json:"domain"`
+		Config struct {
+			InstanceSize    string `json:"instanceSize"`
+			Region          string `json:"region"`
+			UseSpotInstances bool  `json:"useSpotInstances"`
+			AutoShutdown    bool   `json:"autoShutdown"`
+			ShutdownTimeout int    `json:"shutdownTimeout"`
+			EnableBackup    bool   `json:"enableBackup"`
+		} `json:"config"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&deployRequest); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Generate deployment ID
+	deploymentId := fmt.Sprintf("deploy-%d", time.Now().Unix())
+
+	// Estimate deployment time based on instance size
+	var estimatedTime string
+	switch deployRequest.Config.InstanceSize {
+	case "small":
+		estimatedTime = "3-5 minutes"
+	case "medium":
+		estimatedTime = "5-8 minutes"
+	case "large":
+		estimatedTime = "8-12 minutes"
+	case "xlarge":
+		estimatedTime = "12-15 minutes"
+	default:
+		estimatedTime = "5-10 minutes"
+	}
+
+	response := map[string]interface{}{
+		"deploymentId":   deploymentId,
+		"status":         "initiated",
+		"estimatedTime":  estimatedTime,
+		"domain":         deployRequest.Domain,
+		"instanceSize":   deployRequest.Config.InstanceSize,
+		"region":         deployRequest.Config.Region,
+		"useSpotInstances": deployRequest.Config.UseSpotInstances,
+		"timestamp":      time.Now().Unix(),
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+func (s *Server) handleDeploymentStatus(w http.ResponseWriter, r *http.Request) {
+	deploymentId := r.URL.Query().Get("id")
+	if deploymentId == "" {
+		http.Error(w, "Deployment ID required", http.StatusBadRequest)
+		return
+	}
+
+	// Simulate deployment status - in real implementation, this would check actual deployment status
+	response := map[string]interface{}{
+		"deploymentId": deploymentId,
+		"status":       "running",
+		"progress":     75,
+		"currentStep":  "Installing software packages",
+		"timestamp":    time.Now().Unix(),
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }

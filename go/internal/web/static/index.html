@@ -8,6 +8,7 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="/static/js/deployment.js" type="text/babel"></script>
 </head>
 <body>
     <div id="root">
@@ -155,13 +156,25 @@
         function App() {
             const [selectedDomain, setSelectedDomain] = useState(null);
             const [currentView, setCurrentView] = useState('domains');
+            const [deployments, setDeployments] = useState([]);
+
+            const handleDeploymentStart = (deploymentId) => {
+                const newDeployment = {
+                    id: deploymentId,
+                    domain: selectedDomain,
+                    startTime: Date.now(),
+                    status: 'running'
+                };
+                setDeployments(prev => [...prev, newDeployment]);
+                setCurrentView('monitor');
+            };
 
             return (
                 <div className="app">
                     <header className="app-header">
                         <div className="header-content">
                             <h1>🔬 AWS Research Wizard</h1>
-                            <p>Enhanced GUI - Phase 2 Foundation</p>
+                            <p>Enhanced GUI - Phase 3 Foundation</p>
                         </div>
                         <nav className="main-nav">
                             <button 
@@ -176,6 +189,21 @@
                             >
                                 Cost Calculator
                             </button>
+                            <button 
+                                className={currentView === 'deploy' ? 'active' : ''}
+                                onClick={() => setCurrentView('deploy')}
+                            >
+                                Deploy
+                            </button>
+                            <button 
+                                className={currentView === 'monitor' ? 'active' : ''}
+                                onClick={() => setCurrentView('monitor')}
+                            >
+                                Monitor
+                                {deployments.length > 0 && (
+                                    <span className="nav-badge">{deployments.length}</span>
+                                )}
+                            </button>
                         </nav>
                     </header>
 
@@ -189,10 +217,19 @@
                         {currentView === 'costs' && (
                             <CostCalculator selectedDomain={selectedDomain} />
                         )}
+                        {currentView === 'deploy' && (
+                            <DeploymentWorkflow 
+                                selectedDomain={selectedDomain}
+                                onDeploymentStart={handleDeploymentStart}
+                            />
+                        )}
+                        {currentView === 'monitor' && (
+                            <DeploymentMonitor deployments={deployments} />
+                        )}
                     </main>
 
                     <footer className="app-footer">
-                        <p>AWS Research Wizard v2.1.0-alpha | Enhanced GUI Phase 2</p>
+                        <p>AWS Research Wizard v2.1.0-alpha | Enhanced GUI Phase 3</p>
                     </footer>
                 </div>
             );

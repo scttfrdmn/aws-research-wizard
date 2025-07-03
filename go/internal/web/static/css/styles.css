@@ -90,6 +90,18 @@ body {
     color: white;
 }
 
+.nav-badge {
+    background: var(--error-color);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1rem;
+    margin-left: 0.5rem;
+    display: inline-block;
+    min-width: 1.2rem;
+    text-align: center;
+}
+
 /* Main Content */
 .app-main {
     flex: 1;
@@ -304,6 +316,379 @@ body {
     font-size: 0.9rem;
 }
 
+/* Enhanced GUI Phase 3: Deployment & Monitoring Styles */
+
+/* Deployment Workflow */
+.deployment-workflow {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.deployment-workflow h2 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+.warning-message {
+    background: var(--warning-color);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.deployment-config {
+    background: var(--background-light);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.deployment-config h3 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.config-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.config-item.checkbox-item {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.config-item label {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.config-item select,
+.config-item input[type="number"] {
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background: white;
+}
+
+.config-item select:focus,
+.config-item input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.config-item input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: var(--primary-color);
+}
+
+.deployment-actions {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.deploy-button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.deploy-button:hover:not(:disabled) {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.deploy-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.deploy-button.deploying {
+    background: var(--warning-color);
+}
+
+.deploy-button.success {
+    background: var(--success-color);
+}
+
+.deploy-button.error {
+    background: var(--error-color);
+}
+
+.estimated-time {
+    margin-top: 0.5rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.deployment-log {
+    background: #1a1a1a;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 2rem;
+}
+
+.deployment-log h3 {
+    color: #00ff00;
+    margin-bottom: 1rem;
+    font-family: 'Courier New', monospace;
+}
+
+.log-entries {
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.log-entry {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+}
+
+.log-entry .timestamp {
+    color: #888;
+    min-width: 80px;
+}
+
+.log-entry .message {
+    flex: 1;
+}
+
+/* Deployment Monitor */
+.deployment-monitor {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+}
+
+.deployment-monitor h2 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+.no-deployments {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+
+.deployment-overview h3 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.deployment-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.deployment-card {
+    background: var(--background-light);
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.deployment-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.deployment-card.selected {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+}
+
+.deployment-card h4 {
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+}
+
+.status-dot.running {
+    background: var(--success-color);
+    box-shadow: 0 0 8px var(--success-color);
+}
+
+.status-dot.stopped {
+    background: var(--warning-color);
+}
+
+.status-dot.error {
+    background: var(--error-color);
+}
+
+.quick-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.uptime {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.detailed-monitoring {
+    border-top: 2px solid var(--border-color);
+    padding-top: 2rem;
+}
+
+.detailed-monitoring h3 {
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+}
+
+.monitoring-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    background: var(--background-light);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+}
+
+.metric-card h4 {
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.metric-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.metric-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.metric-fill.cpu {
+    background: linear-gradient(90deg, var(--success-color), var(--warning-color));
+}
+
+.metric-fill.memory {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+.metric-fill.disk {
+    background: linear-gradient(90deg, var(--warning-color), var(--error-color));
+}
+
+.deployment-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.action-button {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--border-color);
+    background: white;
+    color: var(--text-primary);
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-button:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.action-button.warning {
+    border-color: var(--warning-color);
+    color: var(--warning-color);
+}
+
+.action-button.warning:hover {
+    background: var(--warning-color);
+    color: white;
+}
+
+.action-button.danger {
+    border-color: var(--error-color);
+    color: var(--error-color);
+}
+
+.action-button.danger:hover {
+    background: var(--error-color);
+    color: white;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .app-main {
@@ -327,7 +712,9 @@ body {
         padding: 1rem;
     }
     
-    .cost-calculator {
+    .cost-calculator,
+    .deployment-workflow,
+    .deployment-monitor {
         padding: 1.5rem;
     }
     
@@ -339,6 +726,23 @@ body {
     .main-nav button {
         padding: 0.5rem 0.75rem;
         font-size: 0.9rem;
+    }
+    
+    .config-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .deployment-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .monitoring-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    
+    .deployment-actions {
+        flex-direction: column;
+        align-items: center;
     }
 }
 
