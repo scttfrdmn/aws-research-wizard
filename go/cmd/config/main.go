@@ -8,8 +8,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/aws-research-wizard/go/internal/config"
-	"github.com/aws-research-wizard/go/internal/tui"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/config"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/tui"
 )
 
 var (

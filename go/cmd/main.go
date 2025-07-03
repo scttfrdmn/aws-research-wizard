@@ -7,10 +7,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/aws-research-wizard/go/internal/commands/config"
-	"github.com/aws-research-wizard/go/internal/commands/data"
-	"github.com/aws-research-wizard/go/internal/commands/deploy"
-	"github.com/aws-research-wizard/go/internal/commands/monitor"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/commands/config"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/commands/data"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/commands/deploy"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/commands/monitor"
 )
 
 var (

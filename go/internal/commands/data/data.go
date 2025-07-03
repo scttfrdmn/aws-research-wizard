@@ -12,8 +12,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	awsClient "github.com/aws-research-wizard/go/internal/aws"
-	"github.com/aws-research-wizard/go/internal/data"
+	awsClient "github.com/scttfrdmn/aws-research-wizard/go/internal/aws"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/data"
 )
 
 // DataCmd represents the data command

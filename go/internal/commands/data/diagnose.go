@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws-research-wizard/go/internal/data"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/data"
 	"github.com/spf13/cobra"
 )
 

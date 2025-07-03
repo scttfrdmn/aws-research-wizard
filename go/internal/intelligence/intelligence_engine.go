@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws-research-wizard/go/internal/data"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/data"
 )
 
 // IntelligenceEngine provides domain-aware intelligent recommendations and optimization

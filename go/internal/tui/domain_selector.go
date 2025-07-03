@@ -8,7 +8,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/aws-research-wizard/go/internal/config"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/config"
 )
 
 var (

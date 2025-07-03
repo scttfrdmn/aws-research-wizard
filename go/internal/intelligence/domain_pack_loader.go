@@ -11,6 +11,7 @@ import (
 // DomainPackLoader loads and manages domain pack configurations
 type DomainPackLoader struct {
 	domainPacksPath string
+	configsPath     string
 	cache           map[string]*DomainPackInfo
 }
 
@@ -83,28 +84,53 @@ type Documentation struct {
 	BestPractices  string `yaml:"best_practices"`
 }
 
+// SimpleDomainConfig represents the structure of configs/domains/*.yaml files
+type SimpleDomainConfig struct {
+	Name        string                 `yaml:"name"`
+	Category    string                 `yaml:"category"`
+	Description string                 `yaml:"description"`
+	Version     string                 `yaml:"version"`
+	Domain      map[string]interface{} `yaml:"domain"`
+	AWS         map[string]interface{} `yaml:"aws"`
+	Environment map[string]interface{} `yaml:"environment"`
+	DataSources map[string]interface{} `yaml:"data_sources"`
+	Workflows   interface{}            `yaml:"workflows"` // Can be list or map
+	Cost        map[string]interface{} `yaml:"cost"`
+}
+
 // NewDomainPackLoader creates a new domain pack loader
 func NewDomainPackLoader() DomainPackLoaderInterface {
 	// Try to find domain-packs directory
 	domainPacksPath := "domain-packs"
+	configsPath := "configs/domains"
 
 	// Check if we're in the go subdirectory
 	if _, err := os.Stat("../domain-packs"); err == nil {
 		domainPacksPath = "../domain-packs"
+	}
+	if _, err := os.Stat("../configs/domains"); err == nil {
+		configsPath = "../configs/domains"
 	}
 
 	// Check if we're in a different location (e.g., tests from internal/intelligence)
 	if _, err := os.Stat("../../domain-packs"); err == nil {
 		domainPacksPath = "../../domain-packs"
 	}
-	
+	if _, err := os.Stat("../../configs/domains"); err == nil {
+		configsPath = "../../configs/domains"
+	}
+
 	// Check if we're even deeper (e.g., tests from internal/intelligence)
 	if _, err := os.Stat("../../../domain-packs"); err == nil {
 		domainPacksPath = "../../../domain-packs"
 	}
+	if _, err := os.Stat("../../../configs/domains"); err == nil {
+		configsPath = "../../../configs/domains"
+	}
 
 	return &DomainPackLoader{
 		domainPacksPath: domainPacksPath,
+		configsPath:     configsPath,
 		cache:           make(map[string]*DomainPackInfo),
 	}
 }
@@ -185,6 +211,26 @@ func (dpl *DomainPackLoader) LoadAllDomainPacks() (map[string]*DomainPackInfo, e
 
 // findDomainPackConfig locates the configuration file for a domain pack
 func (dpl *DomainPackLoader) findDomainPackConfig(domainName string) (string, error) {
+	// First, try the new configs/domains directory
+	configFile := filepath.Join(dpl.configsPath, domainName+".yaml")
+	if _, err := os.Stat(configFile); err == nil {
+		return configFile, nil
+	}
+
+	// Also try some common variations
+	variations := []string{
+		domainName + "_" + "lab",
+		domainName + "_" + "research",
+		domainName + "_" + "studio",
+	}
+	for _, variation := range variations {
+		configFile := filepath.Join(dpl.configsPath, variation+".yaml")
+		if _, err := os.Stat(configFile); err == nil {
+			return configFile, nil
+		}
+	}
+
+	// Fall back to the original domain-packs directory structure
 	domainsPath := filepath.Join(dpl.domainPacksPath, "domains")
 
 	// Search through category directories
@@ -243,12 +289,71 @@ func (dpl *DomainPackLoader) loadConfigFile(configPath string) (*DomainPackConfi
 		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
 
+	// Try to determine if this is a simple config format (configs/domains/*.yaml)
+	// or the traditional domain-pack.yaml format
+	if filepath.Dir(configPath) == dpl.configsPath {
+		// This is a simple config format - convert it
+		var simpleConfig SimpleDomainConfig
+		if err := yaml.Unmarshal(data, &simpleConfig); err != nil {
+			return nil, fmt.Errorf("failed to parse simple YAML config: %w", err)
+		}
+		return dpl.convertSimpleConfigToDomainPack(&simpleConfig), nil
+	}
+
+	// Traditional domain-pack.yaml format
 	var config DomainPackConfig
 	if err := yaml.Unmarshal(data, &config); err != nil {
 		return nil, fmt.Errorf("failed to parse YAML config: %w", err)
 	}
 
 	return &config, nil
+}
+
+// convertSimpleConfigToDomainPack converts a SimpleDomainConfig to DomainPackConfig
+func (dpl *DomainPackLoader) convertSimpleConfigToDomainPack(simpleConfig *SimpleDomainConfig) *DomainPackConfig {
+	config := &DomainPackConfig{
+		Name:        simpleConfig.Name,
+		Description: simpleConfig.Description,
+		Version:     simpleConfig.Version,
+		Categories:  []string{simpleConfig.Category},
+	}
+
+	// Set some default values for the traditional format
+	config.Maintainers = []Maintainer{{Name: "AWS Research Wizard", Email: "support@aws-research-wizard.com"}}
+
+	// Initialize AWS config with defaults
+	config.AWSConfig = AWSConfig{
+		InstanceTypes: map[string]string{
+			"small":  "c6i.large",
+			"medium": "c6i.xlarge",
+			"large":  "r6i.xlarge",
+		},
+		Storage: StorageConfig{
+			Type:       "gp3",
+			SizeGB:     100,
+			IOPS:       3000,
+			Throughput: 125,
+		},
+		Network: NetworkConfig{
+			PlacementGroup:     false,
+			EnhancedNetworking: true,
+			EFAEnabled:         false,
+		},
+	}
+
+	// Initialize spack config with defaults
+	config.SpackConfig = SpackConfig{
+		Packages: []string{"gcc", "cmake", "python"},
+	}
+
+	// Add default cost estimates
+	config.CostEstimates = map[string]string{
+		"small":  "$50-100/month",
+		"medium": "$100-500/month",
+		"large":  "$500-2000/month",
+	}
+
+	return config
 }
 
 // convertToDomainPackInfo converts a DomainPackConfig to DomainPackInfo

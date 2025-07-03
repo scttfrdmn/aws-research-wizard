@@ -2,7 +2,7 @@ package intelligence
 
 import (
 	"context"
-	"github.com/aws-research-wizard/go/internal/data"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/data"
 )
 
 // DomainPackLoaderInterface defines the contract for loading domain packs

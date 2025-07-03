@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aws-research-wizard/go/internal/data"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/data"
 )
 
 func TestResourceAnalyzer_AnalyzeResourceRequirements(t *testing.T) {
@@ -312,7 +312,7 @@ func TestResourceAnalyzer_analyzeDomainSpecificRequirements(t *testing.T) {
 		},
 		{
 			name:           "genomics_cpu_intensive",
-			domain:         "genomics", 
+			domain:         "genomics",
 			expectedMinCPU: 4,
 			expectedGPU:    false,
 		},

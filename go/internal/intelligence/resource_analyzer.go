@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/aws-research-wizard/go/internal/data"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/data"
 )
 
 // ResourceAnalyzer provides intelligent resource requirement analysis

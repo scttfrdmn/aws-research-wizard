@@ -1,4 +1,4 @@
-module github.com/aws-research-wizard/go
+module github.com/scttfrdmn/aws-research-wizard/go
 
 go 1.24.4
 
