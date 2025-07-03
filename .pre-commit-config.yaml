@@ -17,19 +17,25 @@ repos:
         args: ['-w']
         files: '^go/.*\.go$'
       - id: go-vet
-        args: ['-C', 'go']
+        entry: bash -c "cd go && go vet ./..."
+        language: system
         files: '^go/.*\.go$'
+        pass_filenames: false
       - id: go-mod-tidy
-        args: ['-C', 'go']
+        entry: bash -c "cd go && go mod tidy"
+        language: system
         files: '^go/(go\.mod|go\.sum|.*\.go)$'
+        pass_filenames: false
 
-  # Advanced Go linting (configured for go subdirectory)
-  - repo: https://github.com/golangci/golangci-lint
-    rev: v2.2.1
-    hooks:
-      - id: golangci-lint
-        args: ['run', '--timeout=5m', '--path-prefix=go/']
-        files: '^go/.*\.go$'
+  # Advanced Go linting (disabled due to version conflicts)
+  # - repo: https://github.com/golangci/golangci-lint
+  #   rev: v2.2.1
+  #   hooks:
+  #     - id: golangci-lint
+  #       entry: bash -c "cd go && golangci-lint run --timeout=5m"
+  #       language: system
+  #       files: '^go/.*\.go$'
+  #       pass_filenames: false
 
   # Security scanning will be handled by the comprehensive linting script
 

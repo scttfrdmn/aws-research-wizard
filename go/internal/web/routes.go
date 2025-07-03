@@ -23,7 +23,13 @@ func (s *Server) setupRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/api/health", s.handleHealth)
 	mux.HandleFunc("/api/version", s.handleVersion)
 
-	// Future API endpoints (Phase 2+)
+	// Enhanced GUI Phase 4: Authentication endpoints
+	mux.HandleFunc("/api/auth/session", s.handleAuthSession)
+	mux.HandleFunc("/api/auth/login", s.handleAuthLogin)
+	mux.HandleFunc("/api/auth/logout", s.handleAuthLogout)
+	mux.HandleFunc("/api/auth/sso/", s.handleSSOAuth)
+
+	// Deployment and monitoring endpoints
 	mux.HandleFunc("/api/deploy", s.handleDeploy)
 	mux.HandleFunc("/api/monitor", s.handleMonitor)
 	mux.HandleFunc("/api/costs", s.handleCosts)
@@ -161,12 +167,12 @@ func (s *Server) handleDeploymentStart(w http.ResponseWriter, r *http.Request) {
 	var deployRequest struct {
 		Domain string `json:"domain"`
 		Config struct {
-			InstanceSize    string `json:"instanceSize"`
-			Region          string `json:"region"`
-			UseSpotInstances bool  `json:"useSpotInstances"`
-			AutoShutdown    bool   `json:"autoShutdown"`
-			ShutdownTimeout int    `json:"shutdownTimeout"`
-			EnableBackup    bool   `json:"enableBackup"`
+			InstanceSize     string `json:"instanceSize"`
+			Region           string `json:"region"`
+			UseSpotInstances bool   `json:"useSpotInstances"`
+			AutoShutdown     bool   `json:"autoShutdown"`
+			ShutdownTimeout  int    `json:"shutdownTimeout"`
+			EnableBackup     bool   `json:"enableBackup"`
 		} `json:"config"`
 	}
 
@@ -194,14 +200,14 @@ func (s *Server) handleDeploymentStart(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := map[string]interface{}{
-		"deploymentId":   deploymentId,
-		"status":         "initiated",
-		"estimatedTime":  estimatedTime,
-		"domain":         deployRequest.Domain,
-		"instanceSize":   deployRequest.Config.InstanceSize,
-		"region":         deployRequest.Config.Region,
+		"deploymentId":     deploymentId,
+		"status":           "initiated",
+		"estimatedTime":    estimatedTime,
+		"domain":           deployRequest.Domain,
+		"instanceSize":     deployRequest.Config.InstanceSize,
+		"region":           deployRequest.Config.Region,
 		"useSpotInstances": deployRequest.Config.UseSpotInstances,
-		"timestamp":      time.Now().Unix(),
+		"timestamp":        time.Now().Unix(),
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -242,6 +248,134 @@ func (s *Server) handleCosts(w http.ResponseWriter, r *http.Request) {
 		"message": "Cost analysis API endpoint - Coming in Phase 2",
 		"phase":   "2-domain-interface",
 	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+// Enhanced GUI Phase 4: Authentication Handlers
+
+func (s *Server) handleAuthSession(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Simulate session check - in production, this would validate JWT/session tokens
+	response := map[string]interface{}{
+		"user": map[string]interface{}{
+			"id":       "demo-user-001",
+			"username": "demo-researcher",
+			"name":     "Demo Researcher",
+			"email":    "demo@research.example.com",
+			"role":     "researcher",
+		},
+		"permissions": []string{
+			"domains:read",
+			"costs:read",
+			"deployments:create",
+			"deployments:read",
+			"deployments:update",
+			"analytics:read",
+			"templates:read",
+			"templates:create",
+			"settings:read",
+			"settings:update",
+		},
+		"expires":   time.Now().Add(8 * time.Hour).Format(time.RFC3339),
+		"sessionId": fmt.Sprintf("session-%d", time.Now().Unix()),
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+func (s *Server) handleAuthLogin(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var loginRequest struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+		MfaCode  string `json:"mfaCode"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&loginRequest); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Simulate authentication - in production, this would validate against identity provider
+	if loginRequest.Username == "demo" && loginRequest.Password == "demo123" {
+		response := map[string]interface{}{
+			"user": map[string]interface{}{
+				"id":       "demo-user-001",
+				"username": loginRequest.Username,
+				"name":     "Demo Researcher",
+				"email":    "demo@research.example.com",
+				"role":     "researcher",
+			},
+			"permissions": []string{
+				"domains:read",
+				"costs:read",
+				"deployments:create",
+				"deployments:read",
+				"deployments:update",
+				"analytics:read",
+				"templates:read",
+				"templates:create",
+				"settings:read",
+				"settings:update",
+			},
+			"expires":   time.Now().Add(8 * time.Hour).Format(time.RFC3339),
+			"sessionId": fmt.Sprintf("session-%d", time.Now().Unix()),
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	} else {
+		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+	}
+}
+
+func (s *Server) handleAuthLogout(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Simulate logout - in production, this would invalidate session/tokens
+	response := map[string]interface{}{
+		"message": "Logged out successfully",
+		"status":  "success",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+func (s *Server) handleSSOAuth(w http.ResponseWriter, r *http.Request) {
+	// Extract SSO provider from URL path
+	path := strings.TrimPrefix(r.URL.Path, "/api/auth/sso/")
+	provider := strings.Split(path, "/")[0]
+
+	if provider == "" {
+		http.Error(w, "SSO provider required", http.StatusBadRequest)
+		return
+	}
+
+	// Simulate SSO redirect - in production, this would redirect to actual SSO provider
+	redirectURL := fmt.Sprintf("https://auth.%s.com/oauth/authorize?client_id=aws-research-wizard&redirect_uri=%s/api/auth/sso/%s/callback",
+		provider, r.Host, provider)
+
+	response := map[string]interface{}{
+		"provider":    provider,
+		"redirectURL": redirectURL,
+		"message":     fmt.Sprintf("Redirect to %s SSO", provider),
+		"demo":        true,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }

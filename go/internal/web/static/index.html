@@ -9,6 +9,10 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="/static/js/deployment.js" type="text/babel"></script>
+    <script src="/static/js/analytics.js" type="text/babel"></script>
+    <script src="/static/js/auth.js" type="text/babel"></script>
+    <script src="/static/js/notifications.js" type="text/babel"></script>
+    <script src="/static/js/templates.js" type="text/babel"></script>
 </head>
 <body>
     <div id="root">
@@ -50,7 +54,7 @@
                     <h2>🔬 Select Research Domain</h2>
                     <div className="domain-grid">
                         {domains.map(domain => (
-                            <div 
+                            <div
                                 key={domain.name}
                                 className={`domain-card ${selectedDomain === domain.name ? 'selected' : ''}`}
                                 onClick={() => onDomainSelect(domain.name)}
@@ -114,10 +118,10 @@
                             💵 Estimated Monthly Cost: ${domainDetails?.Domain?.monthly_cost || 'N/A'}
                         </p>
                     </div>
-                    
+
                     <div className="instance-selector">
                         <label htmlFor="instance-size">Instance Size:</label>
-                        <select 
+                        <select
                             id="instance-size"
                             value={selectedInstance}
                             onChange={(e) => setSelectedInstance(e.target.value)}
@@ -157,6 +161,19 @@
             const [selectedDomain, setSelectedDomain] = useState(null);
             const [currentView, setCurrentView] = useState('domains');
             const [deployments, setDeployments] = useState([]);
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [currentUser, setCurrentUser] = useState(null);
+
+            // Initialize managers
+            const authManager = AuthManager({
+                onAuthChange: (authenticated, user) => {
+                    setIsAuthenticated(authenticated);
+                    setCurrentUser(user);
+                }
+            });
+
+            const notificationManager = NotificationManager();
+            const templateManager = TemplateManager();
 
             const handleDeploymentStart = (deploymentId) => {
                 const newDeployment = {
@@ -169,47 +186,110 @@
                 setCurrentView('monitor');
             };
 
+            // Show login form if not authenticated
+            if (!isAuthenticated) {
+                return <LoginForm authManager={authManager} />;
+            }
+
             return (
                 <div className="app">
                     <header className="app-header">
                         <div className="header-content">
                             <h1>🔬 AWS Research Wizard</h1>
-                            <p>Enhanced GUI - Phase 3 Foundation</p>
+                            <p>Enhanced GUI - Phase 4 Enterprise</p>
+                            <div className="header-user-info">
+                                <NotificationBell notificationManager={notificationManager} />
+                                <SessionStatus authState={authManager.authState} />
+                                <UserProfile user={currentUser} authManager={authManager} />
+                            </div>
                         </div>
                         <nav className="main-nav">
-                            <button 
-                                className={currentView === 'domains' ? 'active' : ''}
-                                onClick={() => setCurrentView('domains')}
+                            <PermissionGuard
+                                permissions={authManager.authState.permissions}
+                                requiredPermission="domains:read"
                             >
-                                Domains
-                            </button>
-                            <button 
-                                className={currentView === 'costs' ? 'active' : ''}
-                                onClick={() => setCurrentView('costs')}
+                                <button
+                                    className={currentView === 'domains' ? 'active' : ''}
+                                    onClick={() => setCurrentView('domains')}
+                                >
+                                    Domains
+                                </button>
+                            </PermissionGuard>
+                            <PermissionGuard
+                                permissions={authManager.authState.permissions}
+                                requiredPermission="costs:read"
                             >
-                                Cost Calculator
-                            </button>
-                            <button 
-                                className={currentView === 'deploy' ? 'active' : ''}
-                                onClick={() => setCurrentView('deploy')}
+                                <button
+                                    className={currentView === 'costs' ? 'active' : ''}
+                                    onClick={() => setCurrentView('costs')}
+                                >
+                                    Cost Calculator
+                                </button>
+                            </PermissionGuard>
+                            <PermissionGuard
+                                permissions={authManager.authState.permissions}
+                                requiredPermission="deployments:create"
                             >
-                                Deploy
-                            </button>
-                            <button 
-                                className={currentView === 'monitor' ? 'active' : ''}
-                                onClick={() => setCurrentView('monitor')}
+                                <button
+                                    className={currentView === 'deploy' ? 'active' : ''}
+                                    onClick={() => setCurrentView('deploy')}
+                                >
+                                    Deploy
+                                </button>
+                            </PermissionGuard>
+                            <PermissionGuard
+                                permissions={authManager.authState.permissions}
+                                requiredPermission="deployments:read"
                             >
-                                Monitor
-                                {deployments.length > 0 && (
-                                    <span className="nav-badge">{deployments.length}</span>
-                                )}
-                            </button>
+                                <button
+                                    className={currentView === 'monitor' ? 'active' : ''}
+                                    onClick={() => setCurrentView('monitor')}
+                                >
+                                    Monitor
+                                    {deployments.length > 0 && (
+                                        <span className="nav-badge">{deployments.length}</span>
+                                    )}
+                                </button>
+                            </PermissionGuard>
+                            <PermissionGuard
+                                permissions={authManager.authState.permissions}
+                                requiredPermission="analytics:read"
+                            >
+                                <button
+                                    className={currentView === 'analytics' ? 'active' : ''}
+                                    onClick={() => setCurrentView('analytics')}
+                                >
+                                    Analytics
+                                </button>
+                            </PermissionGuard>
+                            <PermissionGuard
+                                permissions={authManager.authState.permissions}
+                                requiredPermission="templates:read"
+                            >
+                                <button
+                                    className={currentView === 'templates' ? 'active' : ''}
+                                    onClick={() => setCurrentView('templates')}
+                                >
+                                    Templates
+                                </button>
+                            </PermissionGuard>
+                            <PermissionGuard
+                                permissions={authManager.authState.permissions}
+                                requiredPermission="settings:read"
+                            >
+                                <button
+                                    className={currentView === 'settings' ? 'active' : ''}
+                                    onClick={() => setCurrentView('settings')}
+                                >
+                                    Settings
+                                </button>
+                            </PermissionGuard>
                         </nav>
                     </header>
 
                     <main className="app-main">
                         {currentView === 'domains' && (
-                            <DomainSelector 
+                            <DomainSelector
                                 onDomainSelect={setSelectedDomain}
                                 selectedDomain={selectedDomain}
                             />
@@ -218,19 +298,58 @@
                             <CostCalculator selectedDomain={selectedDomain} />
                         )}
                         {currentView === 'deploy' && (
-                            <DeploymentWorkflow 
+                            <DeploymentWorkflow
                                 selectedDomain={selectedDomain}
                                 onDeploymentStart={handleDeploymentStart}
                             />
                         )}
                         {currentView === 'monitor' && (
-                            <DeploymentMonitor deployments={deployments} />
+                            <PermissionGuard
+                                permissions={authManager.authState.permissions}
+                                requiredPermission="deployments:read"
+                            >
+                                <DeploymentMonitor deployments={deployments} />
+                            </PermissionGuard>
+                        )}
+                        {currentView === 'analytics' && (
+                            <PermissionGuard
+                                permissions={authManager.authState.permissions}
+                                requiredPermission="analytics:read"
+                            >
+                                <AnalyticsDashboard deployments={deployments} />
+                            </PermissionGuard>
+                        )}
+                        {currentView === 'templates' && (
+                            <PermissionGuard
+                                permissions={authManager.authState.permissions}
+                                requiredPermission="templates:read"
+                            >
+                                <TemplateSelector
+                                    templateManager={templateManager}
+                                    onTemplateSelect={(template) => {
+                                        // Auto-switch to deploy view with template pre-selected
+                                        setSelectedDomain(template.category);
+                                        setCurrentView('deploy');
+                                    }}
+                                />
+                            </PermissionGuard>
+                        )}
+                        {currentView === 'settings' && (
+                            <PermissionGuard
+                                permissions={authManager.authState.permissions}
+                                requiredPermission="settings:read"
+                            >
+                                <NotificationSettings notificationManager={notificationManager} />
+                            </PermissionGuard>
                         )}
                     </main>
 
                     <footer className="app-footer">
-                        <p>AWS Research Wizard v2.1.0-alpha | Enhanced GUI Phase 3</p>
+                        <p>AWS Research Wizard v2.1.0-alpha | Enhanced GUI Phase 4 Enterprise</p>
                     </footer>
+
+                    {/* Toast Notifications */}
+                    <ToastNotifications notificationManager={notificationManager} />
                 </div>
             );
         }
