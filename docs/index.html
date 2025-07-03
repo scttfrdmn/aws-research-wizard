@@ -256,11 +256,18 @@
             border-radius: 8px;
             border: 1px solid var(--border-color);
             text-align: center;
-            transition: transform 0.3s;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
 
         .domain-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-color);
+            text-decoration: none;
+            color: inherit;
         }
 
         .domain-icon {
@@ -564,41 +571,41 @@
         <div class="container">
             <h2 class="section-title">🔬 Research Domain Packs</h2>
             <p style="text-align: center; margin-bottom: 3rem; font-size: 1.1rem; color: var(--text-secondary);">22 pre-configured research environments optimized for every field</p>
-            
+
             <!-- Life Sciences -->
             <div class="category-section">
                 <h3 class="category-title">🧬 Life Sciences (6 domains)</h3>
                 <div class="domains-grid">
-                    <div class="domain-card">
+                    <a href="domains/genomics.html" class="domain-card">
                         <div class="domain-icon">🧬</div>
                         <div class="domain-name">Genomics & Bioinformatics</div>
                         <p>GATK variant calling, RNA-seq analysis, genome assembly with BWA, STAR, Canu, and Bioconductor</p>
-                    </div>
-                    <div class="domain-card">
+                    </a>
+                    <a href="domains/neuroscience.html" class="domain-card">
                         <div class="domain-icon">🏥</div>
                         <div class="domain-name">Neuroscience</div>
                         <p>Brain imaging analysis, neural network modeling, and computational neuroscience tools</p>
-                    </div>
-                    <div class="domain-card">
+                    </a>
+                    <a href="domains/marine-biology.html" class="domain-card">
                         <div class="domain-icon">🌊</div>
                         <div class="domain-name">Marine Biology & Oceanography</div>
                         <p>Ocean data analysis, marine ecosystem modeling, and aquatic research workflows</p>
-                    </div>
-                    <div class="domain-card">
+                    </a>
+                    <a href="domains/food-science.html" class="domain-card">
                         <div class="domain-icon">🥗</div>
                         <div class="domain-name">Food Science & Nutrition</div>
                         <p>Nutritional analysis, food safety research, and agricultural biotechnology</p>
-                    </div>
-                    <div class="domain-card">
+                    </a>
+                    <a href="domains/forestry.html" class="domain-card">
                         <div class="domain-icon">🌲</div>
                         <div class="domain-name">Forestry & Natural Resources</div>
                         <p>Forest management, biodiversity analysis, and environmental conservation tools</p>
-                    </div>
-                    <div class="domain-card">
+                    </a>
+                    <a href="domains/agricultural-sciences.html" class="domain-card">
                         <div class="domain-icon">🌾</div>
                         <div class="domain-name">Agricultural Sciences</div>
                         <p>Crop modeling, precision agriculture, and sustainable farming research</p>
-                    </div>
+                    </a>
                 </div>
             </div>
 
@@ -606,31 +613,31 @@
             <div class="category-section">
                 <h3 class="category-title">🌍 Physical Sciences (5 domains)</h3>
                 <div class="domains-grid">
-                    <div class="domain-card">
+                    <a href="domains/climate-modeling.html" class="domain-card">
                         <div class="domain-icon">🌍</div>
                         <div class="domain-name">Climate Modeling</div>
                         <p>Weather prediction, climate simulations with WRF, CESM, and atmospheric modeling tools</p>
-                    </div>
-                    <div class="domain-card">
+                    </a>
+                    <a href="domains/astronomy.html" class="domain-card">
                         <div class="domain-icon">🔭</div>
                         <div class="domain-name">Astronomy & Astrophysics</div>
                         <p>Image processing, survey analysis, cosmological simulations with specialized astronomy software</p>
-                    </div>
-                    <div class="domain-card">
+                    </a>
+                    <a href="domains/physics.html" class="domain-card">
                         <div class="domain-icon">⚛️</div>
                         <div class="domain-name">Computational Physics</div>
                         <p>High-performance computing for particle physics, quantum mechanics, and materials science</p>
-                    </div>
-                    <div class="domain-card">
+                    </a>
+                    <a href="domains/atmospheric-chemistry.html" class="domain-card">
                         <div class="domain-icon">🌬️</div>
                         <div class="domain-name">Atmospheric Chemistry</div>
                         <p>Air quality modeling, atmospheric reactions, and environmental chemistry analysis</p>
-                    </div>
-                    <div class="domain-card">
+                    </a>
+                    <a href="domains/renewable-energy.html" class="domain-card">
                         <div class="domain-icon">⚡</div>
                         <div class="domain-name">Renewable Energy Systems</div>
                         <p>Solar and wind energy modeling, grid optimization, and sustainable energy research</p>
-                    </div>
+                    </a>
                 </div>
             </div>
 

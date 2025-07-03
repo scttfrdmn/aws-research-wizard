@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Domains - Research Wizard</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .domain-hero {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .domains-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .category-section {
+            margin: 4rem 0;
+        }
+
+        .category-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid #6366f1;
+            padding-bottom: 0.5rem;
+        }
+
+        .category-description {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+
+        .domains-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .domain-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .domain-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: #6366f1;
+        }
+
+        .domain-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .domain-icon {
+            font-size: 2.5rem;
+            margin-right: 1rem;
+        }
+
+        .domain-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .domain-description {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .domain-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tool-tag {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .status-complete {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-coming {
+            background: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="container">
+            <div class="nav">
+                <a href="../index.html" class="logo">
+                    <img src="../wizard-logo.png" alt="Research Wizard" style="width: 48px; height: 48px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);">
+                    <span style="font-size: 1.5rem; font-weight: bold; color: #6366f1; margin-left: 12px;">Research Wizard</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="../index.html#features">Features</a></li>
+                    <li><a href="../domains/">Domains</a></li>
+                    <li><a href="../tutorials/">Tutorials</a></li>
+                    <li><a href="../index.html#get-started">Get Started</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <section class="domain-hero">
+        <div class="container">
+            <h1>22 Research Domains</h1>
+            <p class="subtitle">Pre-configured environments for every field of research</p>
+        </div>
+    </section>
+
+    <main class="domains-container">
+        <!-- Life Sciences -->
+        <div class="category-section">
+            <h2 class="category-title">🧬 Life Sciences</h2>
+            <p class="category-description">Advanced computational environments for biological research, from molecular analysis to ecosystem modeling.</p>
+
+            <div class="domains-grid">
+                <a href="genomics.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🧬</div>
+                        <div class="domain-name">Genomics & Bioinformatics</div>
+                    </div>
+                    <p class="domain-description">Complete genomics software stack with GATK, BWA, STAR, and Bioconductor for variant calling, RNA-seq analysis, and genome assembly.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">GATK v4.4.0</span>
+                        <span class="tool-tag">BWA</span>
+                        <span class="tool-tag">STAR</span>
+                        <span class="tool-tag">Samtools</span>
+                    </div>
+                    <div class="status-badge status-complete">Documentation Complete</div>
+                </a>
+
+                <a href="neuroscience.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🧠</div>
+                        <div class="domain-name">Neuroscience</div>
+                    </div>
+                    <p class="domain-description">Brain imaging analysis, neural network modeling, and computational neuroscience tools for advanced neurological research.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">FSL</span>
+                        <span class="tool-tag">FreeSurfer</span>
+                        <span class="tool-tag">AFNI</span>
+                        <span class="tool-tag">SPM</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+
+                <a href="marine-biology.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🌊</div>
+                        <div class="domain-name">Marine Biology & Oceanography</div>
+                    </div>
+                    <p class="domain-description">Ocean data analysis, marine ecosystem modeling, and aquatic research workflows with specialized oceanographic tools.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">Ocean Data View</span>
+                        <span class="tool-tag">ROMS</span>
+                        <span class="tool-tag">HYCOM</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+
+                <a href="food-science.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🥗</div>
+                        <div class="domain-name">Food Science & Nutrition</div>
+                    </div>
+                    <p class="domain-description">Nutritional analysis, food safety research, and agricultural biotechnology with specialized food science software.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">FoodData Central</span>
+                        <span class="tool-tag">R Statistical</span>
+                        <span class="tool-tag">Python</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+
+                <a href="forestry.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🌲</div>
+                        <div class="domain-name">Forestry & Natural Resources</div>
+                    </div>
+                    <p class="domain-description">Forest management, biodiversity analysis, and environmental conservation tools for sustainable resource management.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">GRASS GIS</span>
+                        <span class="tool-tag">QGIS</span>
+                        <span class="tool-tag">R Forest</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+
+                <a href="agricultural-sciences.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🌾</div>
+                        <div class="domain-name">Agricultural Sciences</div>
+                    </div>
+                    <p class="domain-description">Crop modeling, precision agriculture, and sustainable farming research with agricultural simulation tools.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">DSSAT</span>
+                        <span class="tool-tag">CropSyst</span>
+                        <span class="tool-tag">AgroClimate</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Physical Sciences -->
+        <div class="category-section">
+            <h2 class="category-title">🌍 Physical Sciences</h2>
+            <p class="category-description">High-performance computing environments for physics, chemistry, astronomy, and Earth sciences.</p>
+
+            <div class="domains-grid">
+                <a href="climate-modeling.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🌍</div>
+                        <div class="domain-name">Climate Modeling</div>
+                    </div>
+                    <p class="domain-description">Weather prediction and climate simulations with WRF, CESM, and atmospheric modeling tools for climate research.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">WRF</span>
+                        <span class="tool-tag">CESM</span>
+                        <span class="tool-tag">NCL</span>
+                        <span class="tool-tag">CDO</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+
+                <a href="astronomy.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🔭</div>
+                        <div class="domain-name">Astronomy & Astrophysics</div>
+                    </div>
+                    <p class="domain-description">Image processing, survey analysis, and cosmological simulations with specialized astronomy software.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">IRAF</span>
+                        <span class="tool-tag">DS9</span>
+                        <span class="tool-tag">AstroPy</span>
+                        <span class="tool-tag">CASA</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+
+                <a href="physics.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">⚛️</div>
+                        <div class="domain-name">Computational Physics</div>
+                    </div>
+                    <p class="domain-description">High-performance computing for particle physics, quantum mechanics, and materials science simulations.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">GEANT4</span>
+                        <span class="tool-tag">ROOT</span>
+                        <span class="tool-tag">OpenFOAM</span>
+                        <span class="tool-tag">LAMMPS</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+
+                <a href="atmospheric-chemistry.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🌬️</div>
+                        <div class="domain-name">Atmospheric Chemistry</div>
+                    </div>
+                    <p class="domain-description">Air quality modeling, atmospheric reactions, and environmental chemistry analysis with specialized tools.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">GEOS-Chem</span>
+                        <span class="tool-tag">CMAQ</span>
+                        <span class="tool-tag">CAMx</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+
+                <a href="renewable-energy.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">⚡</div>
+                        <div class="domain-name">Renewable Energy Systems</div>
+                    </div>
+                    <p class="domain-description">Solar and wind energy modeling, grid optimization, and sustainable energy research tools.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">PVLib</span>
+                        <span class="tool-tag">WindPowerLib</span>
+                        <span class="tool-tag">PyPSA</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Engineering & Technology -->
+        <div class="category-section">
+            <h2 class="category-title">🔧 Engineering & Technology</h2>
+            <p class="category-description">Advanced computing environments for machine learning, cybersecurity, and engineering applications.</p>
+
+            <div class="domains-grid">
+                <a href="machine-learning.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🤖</div>
+                        <div class="domain-name">Machine Learning & AI</div>
+                    </div>
+                    <p class="domain-description">GPU-optimized environments for deep learning training and model deployment with PyTorch, TensorFlow, and modern ML frameworks.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">PyTorch</span>
+                        <span class="tool-tag">TensorFlow</span>
+                        <span class="tool-tag">Hugging Face</span>
+                        <span class="tool-tag">CUDA</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+
+                <a href="cybersecurity.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🔐</div>
+                        <div class="domain-name">Cybersecurity Research</div>
+                    </div>
+                    <p class="domain-description">Security analysis, threat detection, and cybersecurity tool development with specialized security frameworks.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">Metasploit</span>
+                        <span class="tool-tag">Wireshark</span>
+                        <span class="tool-tag">Nmap</span>
+                        <span class="tool-tag">YARA</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+
+                <a href="materials-science.html" class="domain-card">
+                    <div class="domain-header">
+                        <div class="domain-icon">🧪</div>
+                        <div class="domain-name">Materials Science</div>
+                    </div>
+                    <p class="domain-description">Materials simulation, property prediction, and advanced materials research with computational chemistry tools.</p>
+                    <div class="domain-tools">
+                        <span class="tool-tag">VASP</span>
+                        <span class="tool-tag">Quantum ESPRESSO</span>
+                        <span class="tool-tag">Materials Project</span>
+                    </div>
+                    <div class="status-badge status-coming">Coming Soon</div>
+                </a>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 4rem 0;">
+            <a href="../tutorials/quickstart.html" class="btn btn-primary">Get Started with Any Domain</a>
+            <a href="../index.html" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>🔬 Research Domains</h3>
+                    <a href="genomics.html">Genomics & Bioinformatics</a>
+                    <a href="climate-modeling.html">Climate Modeling</a>
+                    <a href="machine-learning.html">Machine Learning</a>
+                    <a href="index.html">All Domains</a>
+                </div>
+
+                <div class="footer-section">
+                    <h3>📚 Documentation</h3>
+                    <a href="../tutorials/">Tutorials</a>
+                    <a href="../index.html">Platform Overview</a>
+                    <a href="../tutorials/quickstart.html">Quick Start</a>
+                </div>
+
+                <div class="footer-section">
+                    <h3>🤝 Support</h3>
+                    <a href="https://github.com/scttfrdmn/aws-research-wizard/issues">GitHub Issues</a>
+                    <a href="../index.html#get-started">Get Started</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 Research Wizard. Making research computing accessible to everyone.
+                   <br>Visit us at <a href="https://researchwizard.app" style="color: var(--accent-color);">researchwizard.app</a></p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
