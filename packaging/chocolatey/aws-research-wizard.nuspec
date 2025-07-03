@@ -25,7 +25,7 @@ AWS Research Wizard provides comprehensive tools for configuring, deploying, and
 ## Key Features
 
 - **Interactive Domain Configuration**: 18+ pre-configured research packs including genomics, climate modeling, machine learning, and more
-- **Infrastructure Deployment**: CloudFormation automation with EC2 instance provisioning and security group configuration  
+- **Infrastructure Deployment**: CloudFormation automation with EC2 instance provisioning and security group configuration
 - **Real-time Monitoring**: Live metrics, cost tracking, and alert management through interactive terminal dashboards
 - **Single Binary Distribution**: Zero dependencies, cross-platform support
 - **Cost Optimization**: Spot instance recommendations and real-time cost analysis
@@ -33,7 +33,7 @@ AWS Research Wizard provides comprehensive tools for configuring, deploying, and
 ## Perfect For
 
 - Research computing environments
-- HPC workload deployment  
+- HPC workload deployment
 - Scientific computing on AWS
 - Cost-optimized research infrastructure
 

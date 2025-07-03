@@ -46,7 +46,7 @@ workflows:
     script: "workflows/wrf_forecast.sh"
     input_data: "s3://aws-research-data/weather/gfs/"
     expected_output: "Weather forecast grids in NetCDF format"
-    
+
   - name: "climate_simulation"
     description: "Long-term climate modeling with CESM"
     script: "workflows/cesm_climate.sh"

@@ -40,10 +40,10 @@ class TutorialStep:
 class ComprehensiveTutorialGenerator:
     def __init__(self, output_dir: str = "domain-packs"):
         self.output_dir = Path(output_dir)
-        
+
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
         self.logger = logging.getLogger(__name__)
-        
+
         # Real AWS Open Data Registry datasets for each domain
         self.real_datasets = {
             "genomics_lab": [
@@ -121,13 +121,13 @@ class ComprehensiveTutorialGenerator:
     def generate_all_tutorials(self) -> bool:
         """Generate comprehensive tutorials for all 25 domain packs"""
         self.logger.info("📚 Generating comprehensive tutorials for all 25 domain packs...")
-        
+
         # Get all domain configurations
         domain_configs = self._load_domain_configs()
-        
+
         success_count = 0
         total_count = len(domain_configs)
-        
+
         for domain_name, config in domain_configs.items():
             try:
                 if self._generate_domain_tutorials(domain_name, config):
@@ -137,25 +137,25 @@ class ComprehensiveTutorialGenerator:
                     self.logger.error(f"❌ Failed to generate tutorials for {domain_name}")
             except Exception as e:
                 self.logger.error(f"❌ Error generating tutorials for {domain_name}: {e}")
-        
+
         # Summary
         self.logger.info(f"")
         self.logger.info(f"📊 Tutorial Generation Summary:")
         self.logger.info(f"   Total domains: {total_count}")
         self.logger.info(f"   ✅ Tutorials generated: {success_count}")
         self.logger.info(f"   ❌ Failed: {total_count - success_count}")
-        
+
         return success_count == total_count
 
     def _load_domain_configs(self) -> Dict[str, Any]:
         """Load all domain pack configurations"""
         configs = {}
         domains_dir = self.output_dir / "domains"
-        
+
         if not domains_dir.exists():
             self.logger.warning("Domains directory not found. Using default configurations.")
             return self._get_default_domain_configs()
-        
+
         for category_dir in domains_dir.iterdir():
             if category_dir.is_dir():
                 for domain_dir in category_dir.iterdir():
@@ -165,7 +165,7 @@ class ComprehensiveTutorialGenerator:
                             with open(config_file, 'r') as f:
                                 config = yaml.safe_load(f)
                                 configs[domain_dir.name] = config
-        
+
         return configs
 
     def _get_default_domain_configs(self) -> Dict[str, Any]:
@@ -185,10 +185,10 @@ class ComprehensiveTutorialGenerator:
         if not domain_dir:
             self.logger.error(f"Could not find domain directory for {domain_name}")
             return False
-        
+
         tutorials_dir = domain_dir / "tutorials"
         tutorials_dir.mkdir(exist_ok=True)
-        
+
         # Generate different types of tutorials
         tutorials = [
             self._generate_quickstart_tutorial(domain_name, config),
@@ -197,7 +197,7 @@ class ComprehensiveTutorialGenerator:
             self._generate_advanced_tutorial(domain_name, config),
             self._generate_real_data_tutorial(domain_name, config),
         ]
-        
+
         success = True
         for tutorial_config, steps in tutorials:
             tutorial_file = tutorials_dir / f"{tutorial_config.title.lower().replace(' ', '_')}.md"
@@ -206,10 +206,10 @@ class ComprehensiveTutorialGenerator:
             except Exception as e:
                 self.logger.error(f"Failed to write tutorial {tutorial_file}: {e}")
                 success = False
-        
+
         # Generate tutorial index
         self._generate_tutorial_index(tutorials_dir, tutorials)
-        
+
         return success
 
     def _generate_quickstart_tutorial(self, domain_name: str, config: Dict[str, Any]) -> tuple:
@@ -232,7 +232,7 @@ class ComprehensiveTutorialGenerator:
             cost_estimate="$5-10/hour",
             compute_requirements={"instance": "m6i.large", "storage": "100GB"}
         )
-        
+
         steps = [
             TutorialStep(
                 step_number=1,
@@ -272,7 +272,7 @@ class ComprehensiveTutorialGenerator:
                 validation="ls -la results/"
             )
         ]
-        
+
         return tutorial_config, steps
 
     def _generate_beginner_tutorial(self, domain_name: str, config: Dict[str, Any]) -> tuple:
@@ -296,7 +296,7 @@ class ComprehensiveTutorialGenerator:
             cost_estimate="$15-25/hour",
             compute_requirements={"instance": "m6i.xlarge", "storage": "500GB"}
         )
-        
+
         steps = self._generate_detailed_steps(domain_name, "beginner", 8)
         return tutorial_config, steps
 
@@ -321,7 +321,7 @@ class ComprehensiveTutorialGenerator:
             cost_estimate="$25-50/hour",
             compute_requirements={"instance": "c6i.2xlarge", "storage": "1TB"}
         )
-        
+
         steps = self._generate_detailed_steps(domain_name, "intermediate", 12)
         return tutorial_config, steps
 
@@ -346,7 +346,7 @@ class ComprehensiveTutorialGenerator:
             cost_estimate="$50-100/hour",
             compute_requirements={"instance": "c6i.8xlarge or GPU instances", "storage": "10TB+"}
         )
-        
+
         steps = self._generate_detailed_steps(domain_name, "advanced", 20)
         return tutorial_config, steps
 
@@ -371,14 +371,14 @@ class ComprehensiveTutorialGenerator:
             cost_estimate="$20-40/hour",
             compute_requirements={"instance": "r6i.2xlarge", "storage": "2TB"}
         )
-        
+
         steps = self._generate_real_data_steps(domain_name)
         return tutorial_config, steps
 
     def _generate_detailed_steps(self, domain_name: str, level: str, num_steps: int) -> List[TutorialStep]:
         """Generate detailed tutorial steps based on domain and level"""
         steps = []
-        
+
         # Domain-specific step templates
         step_templates = {
             "genomics_lab": {
@@ -421,11 +421,11 @@ class ComprehensiveTutorialGenerator:
             }
             # Add more domain-specific templates as needed
         }
-        
+
         # Get templates for this domain, fallback to generic
         domain_templates = step_templates.get(domain_name, {})
         level_templates = domain_templates.get(level, [f"Step {i+1}" for i in range(num_steps)])
-        
+
         for i in range(min(num_steps, len(level_templates))):
             step = TutorialStep(
                 step_number=i+1,
@@ -445,13 +445,13 @@ class ComprehensiveTutorialGenerator:
                 validation=f"ls -la results/{level_templates[i].lower().replace(' ', '_')}_output/"
             )
             steps.append(step)
-        
+
         return steps
 
     def _generate_real_data_steps(self, domain_name: str) -> List[TutorialStep]:
         """Generate steps specifically for working with real data"""
         datasets = self.real_datasets.get(domain_name, ["s3://aws-open-data/"])
-        
+
         steps = [
             TutorialStep(
                 step_number=1,
@@ -491,19 +491,19 @@ class ComprehensiveTutorialGenerator:
                 validation="python scripts/compare_with_published.py"
             )
         ]
-        
+
         return steps
 
     def _find_domain_directory(self, domain_name: str) -> Optional[Path]:
         """Find the directory for a specific domain"""
         domains_dir = self.output_dir / "domains"
-        
+
         for category_dir in domains_dir.iterdir():
             if category_dir.is_dir():
                 domain_dir = category_dir / domain_name
                 if domain_dir.exists():
                     return domain_dir
-        
+
         return None
 
     def _write_tutorial_markdown(self, file_path: Path, config: TutorialConfig, steps: List[TutorialStep]):
@@ -543,7 +543,7 @@ class ComprehensiveTutorialGenerator:
 ## Tutorial Steps
 
 """
-        
+
         for step in steps:
             content += f"""
 ### Step {step.step_number}: {step.title}
@@ -569,7 +569,7 @@ class ComprehensiveTutorialGenerator:
 {chr(10).join(f"- {item}" for item in step.troubleshooting)}
 
 """
-        
+
         content += f"""
 ## Next Steps
 
@@ -588,7 +588,7 @@ class ComprehensiveTutorialGenerator:
 *Generated by AWS Research Wizard Tutorial Generator*
 *Last updated: {import datetime; datetime.datetime.now().strftime('%Y-%m-%d')}}*
 """
-        
+
         with open(file_path, 'w') as f:
             f.write(content)
 
@@ -601,7 +601,7 @@ Welcome to the comprehensive tutorial collection! Choose your learning path:
 ## Quick Start (15 minutes)
 Perfect for first-time users who want to get started immediately.
 
-## Beginner Guide (2-3 hours)  
+## Beginner Guide (2-3 hours)
 Comprehensive introduction covering all fundamentals.
 
 ## Intermediate Workflows (4-6 hours)
@@ -624,7 +624,7 @@ Quickstart → Beginner → Intermediate → Advanced
 ## Support Resources
 
 - 🎯 [Choose Your Learning Path](learning_paths.md)
-- 📊 [Tutorial Difficulty Matrix](difficulty_matrix.md) 
+- 📊 [Tutorial Difficulty Matrix](difficulty_matrix.md)
 - 💰 [Cost Planning Guide](cost_planning.md)
 - 🔧 [Troubleshooting Guide](troubleshooting.md)
 
@@ -632,7 +632,7 @@ Quickstart → Beginner → Intermediate → Advanced
 
 *Start with the Quickstart tutorial if you're new to AWS Research Wizard!*
 """
-        
+
         index_file = tutorials_dir / "README.md"
         with open(index_file, 'w') as f:
             f.write(index_content)
@@ -640,17 +640,17 @@ Quickstart → Beginner → Intermediate → Advanced
 def main():
     """Main tutorial generation function"""
     import argparse
-    
+
     parser = argparse.ArgumentParser(description="Generate comprehensive tutorials for all domain packs")
     parser.add_argument("--output", type=str, default="domain-packs",
                        help="Domain packs directory")
-    parser.add_argument("--domain", type=str, 
+    parser.add_argument("--domain", type=str,
                        help="Generate tutorials for specific domain only")
-    
+
     args = parser.parse_args()
-    
+
     generator = ComprehensiveTutorialGenerator(args.output)
-    
+
     if args.domain:
         # Generate for specific domain
         domain_configs = generator._load_domain_configs()
@@ -664,7 +664,7 @@ def main():
         # Generate for all domains
         success = generator.generate_all_tutorials()
         print("🎉 All tutorials generated successfully!" if success else "❌ Some tutorials failed!")
-    
+
     sys.exit(0 if success else 1)
 
 if __name__ == "__main__":

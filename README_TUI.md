@@ -7,7 +7,7 @@ A comprehensive terminal-based interface system for configuring, deploying, and 
 The TUI system consists of three integrated components:
 
 1. **Research Wizard TUI** - Interactive domain configuration and deployment
-2. **AWS Monitor TUI** - Real-time resource monitoring and cost tracking  
+2. **AWS Monitor TUI** - Real-time resource monitoring and cost tracking
 3. **Domain Dashboard TUI** - Configurable domain-specific monitoring
 
 ## Components
@@ -191,19 +191,19 @@ widgets:
     position: "top-left"
     data_source: "workflow"
     refresh_interval: 5
-    
+
   - name: "system_metrics"
     type: "table"
     title: "System Metrics"
     position: "top-right"
     data_source: "aws"
-    
+
   - name: "job_status"
     type: "status"
     title: "Job Status"
     position: "bottom-left"
     data_source: "workflow"
-    
+
   - name: "resource_usage"
     type: "chart"
     title: "Resource Usage"

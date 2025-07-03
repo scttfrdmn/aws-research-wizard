@@ -5,7 +5,7 @@ categories: ["computer-science"]
 
 maintainers:
   - name: "AWS Research Wizard Team"
-    email: "research-wizard@example.com" 
+    email: "research-wizard@example.com"
     organization: "AWS Research Computing"
 
 spack_config:
@@ -48,7 +48,7 @@ workflows:
     script: "workflows/distributed_training.py"
     input_data: "s3://aws-research-data/imagenet/"
     expected_output: "Trained model checkpoints"
-    
+
   - name: "hyperparameter_tuning"
     description: "Large-scale hyperparameter optimization"
     script: "workflows/hp_tuning.py"

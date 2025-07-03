@@ -205,7 +205,7 @@ aws-research-wizard --help
 
 Pre-built binaries are available for:
 - Linux AMD64/ARM64
-- macOS AMD64/ARM64 (Intel/Apple Silicon)  
+- macOS AMD64/ARM64 (Intel/Apple Silicon)
 - Windows AMD64
 
 ### Docker Usage

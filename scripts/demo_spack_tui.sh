@@ -10,7 +10,7 @@ echo ""
 
 echo "📦 Available Features:"
 echo "  • Interactive environment browser"
-echo "  • Real-time installation progress"  
+echo "  • Real-time installation progress"
 echo "  • Package details and status"
 echo "  • Live logs and debugging"
 echo "  • Keyboard shortcuts:"

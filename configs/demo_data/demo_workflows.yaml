@@ -44,7 +44,7 @@ workflows:
         size_gb: 1.2
       estimated_runtime: "2-3 hours"
       estimated_cost: 8.50
-      
+
     rnaseq_differential_expression:
       name: "RNA-seq Differential Expression Analysis"
       description: "Complete RNA-seq pipeline using GTEx tissue samples"
@@ -442,14 +442,14 @@ execution_parameters:
   retry_attempts: 3
   notification_email: "researcher@example.com"
   output_bucket: "research-workflow-outputs"
-  
+
 # Cost Optimization Settings
 cost_optimization:
   use_spot_instances: true
   spot_instance_types: ["c6i", "r6i", "g5"]
   auto_shutdown: true
   idle_timeout_minutes: 30
-  
+
 # Monitoring and Logging
 monitoring:
   cloudwatch_logs: true

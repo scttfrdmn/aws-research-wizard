@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/scttfrdmn/aws-research-wizard/go/internal/intelligence"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/tenant"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/monitoring"
 )
 
 //go:embed static/*
@@ -16,11 +18,14 @@ var staticFiles embed.FS
 
 // Server represents the web GUI server
 type Server struct {
-	port            int
-	server          *http.Server
-	domainLoader    intelligence.DomainPackLoaderInterface
-	staticFS        fs.FS
-	developmentMode bool
+	port             int
+	server           *http.Server
+	domainLoader     intelligence.DomainPackLoaderInterface
+	tenantManager    *tenant.Manager
+	tenantMiddleware *tenant.Middleware
+	monitoringManager *monitoring.Manager
+	staticFS         fs.FS
+	developmentMode  bool
 }
 
 // ServerConfig holds configuration for the web server
@@ -31,12 +36,25 @@ type ServerConfig struct {
 	TLSCertPath string `json:"tls_cert_path,omitempty"`
 	TLSKeyPath  string `json:"tls_key_path,omitempty"`
 	EnableTLS   bool   `json:"enable_tls"`
+	DataDir     string `json:"data_dir,omitempty"`
 }
 
 // NewServer creates a new web server instance
 func NewServer(config ServerConfig) (*Server, error) {
 	// Initialize domain loader
 	domainLoader := intelligence.NewDomainPackLoader()
+
+	// Initialize tenant manager
+	tenantManager := tenant.NewManager(config.DataDir)
+	if err := tenantManager.LoadFromDisk(); err != nil {
+		return nil, fmt.Errorf("failed to load tenant data: %w", err)
+	}
+
+	// Initialize tenant middleware
+	tenantMiddleware := tenant.NewMiddleware(tenantManager)
+
+	// Initialize monitoring manager
+	monitoringManager := monitoring.NewManager(config.DataDir)
 
 	// Setup static file system
 	staticFS, err := fs.Sub(staticFiles, "static")
@@ -45,10 +63,13 @@ func NewServer(config ServerConfig) (*Server, error) {
 	}
 
 	server := &Server{
-		port:            config.Port,
-		domainLoader:    domainLoader,
-		staticFS:        staticFS,
-		developmentMode: config.Development,
+		port:              config.Port,
+		domainLoader:      domainLoader,
+		tenantManager:     tenantManager,
+		tenantMiddleware:  tenantMiddleware,
+		monitoringManager: monitoringManager,
+		staticFS:          staticFS,
+		developmentMode:   config.Development,
 	}
 
 	// Setup HTTP server
@@ -57,7 +78,7 @@ func NewServer(config ServerConfig) (*Server, error) {
 
 	server.server = &http.Server{
 		Addr:         fmt.Sprintf("%s:%d", config.Host, config.Port),
-		Handler:      server.corsMiddleware(server.loggingMiddleware(mux)),
+		Handler:      server.corsMiddleware(server.loggingMiddleware(server.tenantMiddleware.TenantIsolation(mux))),
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
 		IdleTimeout:  60 * time.Second,

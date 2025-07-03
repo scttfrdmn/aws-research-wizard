@@ -6,14 +6,14 @@ target_users: "Marine biologists, oceanographers, fisheries scientists, coastal 
 spack_packages:
   oceanographic_modeling:
     - "netcdf-c@4.9.2"
-    - "netcdf-fortran@4.6.1" 
+    - "netcdf-fortran@4.6.1"
     - "hdf5@1.14.3 +fortran +cxx"
     - "pnetcdf@1.12.3"
     - "nco@5.1.7"
     - "cdo@2.2.2"
     - "ferret@7.6.0"
     - "ncview@2.1.8"
-  
+
   marine_data_analysis:
     - "r@4.3.1 +X +external-lapack"
     - "r-tidyverse@2.0.0"
@@ -29,7 +29,7 @@ spack_packages:
     - "py-matplotlib@3.7.2"
     - "py-seaborn@0.12.2"
     - "py-xarray@2023.8.0"
-  
+
   marine_biology_tools:
     - "blast-plus@2.14.1"
     - "muscle@5.1"
@@ -40,7 +40,7 @@ spack_packages:
     - "qiime2@2023.7"
     - "vsearch@2.22.1"
     - "cutadapt@4.4"
-  
+
   marine_imaging:
     - "opencv@4.8.1 +python3"
     - "imagemagick@7.1.1-15"
@@ -48,7 +48,7 @@ spack_packages:
     - "paraview@5.11.2 +python3"
     - "py-scikit-image@0.21.0"
     - "py-pillow@10.0.0"
-  
+
   marine_statistics:
     - "r-vegan@2.6-4"
     - "r-mgcv@1.9-0"
@@ -57,7 +57,7 @@ spack_packages:
     - "r-randomforest@4.7-1.1"
     - "py-scikit-learn@1.3.0"
     - "py-statsmodels@0.14.0"
-  
+
   geospatial_marine:
     - "gdal@3.7.2 +python"
     - "geos@3.12.0"
@@ -77,7 +77,7 @@ aws_instance_recommendations:
     cost_per_hour: 1.152
     use_case: "Processing large oceanographic datasets, marine environmental data analysis"
     efa_enabled: false
-  
+
   marine_modeling_compute:
     instance_type: "c6i.8xlarge"
     vcpus: 32
@@ -88,7 +88,7 @@ aws_instance_recommendations:
     efa_enabled: true
     placement_group: "cluster"
     enhanced_networking: "sr-iov"
-  
+
   marine_hpc_cluster:
     instance_type: "c6i.16xlarge"
     vcpus: 64
@@ -99,7 +99,7 @@ aws_instance_recommendations:
     efa_enabled: true
     placement_group: "cluster"
     enhanced_networking: "sr-iov"
-  
+
   marine_gpu_analysis:
     instance_type: "g5.2xlarge"
     vcpus: 8
@@ -157,7 +157,7 @@ demo_workflows:
       - "Generate temperature trend analysis"
       - "Create interactive ocean temperature maps"
       - "Statistical analysis of warming patterns"
-  
+
   - name: "Marine Biodiversity Hotspot Mapping"
     description: "Identify marine biodiversity hotspots using species occurrence data"
     dataset: "OBIS Marine Species Data"
@@ -170,7 +170,7 @@ demo_workflows:
       - "Calculate species richness and endemism"
       - "Generate biodiversity hotspot maps"
       - "Perform conservation priority analysis"
-  
+
   - name: "Coral Reef Health Assessment"
     description: "Assess coral reef health using satellite imagery and field data"
     dataset: "Landsat Marine Coastal Imagery"
@@ -196,13 +196,13 @@ scaling_profiles:
     cores_per_node: 16
     memory_per_node: 128
     use_case: "Small oceanographic datasets, individual analysis"
-  
+
   medium_scale:
     nodes: 4
     cores_per_node: 32
     memory_per_node: 64
     use_case: "Regional ocean modeling, medium-sized marine datasets"
-  
+
   large_scale:
     nodes: 16
     cores_per_node: 64
@@ -215,21 +215,21 @@ marine_features:
     - "HDF5 for large datasets"
     - "GRIB for meteorological ocean data"
     - "OPeNDAP for remote data access"
-  
+
   marine_databases:
     - "OBIS (Ocean Biodiversity Information System)"
     - "WoRMS (World Register of Marine Species)"
     - "GBIF marine species records"
     - "FishBase global fish database"
     - "AlgaeBase marine algae database"
-  
+
   visualization_tools:
     - "Ocean Data View (ODV)"
     - "Ferret for oceanographic analysis"
     - "QGIS marine extensions"
     - "ParaView for 3D ocean visualization"
     - "Matplotlib with cartopy for maps"
-  
+
   specialized_software:
     - "ROMS (Regional Ocean Modeling System)"
     - "FVCOM (Finite Volume Community Ocean Model)"

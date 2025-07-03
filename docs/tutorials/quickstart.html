@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Start Tutorial - Research Wizard</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .tutorial-nav {
+            background: #f8fafc;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .tutorial-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .step-section {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .step-badge {
+            background: #6366f1;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+        
+        .code-example {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+        
+        .screenshot-placeholder {
+            background: #f3f4f6;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            margin: 1rem 0;
+            color: #6b7280;
+        }
+        
+        .tip-box {
+            background: #fef3cd;
+            border: 1px solid #fbbf24;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .tip-box h4 {
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+        }
+        
+        .btn-nav {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-back {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .btn-next {
+            background: #6366f1;
+            color: white;
+        }
+        
+        .btn-nav:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="container">
+            <div class="nav">
+                <a href="../index.html" class="logo">
+                    <img src="../wizard-logo.png" alt="Research Wizard">
+                    Research Wizard
+                </a>
+                <ul class="nav-links">
+                    <li><a href="../index.html#features">Features</a></li>
+                    <li><a href="../domains/">Domains</a></li>
+                    <li><a href="../user-guide/">Documentation</a></li>
+                    <li><a href="../index.html#get-started">Get Started</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="tutorial-nav">
+        <div class="container">
+            <nav>
+                <a href="../index.html">Home</a> / 
+                <a href="../tutorials/">Tutorials</a> / 
+                <span>Quick Start</span>
+            </nav>
+        </div>
+    </div>
+
+    <main class="tutorial-container">
+        <h1>Quick Start Tutorial</h1>
+        <p class="subtitle">Get up and running with Research Wizard in 10 minutes</p>
+
+        <!-- Step 1: Installation -->
+        <div class="step-section">
+            <div class="step-header">
+                <div class="step-badge">Step 1</div>
+                <h2>Installation & Setup</h2>
+            </div>
+            
+            <p>Research Wizard provides a beautiful web interface for managing research environments. Let's get it running on your system.</p>
+            
+            <h3>Prerequisites</h3>
+            <ul>
+                <li>Go 1.19+ installed</li>
+                <li>Git for cloning the repository</li>
+                <li>AWS credentials configured</li>
+                <li>Web browser (Chrome, Firefox, Safari, or Edge)</li>
+            </ul>
+
+            <h3>Clone and Build</h3>
+            <div class="code-example">
+<pre># Clone the repository
+git clone https://github.com/scttfrdmn/aws-research-wizard.git
+cd aws-research-wizard/go
+
+# Build the application
+go build ./cmd/main.go
+
+# Verify installation
+./main --version</pre>
+            </div>
+
+            <div class="tip-box">
+                <h4>💡 Pro Tip</h4>
+                <p>You can add the binary to your PATH for easier access:</p>
+                <code>sudo mv main /usr/local/bin/research-wizard</code>
+            </div>
+        </div>
+
+        <!-- Step 2: Starting the Web Interface -->
+        <div class="step-section">
+            <div class="step-header">
+                <div class="step-badge">Step 2</div>
+                <h2>Launch the Web Interface</h2>
+            </div>
+            
+            <p>Research Wizard provides a complete web-based interface. No command line expertise required!</p>
+            
+            <div class="code-example">
+<pre># Start the web server
+./main server --port 8080
+
+# You should see:
+# 2025/07/03 Research Wizard Enhanced GUI v2.1.0-alpha
+# 2025/07/03 Server starting on :8080
+# 2025/07/03 Enhanced GUI ready at http://localhost:8080</pre>
+            </div>
+
+            <div class="screenshot-placeholder">
+                <h3>🖥️ Web Interface Screenshot</h3>
+                <p>The Research Wizard dashboard with 7 tabs:</p>
+                <p>Domains | Cost Calculator | Deploy | Monitor | Analytics | Templates | Settings</p>
+            </div>
+
+            <p>Open your web browser and navigate to <strong>http://localhost:8080</strong></p>
+        </div>
+
+        <!-- Step 3: Exploring Research Domains -->
+        <div class="step-section">
+            <div class="step-header">
+                <div class="step-badge">Step 3</div>
+                <h2>Choose Your Research Domain</h2>
+            </div>
+            
+            <p>Research Wizard includes 22 pre-configured research domains. Each domain is optimized for specific research workflows.</p>
+            
+            <h3>Available Domain Categories</h3>
+            <ul>
+                <li><strong>Life Sciences (6 domains):</strong> Genomics, Medical Research, Drug Discovery, Food Science, Forestry, Agricultural Sciences</li>
+                <li><strong>Physical Sciences (5 domains):</strong> Climate Modeling, Astronomy, Physics, Atmospheric Chemistry, Renewable Energy</li>
+                <li><strong>Engineering (4 domains):</strong> Machine Learning, Data Science, Cybersecurity, Benchmarking</li>
+                <li><strong>Computer Science (4 domains):</strong> AI Research, Visualization Studio, FinOps, Geospatial Research</li>
+                <li><strong>Social Sciences (3 domains):</strong> Various interdisciplinary research areas</li>
+            </ul>
+
+            <div class="screenshot-placeholder">
+                <h3>🔬 Domain Selection Interface</h3>
+                <p>Visual grid showing all 22 research domains with descriptions and optimal configurations</p>
+            </div>
+
+            <div class="tip-box">
+                <h4>🎯 Domain Selection Tips</h4>
+                <p>Each domain includes:</p>
+                <ul>
+                    <li>Pre-installed software and libraries</li>
+                    <li>Optimized instance configurations</li>
+                    <li>Domain-specific data connections</li>
+                    <li>Best practice workflows</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 4: Cost Calculation -->
+        <div class="step-section">
+            <div class="step-header">
+                <div class="step-badge">Step 4</div>
+                <h2>Calculate and Optimize Costs</h2>
+            </div>
+            
+            <p>Research Wizard provides real-time cost calculation and optimization recommendations.</p>
+            
+            <h3>Cost Optimization Features</h3>
+            <ul>
+                <li><strong>Instance Sizing:</strong> Small, Medium, Large, XLarge configurations</li>
+                <li><strong>Spot Instances:</strong> Up to 70% cost savings</li>
+                <li><strong>Auto-Shutdown:</strong> Prevent runaway costs</li>
+                <li><strong>Regional Pricing:</strong> Compare costs across AWS regions</li>
+            </ul>
+
+            <div class="screenshot-placeholder">
+                <h3>💰 Cost Calculator Interface</h3>
+                <p>Real-time cost estimation with optimization recommendations</p>
+                <p>Shows: Hourly cost | Monthly projection | Savings options | Regional comparison</p>
+            </div>
+        </div>
+
+        <!-- Step 5: Deployment -->
+        <div class="step-section">
+            <div class="step-header">
+                <div class="step-badge">Step 5</div>
+                <h2>Deploy Your Environment</h2>
+            </div>
+            
+            <p>With one click, deploy a fully configured research environment.</p>
+            
+            <h3>Deployment Configuration</h3>
+            <ul>
+                <li>Select instance size based on your computational needs</li>
+                <li>Choose AWS region for optimal performance</li>
+                <li>Enable cost optimization features</li>
+                <li>Configure auto-shutdown settings</li>
+            </ul>
+
+            <div class="screenshot-placeholder">
+                <h3>🚀 Deployment Interface</h3>
+                <p>Configuration options and one-click deployment</p>
+                <p>Real-time progress tracking with terminal-style logging</p>
+            </div>
+
+            <div class="tip-box">
+                <h4>⚡ Deployment Tips</h4>
+                <p>Typical deployment times:</p>
+                <ul>
+                    <li>Small instances: 3-5 minutes</li>
+                    <li>Medium instances: 5-8 minutes</li>
+                    <li>Large instances: 8-12 minutes</li>
+                    <li>XLarge instances: 12-15 minutes</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Step 6: Monitoring -->
+        <div class="step-section">
+            <div class="step-header">
+                <div class="step-badge">Step 6</div>
+                <h2>Monitor Performance</h2>
+            </div>
+            
+            <p>Track your research environment's performance in real-time.</p>
+            
+            <h3>Monitoring Features</h3>
+            <ul>
+                <li><strong>Real-time Metrics:</strong> CPU, memory, disk, network usage</li>
+                <li><strong>Cost Tracking:</strong> Live cost monitoring</li>
+                <li><strong>Status Management:</strong> Start, stop, restart environments</li>
+                <li><strong>Multi-Deployment:</strong> Manage multiple environments simultaneously</li>
+            </ul>
+
+            <div class="screenshot-placeholder">
+                <h3>📊 Monitoring Dashboard</h3>
+                <p>Live performance metrics and management controls</p>
+                <p>Shows: Resource usage | Cost tracking | Status indicators | Management actions</p>
+            </div>
+        </div>
+
+        <!-- Step 7: Advanced Features -->
+        <div class="step-section">
+            <div class="step-header">
+                <div class="step-badge">Step 7</div>
+                <h2>Explore Advanced Features</h2>
+            </div>
+            
+            <p>Research Wizard includes enterprise-grade features for advanced users and institutions.</p>
+            
+            <h3>Analytics & Insights</h3>
+            <ul>
+                <li>Advanced data visualization</li>
+                <li>Performance analytics</li>
+                <li>Cost optimization recommendations</li>
+                <li>Usage pattern analysis</li>
+            </ul>
+
+            <h3>Template Management</h3>
+            <ul>
+                <li>Pre-built deployment templates</li>
+                <li>Custom template creation</li>
+                <li>Template sharing and collaboration</li>
+                <li>Quick-deploy functionality</li>
+            </ul>
+
+            <h3>Settings & Configuration</h3>
+            <ul>
+                <li>Notification preferences</li>
+                <li>Cost alerts and thresholds</li>
+                <li>User profile management</li>
+                <li>System configurations</li>
+            </ul>
+
+            <div class="screenshot-placeholder">
+                <h3>⚙️ Advanced Features Interface</h3>
+                <p>Analytics dashboards, template management, and configuration options</p>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="step-section">
+            <div class="step-header">
+                <div class="step-badge">Next</div>
+                <h2>What's Next?</h2>
+            </div>
+            
+            <h3>Learn More</h3>
+            <ul>
+                <li><a href="../domains/">Explore all 22 research domains</a></li>
+                <li><a href="../user-guide/">Read the complete user guide</a></li>
+                <li><a href="../admin/">Enterprise deployment guide</a></li>
+                <li><a href="../api/">API reference for automation</a></li>
+            </ul>
+
+            <h3>Get Help</h3>
+            <ul>
+                <li><a href="../help/">Help center and FAQ</a></li>
+                <li><a href="https://github.com/scttfrdmn/aws-research-wizard/issues">Report issues on GitHub</a></li>
+                <li><a href="../community.html">Join the community</a></li>
+                <li><a href="../contact.html">Contact support</a></li>
+            </ul>
+
+            <div class="tip-box">
+                <h4>🎉 Congratulations!</h4>
+                <p>You're now ready to use Research Wizard for your research computing needs. The platform handles all the AWS complexity so you can focus on your research.</p>
+            </div>
+        </div>
+
+        <div class="navigation-buttons">
+            <a href="../tutorials/" class="btn-nav btn-back">← All Tutorials</a>
+            <a href="../domains/" class="btn-nav btn-next">Explore Domains →</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>🚀 Get Started</h3>
+                    <a href="../tutorials/quickstart.html">Quick Start Guide</a>
+                    <a href="../installation.html">Installation</a>
+                    <a href="../user-guide/">User Guide</a>
+                    <a href="../tutorials/">All Tutorials</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>📚 Resources</h3>
+                    <a href="../domains/">Research Domains</a>
+                    <a href="../api/">API Reference</a>
+                    <a href="../blog/">Blog</a>
+                    <a href="../community.html">Community</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>🤝 Support</h3>
+                    <a href="../help/">Help Center</a>
+                    <a href="../contact.html">Contact</a>
+                    <a href="https://github.com/scttfrdmn/aws-research-wizard/issues">GitHub Issues</a>
+                    <a href="../security.html">Security</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>🏢 Enterprise</h3>
+                    <a href="../enterprise.html">Enterprise Features</a>
+                    <a href="../admin/">Admin Guide</a>
+                    <a href="../pricing.html">Pricing</a>
+                    <a href="../contact.html">Professional Support</a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Research Wizard. Making research computing accessible to everyone.
+                   <br>Visit us at <a href="https://researchwizard.app" style="color: var(--accent-color);">researchwizard.app</a></p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

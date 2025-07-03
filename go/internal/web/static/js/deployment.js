@@ -11,7 +11,7 @@ function DeploymentWorkflow({ selectedDomain, onDeploymentStart }) {
         shutdownTimeout: 30,
         enableBackup: true
     });
-    
+
     const [deploymentStatus, setDeploymentStatus] = React.useState('ready'); // ready, deploying, success, error
     const [deploymentLog, setDeploymentLog] = React.useState([]);
     const [estimatedTime, setEstimatedTime] = React.useState(null);
@@ -24,13 +24,13 @@ function DeploymentWorkflow({ selectedDomain, onDeploymentStart }) {
 
         setDeploymentStatus('deploying');
         setDeploymentLog([]);
-        
+
         try {
             // Add initial log entry
             addLogEntry('🚀 Starting deployment process...');
             addLogEntry(`📦 Domain: ${selectedDomain}`);
             addLogEntry(`🏗️ Instance: ${deploymentConfig.instanceSize} in ${deploymentConfig.region}`);
-            
+
             // Simulate deployment API call
             const response = await fetch('/api/deploy', {
                 method: 'POST',
@@ -47,10 +47,10 @@ function DeploymentWorkflow({ selectedDomain, onDeploymentStart }) {
                 const result = await response.json();
                 addLogEntry('✅ Deployment initiated successfully');
                 setEstimatedTime(result.estimatedTime || '5-10 minutes');
-                
+
                 // Start monitoring deployment progress
                 monitorDeployment(result.deploymentId);
-                
+
                 if (onDeploymentStart) {
                     onDeploymentStart(result.deploymentId);
                 }
@@ -84,7 +84,7 @@ function DeploymentWorkflow({ selectedDomain, onDeploymentStart }) {
         for (let i = 0; i < steps.length; i++) {
             await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
             addLogEntry(steps[i]);
-            
+
             if (i === steps.length - 1) {
                 setDeploymentStatus('success');
             }
@@ -94,7 +94,7 @@ function DeploymentWorkflow({ selectedDomain, onDeploymentStart }) {
     return (
         <div className="deployment-workflow">
             <h2>🚀 Deployment Workflow</h2>
-            
+
             {!selectedDomain && (
                 <div className="warning-message">
                     <p>⚠️ Please select a research domain from the Domains tab to continue.</p>
@@ -108,7 +108,7 @@ function DeploymentWorkflow({ selectedDomain, onDeploymentStart }) {
                         <div className="config-grid">
                             <div className="config-item">
                                 <label>Instance Size:</label>
-                                <select 
+                                <select
                                     value={deploymentConfig.instanceSize}
                                     onChange={(e) => setDeploymentConfig(prev => ({...prev, instanceSize: e.target.value}))}
                                     disabled={deploymentStatus === 'deploying'}
@@ -122,7 +122,7 @@ function DeploymentWorkflow({ selectedDomain, onDeploymentStart }) {
 
                             <div className="config-item">
                                 <label>AWS Region:</label>
-                                <select 
+                                <select
                                     value={deploymentConfig.region}
                                     onChange={(e) => setDeploymentConfig(prev => ({...prev, region: e.target.value}))}
                                     disabled={deploymentStatus === 'deploying'}
@@ -136,7 +136,7 @@ function DeploymentWorkflow({ selectedDomain, onDeploymentStart }) {
 
                             <div className="config-item checkbox-item">
                                 <label>
-                                    <input 
+                                    <input
                                         type="checkbox"
                                         checked={deploymentConfig.useSpotInstances}
                                         onChange={(e) => setDeploymentConfig(prev => ({...prev, useSpotInstances: e.target.checked}))}
@@ -148,7 +148,7 @@ function DeploymentWorkflow({ selectedDomain, onDeploymentStart }) {
 
                             <div className="config-item checkbox-item">
                                 <label>
-                                    <input 
+                                    <input
                                         type="checkbox"
                                         checked={deploymentConfig.autoShutdown}
                                         onChange={(e) => setDeploymentConfig(prev => ({...prev, autoShutdown: e.target.checked}))}
@@ -161,7 +161,7 @@ function DeploymentWorkflow({ selectedDomain, onDeploymentStart }) {
                             {deploymentConfig.autoShutdown && (
                                 <div className="config-item">
                                     <label>Shutdown Timeout (minutes):</label>
-                                    <input 
+                                    <input
                                         type="number"
                                         value={deploymentConfig.shutdownTimeout}
                                         onChange={(e) => setDeploymentConfig(prev => ({...prev, shutdownTimeout: parseInt(e.target.value)}))}
@@ -174,7 +174,7 @@ function DeploymentWorkflow({ selectedDomain, onDeploymentStart }) {
 
                             <div className="config-item checkbox-item">
                                 <label>
-                                    <input 
+                                    <input
                                         type="checkbox"
                                         checked={deploymentConfig.enableBackup}
                                         onChange={(e) => setDeploymentConfig(prev => ({...prev, enableBackup: e.target.checked}))}
@@ -187,7 +187,7 @@ function DeploymentWorkflow({ selectedDomain, onDeploymentStart }) {
                     </div>
 
                     <div className="deployment-actions">
-                        <button 
+                        <button
                             className={`deploy-button ${deploymentStatus}`}
                             onClick={handleDeploy}
                             disabled={deploymentStatus === 'deploying'}
@@ -229,7 +229,7 @@ function DeploymentMonitor({ deployments = [] }) {
         const interval = setInterval(() => {
             const now = Date.now();
             const newData = {};
-            
+
             deployments.forEach(deployment => {
                 newData[deployment.id] = {
                     cpuUsage: Math.floor(Math.random() * 80) + 10,
@@ -242,7 +242,7 @@ function DeploymentMonitor({ deployments = [] }) {
                     status: deployment.status || 'running'
                 };
             });
-            
+
             setMonitoringData(newData);
         }, 3000); // Update every 3 seconds
 
@@ -258,7 +258,7 @@ function DeploymentMonitor({ deployments = [] }) {
     return (
         <div className="deployment-monitor">
             <h2>📊 Deployment Monitoring</h2>
-            
+
             {deployments.length === 0 && (
                 <div className="no-deployments">
                     <p>No active deployments to monitor.</p>
@@ -274,7 +274,7 @@ function DeploymentMonitor({ deployments = [] }) {
                             {deployments.map(deployment => {
                                 const data = monitoringData[deployment.id] || {};
                                 return (
-                                    <div 
+                                    <div
                                         key={deployment.id}
                                         className={`deployment-card ${selectedDeployment === deployment.id ? 'selected' : ''}`}
                                         onClick={() => setSelectedDeployment(deployment.id)}
@@ -315,7 +315,7 @@ function DeploymentMonitor({ deployments = [] }) {
                                     <h4>💻 CPU Usage</h4>
                                     <div className="metric-value">{monitoringData[selectedDeployment].cpuUsage}%</div>
                                     <div className="metric-bar">
-                                        <div 
+                                        <div
                                             className="metric-fill cpu"
                                             style={{width: `${monitoringData[selectedDeployment].cpuUsage}%`}}
                                         ></div>
@@ -326,7 +326,7 @@ function DeploymentMonitor({ deployments = [] }) {
                                     <h4>🧠 Memory Usage</h4>
                                     <div className="metric-value">{monitoringData[selectedDeployment].memoryUsage}%</div>
                                     <div className="metric-bar">
-                                        <div 
+                                        <div
                                             className="metric-fill memory"
                                             style={{width: `${monitoringData[selectedDeployment].memoryUsage}%`}}
                                         ></div>
@@ -337,7 +337,7 @@ function DeploymentMonitor({ deployments = [] }) {
                                     <h4>💾 Disk Usage</h4>
                                     <div className="metric-value">{monitoringData[selectedDeployment].diskUsage}%</div>
                                     <div className="metric-bar">
-                                        <div 
+                                        <div
                                             className="metric-fill disk"
                                             style={{width: `${monitoringData[selectedDeployment].diskUsage}%`}}
                                         ></div>

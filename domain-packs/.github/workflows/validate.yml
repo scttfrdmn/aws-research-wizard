@@ -9,28 +9,28 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    
+
     - name: Install Spack
       run: |
         git clone https://github.com/spack/spack.git
         echo "$GITHUB_WORKSPACE/spack/bin" >> $GITHUB_PATH
-    
+
     - name: Install validation tools
       run: |
         pip install pyyaml jsonschema cerberus
-    
+
     - name: Validate domain pack schemas
       run: |
         python tools/validate_domains.py --all
-    
+
     - name: Test Spack environment creation
       run: |
         for domain in domains/*/; do
@@ -40,7 +40,7 @@ jobs:
             spack env remove -y test-env
           fi
         done
-    
+
     - name: Validate AWS configurations
       run: |
         python tools/validate_aws_configs.py --all

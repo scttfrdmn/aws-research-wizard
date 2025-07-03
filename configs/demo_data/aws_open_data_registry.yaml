@@ -15,7 +15,7 @@ datasets:
       temporal_coverage: "1979-present"
       access_pattern: "s3://era5-pds/{year}/{month}/data/"
       domains: ["climate_modeling", "atmospheric_chemistry"]
-      
+
     noaa_gfs:
       name: "NOAA Global Forecast System"
       description: "Global numerical weather prediction data"
@@ -27,7 +27,7 @@ datasets:
       temporal_coverage: "2015-present"
       access_pattern: "s3://noaa-gfs-bdp-pds/gfs.{YYYYMMDD}/{HH}/"
       domains: ["climate_modeling", "atmospheric_chemistry"]
-      
+
     nasa_merra2:
       name: "NASA MERRA-2 Reanalysis"
       description: "Modern-Era Retrospective analysis for Research and Applications"
@@ -53,7 +53,7 @@ datasets:
       populations: 26
       access_pattern: "s3://1000genomes/{phase}/{data_type}/"
       domains: ["genomics"]
-      
+
     ncbi_sra:
       name: "NCBI Sequence Read Archive"
       description: "Public sequencing data repository"
@@ -64,7 +64,7 @@ datasets:
       samples: "40M+"
       access_pattern: "s3://sra-pub-run-odp/sra/{SRR_ID}/"
       domains: ["genomics", "agricultural_sciences"]
-      
+
     gnomad:
       name: "Genome Aggregation Database"
       description: "Population genomics variant database"
@@ -89,7 +89,7 @@ datasets:
       temporal_coverage: "1972-present"
       access_pattern: "s3://usgs-landsat/collection02/{level}/{path}/{row}/{productId}/"
       domains: ["geospatial_research", "agricultural_sciences"]
-      
+
     sentinel2_l2a:
       name: "Sentinel-2 Cloud-Optimized GeoTIFFs"
       description: "ESA Sentinel-2 Level-2A atmospheric corrected imagery"
@@ -101,7 +101,7 @@ datasets:
       temporal_coverage: "2015-present"
       access_pattern: "s3://sentinel-cogs/sentinel-s2-l2a-cogs/{year}/{month}/"
       domains: ["geospatial_research", "agricultural_sciences"]
-      
+
     modis_mcd43a4:
       name: "MODIS Nadir BRDF-Adjusted Reflectance"
       description: "MODIS daily surface reflectance product"
@@ -126,7 +126,7 @@ datasets:
       pages: "25B+"
       access_pattern: "s3://commoncrawl/crawl-data/{crawl_id}/"
       domains: ["machine_learning"]
-      
+
     open_images:
       name: "Open Images Dataset V7"
       description: "Annotated image dataset for computer vision"
@@ -138,7 +138,7 @@ datasets:
       classes: 19957
       access_pattern: "s3://open-images-dataset/{subset}/{data_type}/"
       domains: ["machine_learning"]
-      
+
     imagenet:
       name: "ImageNet Object Localization Challenge"
       description: "Large-scale image classification dataset"
@@ -163,7 +163,7 @@ datasets:
       techniques: 600
       access_pattern: "s3://mitre-attack/{version}/{data_type}/"
       domains: ["cybersecurity_research"]
-      
+
     malware_bazaar:
       name: "MalwareBazaar Sample Collection"
       description: "Curated malware samples for research"
@@ -188,7 +188,7 @@ datasets:
       temporal_coverage: "2008-present"
       access_pattern: "s3://usda-nass-cdl/{year}/"
       domains: ["agricultural_sciences", "geospatial_research"]
-      
+
     nasa_gpm:
       name: "NASA Global Precipitation Measurement"
       description: "Global precipitation satellite observations"
@@ -213,7 +213,7 @@ datasets:
       benchmarks: ["HPL", "HPCG", "NAS", "STREAM"]
       access_pattern: "s3://hpc-benchmarks-pds/{benchmark}/{problem_size}/"
       domains: ["benchmarking_performance"]
-      
+
     mlperf_datasets:
       name: "MLPerf Training Datasets"
       description: "Standard machine learning benchmark datasets"
@@ -238,7 +238,7 @@ datasets:
       temporal_coverage: "1980-present"
       access_pattern: "s3://noaa-global-ocean-pds/{year}/{month}/ocean_data.nc"
       domains: ["marine_biology_oceanography"]
-      
+
     nasa_ocean_color:
       name: "NASA Ocean Color Data"
       description: "Satellite-derived ocean color and chlorophyll measurements"
@@ -250,7 +250,7 @@ datasets:
       temporal_coverage: "1997-present"
       access_pattern: "s3://nasa-ocean-color/{sensor}/{year}/{doy}/"
       domains: ["marine_biology_oceanography"]
-      
+
     modis_ocean:
       name: "MODIS Ocean Color and Sea Surface Temperature"
       description: "MODIS-derived ocean color and SST data"
@@ -262,7 +262,7 @@ datasets:
       temporal_coverage: "2000-present"
       access_pattern: "s3://modis-ocean-pds/{year}/{doy}/MODIS_OC.nc"
       domains: ["marine_biology_oceanography"]
-      
+
     noaa_tides_currents:
       name: "NOAA Tides and Currents Data"
       description: "Real-time and historical tide and current observations"
@@ -286,7 +286,7 @@ datasets:
       temporal_coverage: "2010-present"
       access_pattern: "s3://sports-analytics-pds/{sport}/{season}/stats.csv"
       domains: ["sports_science_biomechanics"]
-      
+
     biomechanics_motion_data:
       name: "Biomechanics Motion Capture Archive"
       description: "Standardized human movement pattern databases"
@@ -297,7 +297,7 @@ datasets:
       temporal_coverage: "2005-present"
       access_pattern: "s3://biomechanics-mocap-pds/{movement_type}/{subject_id}/"
       domains: ["sports_science_biomechanics"]
-      
+
     wearable_sensor_data:
       name: "Sports Wearable Sensor Collection"
       description: "Heart rate, GPS, accelerometry, and physiological data"
@@ -315,12 +315,12 @@ access_patterns:
     intelligent_tiering: "Enable S3 Intelligent Tiering for datasets >128KB"
     requester_pays: "Some datasets use requester-pays model"
     regional_access: "Access from same AWS region to minimize costs"
-    
+
   performance_optimization:
     multipart_download: "Use multipart downloads for files >100MB"
     parallel_access: "Parallelize across S3 prefixes for maximum throughput"
     caching: "Implement local caching for frequently accessed data"
-    
+
   security_considerations:
     public_datasets: "Most datasets are publicly accessible"
     sensitive_data: "Some datasets require data use agreements"
@@ -333,13 +333,13 @@ integration_examples:
     datasets: ["thousandgenomes"]
     workflow: "Download -> Align -> Call Variants -> Annotate"
     estimated_cost: "$25-50 per sample"
-    
+
   climate_analysis:
     description: "ERA5 temperature trend analysis"
     datasets: ["era5_reanalysis"]
     workflow: "Download -> Process -> Analyze -> Visualize"
     estimated_cost: "$10-30 per analysis"
-    
+
   satellite_classification:
     description: "Land cover classification with Sentinel-2"
     datasets: ["sentinel2_l2a"]

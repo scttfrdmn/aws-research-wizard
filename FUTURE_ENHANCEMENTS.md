@@ -1,7 +1,7 @@
 # AWS Research Wizard - Future Enhancements
 
-**Date**: 2024-06-28  
-**Status**: Strategic Planning  
+**Date**: 2024-06-28
+**Status**: Strategic Planning
 **Priority**: High Impact Improvements
 
 ## 1. Resumable Wizard Sessions
@@ -169,18 +169,18 @@ domains:
     latest_version: "1.2.0"
     versions:
       - "1.0.0"
-      - "1.1.0" 
+      - "1.1.0"
       - "1.2.0"
     categories: ["biology", "bioinformatics", "research"]
     download_url: "https://github.com/aws-research-wizard/domain-packs/releases/download/genomics-v1.2.0/genomics.yaml"
     checksum: "sha256:abc123..."
-    
+
   climate_modeling:
     name: "Climate Simulation & Atmospheric Modeling"
     maintainer: "climate-research-org"
     latest_version: "2.1.0"
     # ... similar structure
-    
+
 community_packs:
   neuroscience_advanced:
     name: "Advanced Neuroscience Pipeline"
@@ -226,12 +226,12 @@ func (dm *DomainManager) SearchDomains(query string) ([]*DomainInfo, error)
 # Browse available domains
 ./aws-research-wizard-config browse
 > 📚 Available Domain Packs (15 official, 8 community):
-> 
+>
 > Official Packs:
 >   🧬 genomics v1.2.0        - Genomics & Bioinformatics Laboratory
 >   🌍 climate_modeling v2.1.0 - Climate Simulation & Atmospheric Modeling
 >   🤖 machine_learning v3.0.0 - ML Research & Training Platform
-> 
+>
 > Community Packs:
 >   🧠 neuroscience_advanced v1.0.0 - Advanced Neuroscience Pipeline (verified)
 >   🔬 custom_hpc v0.9.0           - Custom HPC Workflows (community)

@@ -14,7 +14,7 @@ spack_packages:
     - "py-matplotlib@3.7.2"
     - "py-pandas@2.1.1"
     - "py-scikit-learn@1.3.0"
-  
+
   motion_capture_processing:
     - "opencv@4.8.1 +python3"
     - "vtk@9.3.0 +python +qt"
@@ -24,7 +24,7 @@ spack_packages:
     - "py-pillow@10.0.0"
     - "py-trackpy@0.6.1"
     - "meshlab@2022.02"
-  
+
   statistical_analysis:
     - "r@4.3.1 +X +external-lapack"
     - "r-tidyverse@2.0.0"
@@ -36,7 +36,7 @@ spack_packages:
     - "r-emmeans@1.8.8"
     - "py-statsmodels@0.14.0"
     - "py-pingouin@0.5.3"
-  
+
   signal_processing:
     - "fftw@3.3.10 +mpi"
     - "gsl@2.7.1"
@@ -45,7 +45,7 @@ spack_packages:
     - "octave@8.3.0"
     - "r-signal@0.7-7"
     - "r-wavelets@0.3-0.2"
-  
+
   machine_learning_sports:
     - "py-tensorflow@2.13.0"
     - "py-pytorch@2.0.1"
@@ -55,7 +55,7 @@ spack_packages:
     - "py-hyperopt@0.2.7"
     - "r-randomforest@4.7-1.1"
     - "r-xgboost@1.7.5.1"
-  
+
   visualization_sports:
     - "py-plotly@5.16.1"
     - "py-dash@2.14.1"
@@ -65,7 +65,7 @@ spack_packages:
     - "r-plotly@4.10.2"
     - "r-shiny@1.7.5"
     - "paraview@5.11.2 +python3"
-  
+
   database_sports:
     - "sqlite@3.43.0"
     - "postgresql@15.4"
@@ -83,7 +83,7 @@ aws_instance_recommendations:
     cost_per_hour: 0.576
     use_case: "Motion capture data analysis, kinematic calculations"
     efa_enabled: false
-  
+
   sports_data_processing:
     instance_type: "c6i.4xlarge"
     vcpus: 16
@@ -92,7 +92,7 @@ aws_instance_recommendations:
     cost_per_hour: 0.816
     use_case: "Large-scale sports data processing, performance analytics"
     efa_enabled: false
-  
+
   ml_performance_analysis:
     instance_type: "m6i.8xlarge"
     vcpus: 32
@@ -101,7 +101,7 @@ aws_instance_recommendations:
     cost_per_hour: 1.728
     use_case: "Machine learning for sports performance, predictive modeling"
     efa_enabled: false
-  
+
   sports_gpu_analysis:
     instance_type: "g5.xlarge"
     vcpus: 4
@@ -110,7 +110,7 @@ aws_instance_recommendations:
     cost_per_hour: 1.006
     use_case: "Deep learning for sports video analysis, real-time motion tracking"
     efa_enabled: false
-  
+
   high_speed_analysis:
     instance_type: "c6i.12xlarge"
     vcpus: 48
@@ -169,7 +169,7 @@ demo_workflows:
       - "Calculate joint kinematics and kinetics"
       - "Perform statistical gait analysis"
       - "Generate biomechanical reports and visualizations"
-  
+
   - name: "Team Performance Analytics"
     description: "Analyze team sports performance using tracking data"
     dataset: "Sports Performance Datasets"
@@ -182,7 +182,7 @@ demo_workflows:
       - "Analyze player load and intensity patterns"
       - "Generate performance dashboards"
       - "Predict optimal team strategies"
-  
+
   - name: "Injury Risk Prediction Model"
     description: "Develop machine learning models for injury risk assessment"
     dataset: "Wearable Sensor Data Collections"
@@ -208,13 +208,13 @@ scaling_profiles:
     cores_per_node: 8
     memory_per_node: 64
     use_case: "Individual athlete analysis, single motion capture sessions"
-  
+
   team_analysis:
     nodes: 2
     cores_per_node: 16
     memory_per_node: 32
     use_case: "Team sports analysis, multiple athlete comparisons"
-  
+
   large_cohort:
     nodes: 8
     cores_per_node: 32
@@ -228,14 +228,14 @@ sports_features:
     - "Qualisys data processing"
     - "IMU sensor data fusion"
     - "Markerless motion capture"
-  
+
   performance_metrics:
     - "Kinematic analysis (joint angles, velocities, accelerations)"
     - "Kinetic analysis (forces, moments, power)"
     - "Performance indicators (speed, agility, power output)"
     - "Physiological markers (heart rate, VO2, lactate)"
     - "Tactical metrics (formations, heat maps, passing networks)"
-  
+
   analysis_techniques:
     - "Statistical Parametric Mapping (SPM)"
     - "Principal Component Analysis (PCA)"
@@ -243,7 +243,7 @@ sports_features:
     - "Machine learning classification"
     - "Time series analysis"
     - "Network analysis for team sports"
-  
+
   specialized_software:
     - "OpenSim for musculoskeletal modeling"
     - "Visual3D for biomechanical analysis"
@@ -258,14 +258,14 @@ biomechanics_features:
     - "CSV time series data"
     - "MATLAB .mat files"
     - "HDF5 for large datasets"
-  
+
   modeling_capabilities:
     - "Inverse kinematics"
     - "Inverse dynamics"
     - "Muscle force estimation"
     - "Joint contact force calculation"
     - "Optimization-based movement prediction"
-  
+
   validation_tools:
     - "Cross-validation for model assessment"
     - "Reliability analysis"

@@ -7,15 +7,15 @@ mpi_packages:
     - "libfabric@1.18.1 %gcc@11.4.0 +verbs +mlx +efa"
     - "aws-ofi-nccl@1.7.0 %gcc@11.4.0"
     - "ucx@1.14.1 %gcc@11.4.0 +verbs +mlx +ib_hw_tm"
-    
+
   alternative_mpi:
     - "mpich@4.1.2 %gcc@11.4.0 +pmi +slurm +libfabric"
     - "intel-oneapi-mpi@2021.10.0 %gcc@11.4.0 +libfabric"
-    
+
   gpu_communication:
     - "nccl@2.18.3 %gcc@11.4.0 +cuda"
     - "aws-ofi-nccl@1.7.0 %gcc@11.4.0 +cuda"
-    
+
   parallel_libraries:
     - "fftw@3.3.10 %gcc@11.4.0 +mpi +openmp +pfft_patches"
     - "hdf5@1.14.2 %gcc@11.4.0 +mpi +threadsafe +fortran +cxx"
@@ -24,13 +24,13 @@ mpi_packages:
     - "scalapack@2.2.0 %gcc@11.4.0 ^openmpi+fabrics"
     - "petsc@3.19.4 %gcc@11.4.0 +mpi +hypre +metis +mumps"
     - "hypre@2.29.0 %gcc@11.4.0 +mpi +openmp"
-    
+
   benchmarking:
     - "osu-micro-benchmarks@6.2 %gcc@11.4.0 +mpi"
     - "ior@3.3.0 %gcc@11.4.0 +mpi +hdf5 +netcdf"
     - "mdtest@3.4.0 %gcc@11.4.0 +mpi"
     - "mpiP@3.5 %gcc@11.4.0 +mpi"
-    
+
   cluster_management:
     - "slurm@23.02.5 %gcc@11.4.0 +pmix +numa +nvml"
     - "aws-parallelcluster@3.7.0 %gcc@11.4.0"
@@ -43,16 +43,16 @@ efa_environment:
     FI_EFA_USE_DEVICE_RDMA: "1"
     RDMAV_FORK_SAFE: "1"
     MALLOC_ARENA_MAX: "4"
-    
+
   openmpi_settings:
     OMPI_MCA_btl: "^vader,tcp,openib,uct"
     OMPI_MCA_pml: "ucx"
     OMPI_MCA_osc: "ucx"
-    
+
   ucx_settings:
     UCX_TLS: "rc,ud,sm,self"
     UCX_NET_DEVICES: "efa0:1"
-    
+
   nccl_settings:
     NCCL_PROTO: "simple"
     NCCL_ALGO: "ring"
@@ -67,7 +67,7 @@ mpi_runtime_flags:
     - "--bind-to core"
     - "--map-by socket:PE=1"
     - "--report-bindings"
-    
+
   srun:
     - "--mpi=pmix"
     - "--cpus-per-task=1"
@@ -82,14 +82,14 @@ efa_instance_types:
       network_performance: "100 Gbps"
       efa_supported: true
       cost_per_hour: 2.88
-      
+
     - instance_type: "hpc6id.32xlarge"
       vcpus: 128
       memory_gb: 1024
       network_performance: "200 Gbps"
       efa_supported: true
       cost_per_hour: 7.26
-      
+
   compute_optimized:
     - instance_type: "c6in.32xlarge"
       vcpus: 128
@@ -97,7 +97,7 @@ efa_instance_types:
       network_performance: "200 Gbps"
       efa_supported: true
       cost_per_hour: 6.912
-      
+
     - instance_type: "c6a.48xlarge"
       vcpus: 192
       memory_gb: 384
@@ -112,13 +112,13 @@ placement_groups:
     description: "Pack instances close together for low-latency networking"
     use_case: "Tightly coupled MPI workloads"
     max_instances: 64
-    
+
   partition:
     strategy: "partition"
     description: "Spread instances across logical partitions"
     use_case: "Fault-tolerant distributed workloads"
     max_instances: 7
-    
+
   spread:
     strategy: "spread"
     description: "Spread instances across distinct hardware"
@@ -132,13 +132,13 @@ scaling_profiles:
     max_nodes: 4
     target_efficiency: 85
     use_case: "Development and small workloads"
-    
+
   medium_scale:
     min_nodes: 2
     max_nodes: 16
     target_efficiency: 90
     use_case: "Production research workloads"
-    
+
   large_scale:
     min_nodes: 8
     max_nodes: 32

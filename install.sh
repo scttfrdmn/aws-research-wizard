@@ -100,18 +100,18 @@ get_latest_version() {
 
     local latest_url="https://api.github.com/repos/$GITHUB_REPO/releases/latest"
     local version
-    
+
     if command_exists curl; then
         version=$(curl -s "$latest_url" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     else
         version=$(wget -qO- "$latest_url" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     fi
-    
+
     if [ -z "$version" ]; then
         log_error "Failed to get latest version from GitHub API"
         exit 1
     fi
-    
+
     echo "$version"
 }
 
@@ -119,9 +119,9 @@ get_latest_version() {
 download_file() {
     local url="$1"
     local output="$2"
-    
+
     log_info "Downloading from $url"
-    
+
     if command_exists curl; then
         curl -fsSL "$url" -o "$output"
     elif command_exists wget; then
@@ -136,15 +136,15 @@ download_file() {
 verify_checksum() {
     local file="$1"
     local expected_checksum="$2"
-    
+
     if ! command_exists sha256sum; then
         log_warning "sha256sum not available, skipping checksum verification"
         return 0
     fi
-    
+
     local actual_checksum
     actual_checksum=$(sha256sum "$file" | cut -d' ' -f1)
-    
+
     if [ "$actual_checksum" = "$expected_checksum" ]; then
         log_success "Checksum verification passed"
         return 0
@@ -171,9 +171,9 @@ check_install_dir() {
 install_binary() {
     local binary_path="$1"
     local install_path="$INSTALL_DIR/$BINARY_NAME"
-    
+
     log_step "Installing $BINARY_NAME to $install_path"
-    
+
     if check_install_dir; then
         cp "$binary_path" "$install_path"
         chmod +x "$install_path"
@@ -182,7 +182,7 @@ install_binary() {
         sudo cp "$binary_path" "$install_path"
         sudo chmod +x "$install_path"
     fi
-    
+
     log_success "Successfully installed $BINARY_NAME to $install_path"
 }
 
@@ -190,7 +190,7 @@ install_binary() {
 add_to_path() {
     local shell_rc
     local path_line="export PATH=\"$INSTALL_DIR:\$PATH\""
-    
+
     # Detect shell and set appropriate RC file
     if [ -n "$BASH_VERSION" ]; then
         shell_rc="$HOME/.bashrc"
@@ -203,19 +203,19 @@ add_to_path() {
     else
         shell_rc="$HOME/.profile"
     fi
-    
+
     # Check if INSTALL_DIR is already in PATH
     if echo "$PATH" | grep -q "$INSTALL_DIR"; then
         log_info "$INSTALL_DIR is already in PATH"
         return 0
     fi
-    
+
     # Check if we already added it to the RC file
     if [ -f "$shell_rc" ] && grep -q "$INSTALL_DIR" "$shell_rc"; then
         log_info "$INSTALL_DIR already added to $shell_rc"
         return 0
     fi
-    
+
     # Add to PATH in shell RC file
     if [ -w "$shell_rc" ] || [ ! -f "$shell_rc" ]; then
         echo "" >> "$shell_rc"
@@ -233,10 +233,10 @@ add_to_path() {
 # Verify installation
 verify_installation() {
     local install_path="$INSTALL_DIR/$BINARY_NAME"
-    
+
     if [ -x "$install_path" ]; then
         log_success "Installation verified: $install_path"
-        
+
         # Test if binary works
         if "$install_path" version >/dev/null 2>&1; then
             local version_output
@@ -245,7 +245,7 @@ verify_installation() {
         else
             log_warning "Binary installed but may not be functional"
         fi
-        
+
         return 0
     else
         log_error "Installation verification failed: $install_path not found or not executable"
@@ -272,7 +272,7 @@ print_usage() {
     echo -e "${CYAN}Documentation:${NC}"
     echo "  https://github.com/$GITHUB_REPO"
     echo ""
-    
+
     # Check if binary is in PATH
     if command_exists "$BINARY_NAME"; then
         log_success "$BINARY_NAME is ready to use!"
@@ -290,15 +290,15 @@ main() {
     echo "║          Complete research environment management             ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
-    
+
     # Detect system
     local os arch
     os=$(detect_os)
     arch=$(detect_arch)
-    
+
     log_info "Detected system: $os-$arch"
     log_info "Install directory: $INSTALL_DIR"
-    
+
     # Get version
     local version
     if [ "$VERSION" = "latest" ]; then
@@ -307,19 +307,19 @@ main() {
     else
         version="$VERSION"
     fi
-    
+
     log_info "Installing version: $version"
-    
+
     # Construct download URL
     local binary_filename="$BINARY_NAME-$os-$arch"
     local download_url="https://github.com/$GITHUB_REPO/releases/download/$version/$binary_filename"
     local checksum_url="https://github.com/$GITHUB_REPO/releases/download/$version/checksums.txt"
-    
+
     # Download binary
     log_step "Downloading $BINARY_NAME binary"
     local binary_path="$TEMP_DIR/$binary_filename"
     download_file "$download_url" "$binary_path"
-    
+
     # Download and verify checksum
     log_step "Verifying checksum"
     local checksums_path="$TEMP_DIR/checksums.txt"
@@ -334,10 +334,10 @@ main() {
     else
         log_warning "Could not download checksums, skipping verification"
     fi
-    
+
     # Make binary executable
     chmod +x "$binary_path"
-    
+
     # Create install directory if it doesn't exist
     if [ ! -d "$INSTALL_DIR" ]; then
         log_step "Creating install directory: $INSTALL_DIR"
@@ -347,18 +347,18 @@ main() {
             sudo mkdir -p "$INSTALL_DIR"
         fi
     fi
-    
+
     # Install binary
     install_binary "$binary_path"
-    
+
     # Add to PATH (only for user installs)
     if [ "$INSTALL_DIR" != "/usr/local/bin" ] && [ "$INSTALL_DIR" != "/usr/bin" ]; then
         add_to_path
     fi
-    
+
     # Verify installation
     verify_installation
-    
+
     # Print usage instructions
     print_usage
 }

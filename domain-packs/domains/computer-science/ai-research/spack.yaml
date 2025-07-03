@@ -5,34 +5,34 @@ spack:
   - py-torch@2.0.1 %gcc@11.4.0 +cuda+nccl
   - py-tensorflow@2.13.0 %gcc@11.4.0 +cuda
   - py-jax@0.4.13 %gcc@11.4.0 +cuda
-  
+
   # Scientific computing stack
   - py-numpy@1.24.3 %gcc@11.4.0 +blas+lapack
   - py-scipy@1.11.1 %gcc@11.4.0
   - py-pandas@2.0.3 %gcc@11.4.0
   - py-scikit-learn@1.3.0 %gcc@11.4.0
   - py-matplotlib@3.7.1 %gcc@11.4.0
-  
+
   # Development environment
   - py-jupyter@1.0.0 %gcc@11.4.0
   - py-ipython@8.14.0 %gcc@11.4.0
-  
+
   # CUDA and GPU libraries
   - cuda@12.2.0 %gcc@11.4.0
   - cudnn@8.9.2.26-12 %gcc@11.4.0
   - nccl@2.18.3-1 %gcc@11.4.0 +cuda
-  
+
   view: /opt/spack-environment
-  
+
   concretizer:
     unify: true
-    
+
   config:
     install_tree:
       root: /opt/spack
       padded_length: 128
     build_stage: /tmp/spack-stage
-    
+
   compilers:
   - compiler:
       spec: gcc@11.4.0
@@ -47,7 +47,7 @@ spack:
         fflags: -O3
       operating_system: ubuntu22
       target: x86_64
-      
+
   packages:
     all:
       target: [x86_64_v3]

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genomics & Bioinformatics - Research Wizard</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .domain-hero {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .domain-icon-large {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .content-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .feature-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .software-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .software-item {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid #059669;
+        }
+        
+        .config-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .config-table th,
+        .config-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .config-table th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+        
+        .dataset-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .dataset-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .dataset-size {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-left: 1rem;
+        }
+        
+        .workflow-step {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+        
+        .workflow-step::before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            left: -10px;
+            top: -10px;
+            background: #059669;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+        
+        .workflow-container {
+            counter-reset: step-counter;
+        }
+        
+        .performance-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="container">
+            <div class="nav">
+                <a href="../index.html" class="logo">
+                    <img src="../wizard-logo.png" alt="Research Wizard">
+                    Research Wizard
+                </a>
+                <ul class="nav-links">
+                    <li><a href="../index.html#features">Features</a></li>
+                    <li><a href="../domains/">Domains</a></li>
+                    <li><a href="../user-guide/">Documentation</a></li>
+                    <li><a href="../tutorials/">Tutorials</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <section class="domain-hero">
+        <div class="container">
+            <div class="domain-icon-large">🧬</div>
+            <h1>Genomics & Bioinformatics</h1>
+            <p class="subtitle">High-performance computing environments for genome analysis, variant calling, and bioinformatics workflows</p>
+        </div>
+    </section>
+
+    <main class="content-section">
+        <!-- Overview -->
+        <section>
+            <h2>Domain Overview</h2>
+            <p>The Genomics & Bioinformatics domain provides specialized computing environments optimized for large-scale genomic data analysis. With pre-configured software stacks and high-memory instances, researchers can process whole genome sequences, perform variant calling, and conduct population genetics studies without infrastructure complexity.</p>
+            
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h3>🔧 Pre-configured Tools</h3>
+                    <p>Complete genomics software stack including GATK, BWA, STAR, Samtools, and Bioconductor packages ready to use.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>💾 High-Memory Instances</h3>
+                    <p>Memory-optimized instances (up to 768GB RAM) designed for large genome assemblies and variant calling pipelines.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>📊 Scalable Storage</h3>
+                    <p>High-performance storage configurations optimized for large genomic datasets and intermediate file handling.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Software Stack -->
+        <section>
+            <h2>Pre-installed Software</h2>
+            <p>The genomics environment includes industry-standard tools and the latest versions of essential bioinformatics software:</p>
+            
+            <div class="software-list">
+                <div class="software-item">
+                    <h4>GATK v4.4.0</h4>
+                    <p>Genome Analysis Toolkit for variant discovery</p>
+                </div>
+                <div class="software-item">
+                    <h4>BWA v0.7.17</h4>
+                    <p>Burrows-Wheeler Aligner for sequence mapping</p>
+                </div>
+                <div class="software-item">
+                    <h4>STAR v2.7.10</h4>
+                    <p>RNA-seq aligner for transcript mapping</p>
+                </div>
+                <div class="software-item">
+                    <h4>Samtools v1.17</h4>
+                    <p>Suite for manipulating SAM/BAM files</p>
+                </div>
+                <div class="software-item">
+                    <h4>bcftools v1.17</h4>
+                    <p>Variant calling and format conversion</p>
+                </div>
+                <div class="software-item">
+                    <h4>HISAT2 v2.2.1</h4>
+                    <p>Graph-based alignment of RNA-seq reads</p>
+                </div>
+                <div class="software-item">
+                    <h4>StringTie v2.2.1</h4>
+                    <p>Transcript assembly and quantification</p>
+                </div>
+                <div class="software-item">
+                    <h4>Cufflinks v2.2.1</h4>
+                    <p>RNA-seq analysis pipeline</p>
+                </div>
+                <div class="software-item">
+                    <h4>FastQC v0.12.1</h4>
+                    <p>Quality control for high-throughput data</p>
+                </div>
+                <div class="software-item">
+                    <h4>Trimmomatic v0.39</h4>
+                    <p>Flexible read trimming tool</p>
+                </div>
+                <div class="software-item">
+                    <h4>Bowtie2 v2.5.1</h4>
+                    <p>Fast and memory-efficient alignment</p>
+                </div>
+                <div class="software-item">
+                    <h4>TopHat v2.1.2</h4>
+                    <p>Splice junction mapper for RNA-seq</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Instance Configurations -->
+        <section>
+            <h2>Recommended Instance Configurations</h2>
+            <p>Choose the optimal configuration based on your data size and analysis requirements:</p>
+            
+            <table class="config-table">
+                <thead>
+                    <tr>
+                        <th>Configuration</th>
+                        <th>Instance Type</th>
+                        <th>vCPUs</th>
+                        <th>Memory</th>
+                        <th>Storage</th>
+                        <th>Use Case</th>
+                        <th>Est. Cost/Hour</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Small</strong></td>
+                        <td>r6i.large</td>
+                        <td>2</td>
+                        <td>16 GB</td>
+                        <td>500 GB SSD</td>
+                        <td>Small datasets, testing</td>
+                        <td>$0.252</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Medium</strong></td>
+                        <td>r6i.xlarge</td>
+                        <td>4</td>
+                        <td>32 GB</td>
+                        <td>1 TB SSD</td>
+                        <td>Exome sequencing, small cohorts</td>
+                        <td>$0.504</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Large</strong></td>
+                        <td>r6i.4xlarge</td>
+                        <td>16</td>
+                        <td>128 GB</td>
+                        <td>2 TB SSD</td>
+                        <td>Whole genome sequencing</td>
+                        <td>$2.016</td>
+                    </tr>
+                    <tr>
+                        <td><strong>XLarge</strong></td>
+                        <td>r6i.8xlarge</td>
+                        <td>32</td>
+                        <td>256 GB</td>
+                        <td>4 TB SSD</td>
+                        <td>Large cohorts, population studies</td>
+                        <td>$4.032</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Real Data Examples -->
+        <section>
+            <h2>Real-World Datasets</h2>
+            <p>The genomics environment provides seamless access to major public genomics datasets:</p>
+            
+            <div class="dataset-card">
+                <div class="dataset-header">
+                    <h3>1000 Genomes Project</h3>
+                    <div class="dataset-size">2.5 TB</div>
+                </div>
+                <p><strong>Description:</strong> Complete genomic sequences from 2,504 individuals across 26 populations worldwide.</p>
+                <p><strong>Access:</strong> <code>s3://1000genomes/</code></p>
+                <p><strong>Use Cases:</strong> Population genetics, variant discovery, ancestry analysis</p>
+                <p><strong>Format:</strong> VCF, BAM, FASTQ files</p>
+            </div>
+
+            <div class="dataset-card">
+                <div class="dataset-header">
+                    <h3>gnomAD v3.1.2</h3>
+                    <div class="dataset-size">15 TB</div>
+                </div>
+                <p><strong>Description:</strong> Genome Aggregation Database with variants from 76,156 genomes and 125,748 exomes.</p>
+                <p><strong>Access:</strong> <code>s3://gnomad-public-us-east-1/</code></p>
+                <p><strong>Use Cases:</strong> Variant annotation, frequency analysis, clinical genomics</p>
+                <p><strong>Format:</strong> VCF, Hail Tables, Parquet</p>
+            </div>
+
+            <div class="dataset-card">
+                <div class="dataset-header">
+                    <h3>TCGA Research Network</h3>
+                    <div class="dataset-size">3.5 TB</div>
+                </div>
+                <p><strong>Description:</strong> Cancer genomics data from The Cancer Genome Atlas with clinical annotations.</p>
+                <p><strong>Access:</strong> <code>s3://tcga-2-open/</code></p>
+                <p><strong>Use Cases:</strong> Cancer research, tumor analysis, biomarker discovery</p>
+                <p><strong>Format:</strong> BAM, VCF, RNA-seq, methylation data</p>
+            </div>
+
+            <div class="dataset-card">
+                <div class="dataset-header">
+                    <h3>Human Pangenome Reference</h3>
+                    <div class="dataset-size">1.2 TB</div>
+                </div>
+                <p><strong>Description:</strong> Draft human pangenome reference representing genetic diversity.</p>
+                <p><strong>Access:</strong> <code>s3://human-pangenomics/</code></p>
+                <p><strong>Use Cases:</strong> Reference genome improvement, structural variant analysis</p>
+                <p><strong>Format:</strong> FASTA, GFA, VCF</p>
+            </div>
+        </section>
+
+        <!-- Workflow Examples -->
+        <section>
+            <h2>Common Workflows</h2>
+            <p>Pre-configured workflows for standard genomics analyses:</p>
+            
+            <div class="workflow-container">
+                <h3>Variant Calling Pipeline (GATK Best Practices)</h3>
+                
+                <div class="workflow-step">
+                    <h4>Quality Control & Preprocessing</h4>
+                    <p>Run FastQC for quality assessment, followed by Trimmomatic for adapter removal and quality trimming.</p>
+                    <code>fastqc sample_R1.fastq.gz sample_R2.fastq.gz</code>
+                </div>
+
+                <div class="workflow-step">
+                    <h4>Read Alignment</h4>
+                    <p>Align reads to reference genome using BWA-MEM with optimal parameters for paired-end data.</p>
+                    <code>bwa mem -M -t 16 reference.fa sample_R1.fastq.gz sample_R2.fastq.gz</code>
+                </div>
+
+                <div class="workflow-step">
+                    <h4>Mark Duplicates</h4>
+                    <p>Use GATK MarkDuplicates to identify and mark PCR duplicates in aligned reads.</p>
+                    <code>gatk MarkDuplicates -I aligned.bam -O marked.bam -M metrics.txt</code>
+                </div>
+
+                <div class="workflow-step">
+                    <h4>Base Quality Recalibration</h4>
+                    <p>Apply GATK BaseRecalibrator and ApplyBQSR for accurate base quality scores.</p>
+                    <code>gatk BaseRecalibrator -I marked.bam -R reference.fa --known-sites dbsnp.vcf</code>
+                </div>
+
+                <div class="workflow-step">
+                    <h4>Variant Calling</h4>
+                    <p>Call variants using GATK HaplotypeCaller with appropriate parameters for your data type.</p>
+                    <code>gatk HaplotypeCaller -R reference.fa -I recalibrated.bam -O variants.vcf</code>
+                </div>
+
+                <div class="workflow-step">
+                    <h4>Variant Filtering</h4>
+                    <p>Apply hard filters or VQSR to remove low-quality variants from the callset.</p>
+                    <code>gatk VariantFiltration -R reference.fa -V variants.vcf --filter-expression "QD < 2.0"</code>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Metrics -->
+        <section>
+            <h2>Performance Benchmarks</h2>
+            <p>Real-world performance metrics for common genomics tasks:</p>
+            
+            <div class="performance-metrics">
+                <div class="metric-card">
+                    <div class="metric-value">2.5 hrs</div>
+                    <div class="metric-label">30x WGS Alignment (r6i.4xlarge)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">45 min</div>
+                    <div class="metric-label">Exome Variant Calling (r6i.xlarge)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">8 TB/hr</div>
+                    <div class="metric-label">Data Transfer Rate (S3 to EBS)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">99.7%</div>
+                    <div class="metric-label">Pipeline Success Rate</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Getting Started -->
+        <section>
+            <h2>Getting Started</h2>
+            <p>Ready to start your genomics research? Follow these steps:</p>
+            
+            <ol>
+                <li><strong>Launch Research Wizard:</strong> Start the web interface and navigate to the Domains tab</li>
+                <li><strong>Select Genomics:</strong> Choose "Genomics & Bioinformatics" from the life sciences category</li>
+                <li><strong>Configure Environment:</strong> Select instance size based on your data requirements</li>
+                <li><strong>Deploy:</strong> One-click deployment creates your fully configured environment</li>
+                <li><strong>Access Tools:</strong> Connect via SSH or Jupyter for interactive analysis</li>
+                <li><strong>Monitor Usage:</strong> Track performance and costs in real-time</li>
+            </ol>
+
+            <div class="tip-box">
+                <h4>💡 Best Practices</h4>
+                <ul>
+                    <li>Use spot instances for development and testing (70% cost savings)</li>
+                    <li>Enable auto-shutdown to prevent unnecessary charges</li>
+                    <li>Store results in S3 for long-term retention</li>
+                    <li>Use EFS for shared storage across multiple instances</li>
+                    <li>Monitor memory usage and scale instances as needed</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="text-center" style="margin: 3rem 0;">
+            <a href="../tutorials/quickstart.html" class="btn btn-primary">Start Tutorial</a>
+            <a href="../domains/" class="btn btn-secondary">Explore All Domains</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>🧬 Genomics Resources</h3>
+                    <a href="genomics.html">Domain Overview</a>
+                    <a href="../tutorials/genomics-tutorial.html">Genomics Tutorial</a>
+                    <a href="../user-guide/genomics-best-practices.html">Best Practices</a>
+                    <a href="../api/genomics-api.html">API Reference</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>📚 Documentation</h3>
+                    <a href="../user-guide/">User Guide</a>
+                    <a href="../tutorials/">Tutorials</a>
+                    <a href="../api/">API Reference</a>
+                    <a href="../help/">Help Center</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>🔬 Other Domains</h3>
+                    <a href="climate.html">Climate Modeling</a>
+                    <a href="machine-learning.html">Machine Learning</a>
+                    <a href="astronomy.html">Astronomy</a>
+                    <a href="../domains/">All Domains</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>🤝 Support</h3>
+                    <a href="../help/">Help Center</a>
+                    <a href="../contact.html">Contact</a>
+                    <a href="https://github.com/scttfrdmn/aws-research-wizard/issues">GitHub Issues</a>
+                    <a href="../community.html">Community</a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Research Wizard. Making research computing accessible to everyone.
+                   <br>Visit us at <a href="https://researchwizard.app" style="color: var(--accent-color);">researchwizard.app</a></p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

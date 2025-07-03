@@ -3,7 +3,7 @@ name: Deploy GitHub Pages
 on:
   push:
     branches: [ main ]
-    paths: 
+    paths:
       - 'go/docs/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -35,12 +35,12 @@ jobs:
         run: |
           mkdir -p _site
           cp -r go/docs/* _site/
-          
+
           # Ensure CNAME file exists
           if [ ! -f _site/CNAME ]; then
             echo "researchwizard.app" > _site/CNAME
           fi
-          
+
           # Add build timestamp
           echo "<!-- Built: $(date -u +"%Y-%m-%d %H:%M:%S UTC") -->" >> _site/index.html
 
@@ -71,7 +71,7 @@ jobs:
         run: |
           # Test if the site is accessible
           curl -f -s -o /dev/null https://researchwizard.app || echo "Site not yet accessible at custom domain"
-          
+
           # Get the GitHub Pages URL from the deployment step
           echo "GitHub Pages deployed successfully"
           echo "Site should be available at: https://researchwizard.app"

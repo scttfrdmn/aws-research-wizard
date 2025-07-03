@@ -7,6 +7,9 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/tenant"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/monitoring"
 )
 
 // setupRoutes configures all HTTP routes for the web interface
@@ -33,6 +36,23 @@ func (s *Server) setupRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/api/deploy", s.handleDeploy)
 	mux.HandleFunc("/api/monitor", s.handleMonitor)
 	mux.HandleFunc("/api/costs", s.handleCosts)
+
+	// Enhanced GUI Phase 5: Multi-tenant management endpoints
+	mux.HandleFunc("/api/tenants", s.handleTenants)
+	mux.HandleFunc("/api/tenants/", s.handleTenantDetails)
+	mux.HandleFunc("/api/tenant/users", s.handleTenantUsers)
+	mux.HandleFunc("/api/tenant/deployments", s.handleTenantDeployments)
+	mux.HandleFunc("/api/tenant/stats", s.handleTenantStats)
+	mux.HandleFunc("/api/tenant/switch", s.handleTenantSwitch)
+
+	// Enhanced GUI Phase 5: Advanced monitoring and SLA endpoints
+	mux.HandleFunc("/api/monitoring/slas", s.handleSLAs)
+	mux.HandleFunc("/api/monitoring/slas/", s.handleSLADetails)
+	mux.HandleFunc("/api/monitoring/metrics", s.handleMetrics)
+	mux.HandleFunc("/api/monitoring/alerts", s.handleAlerts)
+	mux.HandleFunc("/api/monitoring/dashboards", s.handleDashboards)
+	mux.HandleFunc("/api/monitoring/dashboards/", s.handleDashboardDetails)
+	mux.HandleFunc("/api/monitoring/compliance", s.handleCompliance)
 }
 
 // handleIndex serves the main React application
@@ -378,4 +398,563 @@ func (s *Server) handleSSOAuth(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+}
+
+// Enhanced GUI Phase 5: Multi-Tenant Management Handlers
+
+// handleTenants manages tenant operations
+func (s *Server) handleTenants(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		s.handleListTenants(w, r)
+	case http.MethodPost:
+		s.handleCreateTenant(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func (s *Server) handleListTenants(w http.ResponseWriter, r *http.Request) {
+	tenants := s.tenantManager.ListTenants()
+
+	response := map[string]interface{}{
+		"tenants": tenants,
+		"total":   len(tenants),
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+func (s *Server) handleCreateTenant(w http.ResponseWriter, r *http.Request) {
+	var tenantConfig tenant.TenantConfig
+
+	if err := json.NewDecoder(r.Body).Decode(&tenantConfig); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if err := s.tenantManager.CreateTenant(&tenantConfig); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to create tenant: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message":  "Tenant created successfully",
+		"tenantId": tenantConfig.TenantID,
+	})
+}
+
+// handleTenantDetails manages individual tenant operations
+func (s *Server) handleTenantDetails(w http.ResponseWriter, r *http.Request) {
+	// Extract tenant ID from URL path
+	path := strings.TrimPrefix(r.URL.Path, "/api/tenants/")
+	tenantID := strings.Split(path, "/")[0]
+
+	if tenantID == "" {
+		http.Error(w, "Tenant ID required", http.StatusBadRequest)
+		return
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		s.handleGetTenant(w, r, tenantID)
+	case http.MethodPut:
+		s.handleUpdateTenant(w, r, tenantID)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func (s *Server) handleGetTenant(w http.ResponseWriter, r *http.Request, tenantID string) {
+	tenantConfig, err := s.tenantManager.GetTenant(tenantID)
+	if err != nil {
+		http.Error(w, "Tenant not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(tenantConfig)
+}
+
+func (s *Server) handleUpdateTenant(w http.ResponseWriter, r *http.Request, tenantID string) {
+	var updates tenant.TenantConfig
+
+	if err := json.NewDecoder(r.Body).Decode(&updates); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if err := s.tenantManager.UpdateTenant(tenantID, &updates); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to update tenant: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": "Tenant updated successfully",
+	})
+}
+
+// handleTenantUsers manages users within a tenant
+func (s *Server) handleTenantUsers(w http.ResponseWriter, r *http.Request) {
+	tenantID := tenant.GetTenantID(r.Context())
+	if tenantID == "" {
+		http.Error(w, "Tenant context required", http.StatusBadRequest)
+		return
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		users := s.tenantManager.GetUsersForTenant(tenantID)
+		response := map[string]interface{}{
+			"users":    users,
+			"total":    len(users),
+			"tenantId": tenantID,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+
+	case http.MethodPost:
+		var user tenant.TenantUser
+		if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		user.TenantID = tenantID
+		if err := s.tenantManager.CreateUser(&user); err != nil {
+			http.Error(w, fmt.Sprintf("Failed to create user: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"message": "User created successfully",
+			"userId":  user.UserID,
+		})
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// handleTenantDeployments manages deployments within a tenant
+func (s *Server) handleTenantDeployments(w http.ResponseWriter, r *http.Request) {
+	tenantID := tenant.GetTenantID(r.Context())
+	if tenantID == "" {
+		http.Error(w, "Tenant context required", http.StatusBadRequest)
+		return
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		deployments := s.tenantManager.GetDeploymentsForTenant(tenantID)
+		response := map[string]interface{}{
+			"deployments": deployments,
+			"total":       len(deployments),
+			"tenantId":    tenantID,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+
+	case http.MethodPost:
+		var deployment tenant.TenantDeployment
+		if err := json.NewDecoder(r.Body).Decode(&deployment); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		deployment.TenantID = tenantID
+		deployment.UserID = tenant.GetUserID(r.Context())
+		if err := s.tenantManager.CreateDeployment(&deployment); err != nil {
+			http.Error(w, fmt.Sprintf("Failed to create deployment: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"message":      "Deployment created successfully",
+			"deploymentId": deployment.DeploymentID,
+		})
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// handleTenantStats returns tenant usage statistics
+func (s *Server) handleTenantStats(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	tenantID := tenant.GetTenantID(r.Context())
+	if tenantID == "" {
+		http.Error(w, "Tenant context required", http.StatusBadRequest)
+		return
+	}
+
+	stats, err := s.tenantManager.GetTenantStats(tenantID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to get tenant stats: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(stats)
+}
+
+// handleTenantSwitch handles tenant switching for users
+func (s *Server) handleTenantSwitch(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var switchRequest struct {
+		TenantID string `json:"tenantId"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&switchRequest); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Verify tenant exists
+	_, err := s.tenantManager.GetTenant(switchRequest.TenantID)
+	if err != nil {
+		http.Error(w, "Tenant not found", http.StatusNotFound)
+		return
+	}
+
+	// In a real implementation, this would update the user's session
+	// For demo purposes, we'll just return success
+	response := map[string]interface{}{
+		"message":  "Tenant switched successfully",
+		"tenantId": switchRequest.TenantID,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+// Enhanced GUI Phase 5: Advanced Monitoring & SLA Management Handlers
+
+// handleSLAs manages SLA operations
+func (s *Server) handleSLAs(w http.ResponseWriter, r *http.Request) {
+	tenantID := tenant.GetTenantID(r.Context())
+	
+	switch r.Method {
+	case http.MethodGet:
+		slas := s.monitoringManager.ListSLAs(tenantID)
+		response := map[string]interface{}{
+			"slas":     slas,
+			"total":    len(slas),
+			"tenantId": tenantID,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+
+	case http.MethodPost:
+		var sla monitoring.SLADefinition
+		if err := json.NewDecoder(r.Body).Decode(&sla); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		sla.TenantID = tenantID
+		if err := s.monitoringManager.CreateSLA(&sla); err != nil {
+			http.Error(w, fmt.Sprintf("Failed to create SLA: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"message": "SLA created successfully",
+			"slaId":   sla.ID,
+		})
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// handleSLADetails manages individual SLA operations
+func (s *Server) handleSLADetails(w http.ResponseWriter, r *http.Request) {
+	// Extract SLA ID from URL path
+	path := strings.TrimPrefix(r.URL.Path, "/api/monitoring/slas/")
+	slaID := strings.Split(path, "/")[0]
+
+	if slaID == "" {
+		http.Error(w, "SLA ID required", http.StatusBadRequest)
+		return
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		sla, err := s.monitoringManager.GetSLA(slaID)
+		if err != nil {
+			http.Error(w, "SLA not found", http.StatusNotFound)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(sla)
+
+	case http.MethodPut:
+		var updates monitoring.SLADefinition
+		if err := json.NewDecoder(r.Body).Decode(&updates); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		if err := s.monitoringManager.UpdateSLA(slaID, &updates); err != nil {
+			http.Error(w, fmt.Sprintf("Failed to update SLA: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"message": "SLA updated successfully",
+		})
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// handleMetrics manages metrics operations
+func (s *Server) handleMetrics(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		// Parse query parameters for metric filtering
+		query := monitoring.MetricQuery{
+			MetricName: r.URL.Query().Get("name"),
+		}
+
+		if startTime := r.URL.Query().Get("start_time"); startTime != "" {
+			if t, err := time.Parse(time.RFC3339, startTime); err == nil {
+				query.StartTime = t
+			}
+		}
+
+		if endTime := r.URL.Query().Get("end_time"); endTime != "" {
+			if t, err := time.Parse(time.RFC3339, endTime); err == nil {
+				query.EndTime = t
+			}
+		}
+
+		metrics, err := s.monitoringManager.GetMetrics(query)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to get metrics: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		response := map[string]interface{}{
+			"metrics": metrics,
+			"total":   len(metrics),
+			"query":   query,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+
+	case http.MethodPost:
+		var metric monitoring.Metric
+		if err := json.NewDecoder(r.Body).Decode(&metric); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		if err := s.monitoringManager.RecordMetric(metric); err != nil {
+			http.Error(w, fmt.Sprintf("Failed to record metric: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"message": "Metric recorded successfully",
+		})
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// handleAlerts manages alert operations
+func (s *Server) handleAlerts(w http.ResponseWriter, r *http.Request) {
+	tenantID := tenant.GetTenantID(r.Context())
+
+	switch r.Method {
+	case http.MethodGet:
+		status := r.URL.Query().Get("status")
+		var alertStatus monitoring.AlertStatus
+		if status != "" {
+			alertStatus = monitoring.AlertStatus(status)
+		}
+
+		alerts := s.monitoringManager.GetAlerts(tenantID, alertStatus)
+		response := map[string]interface{}{
+			"alerts":   alerts,
+			"total":    len(alerts),
+			"tenantId": tenantID,
+			"status":   status,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+
+	case http.MethodPost:
+		var alert monitoring.Alert
+		if err := json.NewDecoder(r.Body).Decode(&alert); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		alert.TenantID = tenantID
+		if err := s.monitoringManager.CreateAlert(&alert); err != nil {
+			http.Error(w, fmt.Sprintf("Failed to create alert: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"message": "Alert created successfully",
+			"alertId": alert.ID,
+		})
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// handleDashboards manages dashboard operations
+func (s *Server) handleDashboards(w http.ResponseWriter, r *http.Request) {
+	tenantID := tenant.GetTenantID(r.Context())
+
+	switch r.Method {
+	case http.MethodGet:
+		dashboards := s.monitoringManager.ListDashboards(tenantID)
+		response := map[string]interface{}{
+			"dashboards": dashboards,
+			"total":      len(dashboards),
+			"tenantId":   tenantID,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+
+	case http.MethodPost:
+		var dashboard monitoring.Dashboard
+		if err := json.NewDecoder(r.Body).Decode(&dashboard); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		dashboard.TenantID = tenantID
+		dashboard.CreatedBy = tenant.GetUserID(r.Context())
+		if err := s.monitoringManager.CreateDashboard(&dashboard); err != nil {
+			http.Error(w, fmt.Sprintf("Failed to create dashboard: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"message":     "Dashboard created successfully",
+			"dashboardId": dashboard.ID,
+		})
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// handleDashboardDetails manages individual dashboard operations
+func (s *Server) handleDashboardDetails(w http.ResponseWriter, r *http.Request) {
+	// Extract dashboard ID from URL path
+	path := strings.TrimPrefix(r.URL.Path, "/api/monitoring/dashboards/")
+	dashboardID := strings.Split(path, "/")[0]
+
+	if dashboardID == "" {
+		http.Error(w, "Dashboard ID required", http.StatusBadRequest)
+		return
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		dashboard, err := s.monitoringManager.GetDashboard(dashboardID)
+		if err != nil {
+			http.Error(w, "Dashboard not found", http.StatusNotFound)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(dashboard)
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// handleCompliance manages compliance reporting
+func (s *Server) handleCompliance(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	tenantID := tenant.GetTenantID(r.Context())
+	if tenantID == "" {
+		http.Error(w, "Tenant context required", http.StatusBadRequest)
+		return
+	}
+
+	// Parse report period from query parameters
+	reportType := r.URL.Query().Get("period")
+	if reportType == "" {
+		reportType = "monthly"
+	}
+
+	// Calculate report period based on type
+	var period monitoring.ReportPeriod
+	now := time.Now()
+	
+	switch reportType {
+	case "daily":
+		period = monitoring.ReportPeriod{
+			StartTime: now.AddDate(0, 0, -1),
+			EndTime:   now,
+			Type:      "daily",
+		}
+	case "weekly":
+		period = monitoring.ReportPeriod{
+			StartTime: now.AddDate(0, 0, -7),
+			EndTime:   now,
+			Type:      "weekly",
+		}
+	case "monthly":
+		period = monitoring.ReportPeriod{
+			StartTime: now.AddDate(0, -1, 0),
+			EndTime:   now,
+			Type:      "monthly",
+		}
+	case "quarterly":
+		period = monitoring.ReportPeriod{
+			StartTime: now.AddDate(0, -3, 0),
+			EndTime:   now,
+			Type:      "quarterly",
+		}
+	default:
+		http.Error(w, "Invalid report period", http.StatusBadRequest)
+		return
+	}
+
+	report, err := s.monitoringManager.GenerateComplianceReport(tenantID, period)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to generate compliance report: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(report)
 }

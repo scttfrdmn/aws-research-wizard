@@ -34,28 +34,28 @@ error() {
 # Check prerequisites
 check_prerequisites() {
     log "Checking prerequisites..."
-    
+
     # Check AWS CLI
     if ! command -v aws &> /dev/null; then
         error "AWS CLI not found. Please install AWS CLI."
     fi
-    
+
     # Check Terraform
     if ! command -v terraform &> /dev/null; then
         error "Terraform not found. Please install Terraform."
     fi
-    
+
     # Check AWS credentials
     if ! aws sts get-caller-identity &> /dev/null; then
         error "AWS credentials not configured. Run 'aws configure'."
     fi
-    
+
     # Check required environment variables
     if [[ -z "${AWS_REGION:-}" ]]; then
         export AWS_REGION="us-east-1"
         warn "AWS_REGION not set, using default: us-east-1"
     fi
-    
+
     log "Prerequisites check passed ✓"
 }
 
@@ -63,7 +63,7 @@ check_prerequisites() {
 estimate_costs() {
     local solution_type=$1
     local usage_hours=${2:-8}  # Default 8 hours/day
-    
+
     case $solution_type in
         "serverless-pipeline")
             local daily_cost=$(echo "$usage_hours * 0.5" | bc -l)
@@ -92,7 +92,7 @@ generate_terraform_config() {
     local solution_type=$1
     local project_name=$2
     local budget_limit=$3
-    
+
     cat > "${SCRIPT_DIR}/main.tf" << EOF
 # FinOps-First Research Computing Solution
 # Auto-generated configuration for ${solution_type}
@@ -109,7 +109,7 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
-  
+
   default_tags {
     tags = {
       Project        = var.project_name
@@ -334,16 +334,16 @@ from datetime import datetime, timedelta
 def handler(event, context):
     project_name = os.environ['PROJECT_NAME']
     max_hours = int(os.environ.get('MAX_HOURS', 24))
-    
+
     # Initialize AWS clients
     ec2 = boto3.client('ec2')
     ecs = boto3.client('ecs')
     batch = boto3.client('batch')
     sagemaker = boto3.client('sagemaker')
-    
+
     cutoff_time = datetime.utcnow() - timedelta(hours=max_hours)
     destroyed_resources = []
-    
+
     try:
         # Check and terminate old EC2 instances
         instances = ec2.describe_instances(
@@ -352,25 +352,25 @@ def handler(event, context):
                 {'Name': 'instance-state-name', 'Values': ['running']}
             ]
         )
-        
+
         for reservation in instances['Reservations']:
             for instance in reservation['Instances']:
                 launch_time = instance['LaunchTime'].replace(tzinfo=None)
                 if launch_time < cutoff_time:
                     ec2.terminate_instances(InstanceIds=[instance['InstanceId']])
                     destroyed_resources.append(f"EC2 Instance: {instance['InstanceId']}")
-        
+
         # Check and stop SageMaker notebook instances
         notebooks = sagemaker.list_notebook_instances(
             StatusEquals='InService'
         )
-        
+
         for notebook in notebooks['NotebookInstances']:
             # Check if it belongs to our project and is old
             try:
                 tags = sagemaker.list_tags(ResourceArn=notebook['NotebookInstanceArn'])
                 project_tag = next((tag for tag in tags['Tags'] if tag['Key'] == 'Project'), None)
-                
+
                 if project_tag and project_tag['Value'] == project_name:
                     creation_time = notebook['CreationTime'].replace(tzinfo=None)
                     if creation_time < cutoff_time:
@@ -380,9 +380,9 @@ def handler(event, context):
                         destroyed_resources.append(f"SageMaker Notebook: {notebook['NotebookInstanceName']}")
             except Exception as e:
                 print(f"Error checking notebook {notebook['NotebookInstanceName']}: {e}")
-        
+
         print(f"Auto-destroyer completed. Destroyed resources: {destroyed_resources}")
-        
+
         return {
             'statusCode': 200,
             'body': json.dumps({
@@ -390,7 +390,7 @@ def handler(event, context):
                 'destroyed_resources': destroyed_resources
             })
         }
-        
+
     except Exception as e:
         print(f"Error in auto-destroyer: {e}")
         return {
@@ -583,43 +583,43 @@ deploy_solution() {
     local solution_type=$1
     local project_name=$2
     local budget_limit=${3:-100}
-    
+
     log "Deploying ${solution_type} solution for project: ${project_name}"
-    
+
     # Estimate costs
     estimate_costs "$solution_type"
-    
+
     # Generate Terraform configuration
     generate_terraform_config "$solution_type" "$project_name" "$budget_limit"
-    
+
     # Generate auto-destroyer
     generate_auto_destroyer
-    
+
     # Initialize and apply Terraform
     log "Initializing Terraform..."
     terraform init
-    
+
     log "Planning deployment..."
     terraform plan -var="project_name=${project_name}" -var="solution_type=${solution_type}" -var="budget_limit=${budget_limit}"
-    
+
     echo -e "${YELLOW}Do you want to proceed with deployment? (y/N)${NC}"
     read -r response
     if [[ "$response" =~ ^[Yy]$ ]]; then
         log "Applying Terraform configuration..."
         terraform apply -auto-approve -var="project_name=${project_name}" -var="solution_type=${solution_type}" -var="budget_limit=${budget_limit}"
-        
+
         # Save deployment state
         echo "solution_type=${solution_type}" > "$STATE_FILE"
         echo "project_name=${project_name}" >> "$STATE_FILE"
         echo "deployed_at=$(date)" >> "$STATE_FILE"
-        
+
         log "Deployment completed successfully! ✓"
         log "Budget alerts configured for \$${budget_limit}/month"
         log "Auto-destruction enabled after 24 hours of inactivity"
-        
+
         # Show cost dashboard
         terraform output cost_dashboard_url
-        
+
     else
         log "Deployment cancelled."
     fi
@@ -630,23 +630,23 @@ destroy_solution() {
     if [[ ! -f "$STATE_FILE" ]]; then
         error "No deployment state found. Nothing to destroy."
     fi
-    
+
     source "$STATE_FILE"
-    
+
     log "Destroying solution: ${solution_type} for project: ${project_name}"
-    
+
     echo -e "${RED}This will destroy ALL resources for project: ${project_name}${NC}"
     echo -e "${RED}Are you sure? (type 'destroy' to confirm)${NC}"
     read -r response
-    
+
     if [[ "$response" == "destroy" ]]; then
         log "Destroying Terraform infrastructure..."
         terraform destroy -auto-approve -var="project_name=${project_name}" -var="solution_type=${solution_type}"
-        
+
         # Clean up local files
         rm -f "$STATE_FILE" main.tf terraform.tfstate* .terraform.lock.hcl auto-destroyer.zip
         rm -rf .terraform/
-        
+
         log "Solution destroyed successfully! ✓"
         log "All resources have been cleaned up."
     else
@@ -664,13 +664,13 @@ Usage: $0 [command] [options]
 Commands:
   deploy <solution-type> <project-name> [budget-limit]
     Deploy a research computing solution
-    
+
   destroy
     Destroy the current deployment
-    
+
   status
     Show current deployment status
-    
+
   costs
     Show current cost breakdown
 
@@ -701,13 +701,13 @@ show_status() {
         log "No active deployment found."
         return
     fi
-    
+
     source "$STATE_FILE"
     log "Current deployment:"
     log "  Solution Type: ${solution_type}"
     log "  Project Name: ${project_name}"
     log "  Deployed At: ${deployed_at}"
-    
+
     # Show Terraform resources
     if [[ -f "terraform.tfstate" ]]; then
         log "Active resources:"
@@ -720,10 +720,10 @@ show_costs() {
     if [[ ! -f "$STATE_FILE" ]]; then
         error "No active deployment found."
     fi
-    
+
     source "$STATE_FILE"
     log "Fetching cost data for project: ${project_name}"
-    
+
     # Get costs from AWS Cost Explorer
     aws ce get-cost-and-usage \
         --time-period Start=2025-06-01,End=2025-06-30 \

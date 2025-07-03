@@ -11,13 +11,13 @@ institutional_storage:
     username: "research_user"
     key_file: "/home/user/.ssh/hpc_key"
     base_path: "/gpfs/research/datasets"
-  
+
   research_domain: "multi_domain"
   data_categories:
     - "genomics"
-    - "climate_modeling" 
+    - "climate_modeling"
     - "geospatial_research"
-  
+
   transfer_optimization:
     # Free ingress to AWS - optimize for throughput
     preferred_method: "parallel_multipart"
@@ -25,7 +25,7 @@ institutional_storage:
     chunk_size_mb: 100
     compression_enabled: true
     bandwidth_limit_mbps: null  # Use full available bandwidth
-    
+
   cost_considerations:
     ingress_to_aws: 0.0  # Always free
     egress_waiver_eligible: true  # University qualifies for Global Data Egress Waiver
@@ -41,19 +41,19 @@ consortium_data:
     account_name: "researchconsortium"
     container: "shared-datasets"
     access_key: "${AZURE_STORAGE_KEY}"
-  
+
   research_domain: "climate_modeling"
   data_categories:
     - "atmospheric_chemistry"
     - "oceanography"
-  
+
   transfer_optimization:
     # Cross-cloud transfer - coordinate timing carefully
     preferred_method: "staged_transfer"
     staging_location: "s3://research-staging-bucket/"
     verification_required: true
     checksum_validation: "sha256"
-    
+
   cost_considerations:
     cross_cloud_egress: 0.087  # Azure to AWS per GB
     aws_ingress: 0.0
@@ -69,11 +69,11 @@ genome_sequencer:
     data_rate_mb_per_hour: 1500  # ~1.5 GB/hour during sequencing
     data_format: "FASTQ"
     buffer_size_mb: 500
-    
+
     # Monitor sequencer output directory
     watch_directory: "/mnt/sequencer/output"
     file_patterns: ["*.fastq.gz", "*.bam"]
-    
+
     quality_control_rules:
       - type: "min_size"
         value: 50_000_000  # 50 MB minimum file size
@@ -81,25 +81,25 @@ genome_sequencer:
         format: "fastq"
       - type: "read_count_check"
         min_reads: 1000000
-    
+
     preprocessing_steps:
       - "fastqc_quality_check"
       - "adapter_trimming"
       - "duplicate_removal"
-    
+
     trigger_conditions:
       data_availability: "file_complete"  # Wait for complete files
       min_trigger_size_gb: 2.0  # Don't trigger compute for small files
       max_buffer_time_hours: 4  # Process at least every 4 hours
-  
+
   research_domain: "genomics"
-  
+
   streaming_config:
     immediate_staging: true
     staging_location: "s3://genomics-staging/novaseq/"
     real_time_processing: true
     batch_aggregation: false
-    
+
   cost_considerations:
     streaming_infrastructure: 0.05  # Per hour for real-time streaming
     staging_storage: 0.023  # S3 standard per GB/month
@@ -107,7 +107,7 @@ genome_sequencer:
 
 # Environmental Sensor Network
 environmental_sensors:
-  type: "real_time_instrument"  
+  type: "real_time_instrument"
   description: "Distributed environmental sensor network"
   instrument_config:
     instrument_id: "env_network_001"
@@ -115,13 +115,13 @@ environmental_sensors:
     data_rate_mb_per_hour: 50  # Lower volume, continuous stream
     data_format: "JSON"
     buffer_size_mb: 100
-    
+
     # HTTP streaming endpoint
     stream_endpoint: "https://sensors.research.edu/api/stream"
     authentication:
       type: "api_key"
       key: "${SENSOR_API_KEY}"
-    
+
     quality_control_rules:
       - type: "timestamp_validation"
         max_delay_minutes: 15
@@ -130,13 +130,13 @@ environmental_sensors:
         humidity_range: [0, 100]  # Percent
       - type: "data_completeness"
         required_fields: ["timestamp", "sensor_id", "temperature", "humidity", "pressure"]
-    
+
     preprocessing_steps:
       - "timestamp_standardization"
       - "unit_conversion"
       - "anomaly_detection"
       - "spatial_interpolation"
-    
+
     trigger_conditions:
       data_availability: "time_based"
       trigger_frequency: "hourly"  # Process hourly aggregations
@@ -144,16 +144,16 @@ environmental_sensors:
       alert_thresholds:
         extreme_temperature: 50  # Trigger immediate processing for extreme values
         sensor_failure: true  # Trigger diagnostics for missing data
-        
+
   research_domain: "atmospheric_chemistry"
-  
+
   streaming_config:
     immediate_staging: false  # Batch processing is sufficient
     staging_location: "s3://environmental-data/sensors/"
     real_time_processing: false
     batch_aggregation: true
     aggregation_window_hours: 1
-    
+
   cost_considerations:
     streaming_infrastructure: 0.02  # Lower cost for batch processing
     data_compression: 0.7  # JSON compresses well
@@ -169,11 +169,11 @@ satellite_imagery:
     data_rate_mb_per_hour: 2000  # High volume during satellite passes
     data_format: "COG"  # Cloud-Optimized GeoTIFF
     buffer_size_mb: 1000
-    
+
     # API endpoint for new imagery notifications
     api_endpoint: "https://copernicus.eu/api/sentinel2/notifications"
     polling_interval_minutes: 30
-    
+
     quality_control_rules:
       - type: "cloud_coverage"
         max_cloud_percent: 20
@@ -184,27 +184,27 @@ satellite_imagery:
         max_lon: -60.0  # Focus on North America
       - type: "image_quality"
         min_pixel_quality: 0.8
-    
+
     preprocessing_steps:
       - "atmospheric_correction"
       - "cloud_masking"
       - "geometric_correction"
       - "tile_generation"
-    
+
     trigger_conditions:
       data_availability: "scene_complete"
       min_trigger_area_km2: 1000  # Minimum scene size
       processing_priority: "geographic_relevance"
       max_processing_delay_hours: 24
-      
+
   research_domain: "geospatial_research"
-  
+
   streaming_config:
     immediate_staging: true  # Large files benefit from immediate staging
     staging_location: "s3://satellite-imagery/sentinel2/"
     real_time_processing: true
     batch_aggregation: false
-    
+
   cost_considerations:
     high_volume_periods: "satellite_pass_windows"
     storage_optimization: "immediate_transition_to_ia"  # Infrequent Access after processing
@@ -220,7 +220,7 @@ global_settings:
     waiver_limit_tb_monthly: 100  # 100 TB/month waiver limit
     monitoring_required: true
     usage_reporting: "monthly"
-    
+
   # Transfer Optimization
   transfer_defaults:
     ingress_optimization: "maximize_throughput"  # Ingress is free
@@ -229,37 +229,37 @@ global_settings:
     parallel_streams: 4  # Default parallel connections
     retry_attempts: 3
     timeout_hours: 24
-    
+
   # Coordination Settings
   compute_coordination:
     wait_for_data_availability: true
     pre_warm_compute: false  # Don't spin up compute until data ready
     staging_verification: true  # Verify data integrity before compute
     cost_threshold_check: true  # Check costs before large operations
-    
+
     # Intelligent scheduling windows
     preferred_compute_hours:
       - "02:00-06:00"  # Off-peak hours for large jobs
       - "22:00-24:00"  # Evening hours for medium jobs
-    
+
     priority_overrides:
       real_time_instruments: "immediate"
       research_deadlines: "priority_queue"
       cost_sensitive: "off_peak_only"
-      
+
   # Monitoring and Alerting
   monitoring:
     data_transfer_tracking: true
     cost_monitoring: true
     performance_metrics: true
     egress_waiver_usage: true
-    
+
     alerts:
       approaching_egress_limit: 80  # Alert at 80% of waiver limit
       transfer_failures: true
       compute_idle_time: 30  # Alert if compute idle >30 minutes
       cost_threshold_exceeded: true
-      
+
   # Integration Settings
   integration:
     workflow_engine: "demo_workflow_engine"

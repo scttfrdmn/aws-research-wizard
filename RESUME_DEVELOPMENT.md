@@ -37,7 +37,7 @@ cd go && make build
 ```
 go/internal/data/
 ├── s3_manager.go           # S3 transfer optimization
-├── open_data.go            # AWS Open Data integration  
+├── open_data.go            # AWS Open Data integration
 ├── pipeline.go             # Data pipeline orchestration
 └── transfer_monitor.go     # Transfer progress tracking
 
@@ -57,7 +57,7 @@ go/internal/commands/data/
 ### **Project Architecture**
 - **Language**: Go 1.21+
 - **CLI Framework**: Cobra for command structure
-- **TUI Framework**: Bubble Tea and Lip Gloss for interactive interfaces  
+- **TUI Framework**: Bubble Tea and Lip Gloss for interactive interfaces
 - **AWS SDK**: v2 with comprehensive service integration
 - **Build Tool**: Make with cross-platform support
 
@@ -66,7 +66,7 @@ go/internal/commands/data/
 aws-research-wizard
 ├── config      # Domain configuration and cost analysis
 ├── deploy      # Infrastructure deployment and management
-├── monitor     # Real-time monitoring and dashboards  
+├── monitor     # Real-time monitoring and dashboards
 └── version     # Version information
 ```
 
@@ -114,7 +114,7 @@ make build
 # Run tests
 make test
 
-# Check code quality  
+# Check code quality
 make lint
 
 # Build for all platforms
@@ -150,7 +150,7 @@ make help           # Show all targets
 - Progress tracking and resumption
 - Bandwidth throttling capabilities
 
-### **Phase 1B: AWS Open Data Integration** (2-3 hours)  
+### **Phase 1B: AWS Open Data Integration** (2-3 hours)
 - Implement `go/internal/data/open_data.go`
 - Registry discovery and browsing
 - Cost-free data access optimization
@@ -248,7 +248,7 @@ ls -la go/build/aws-research-wizard  # Should be executable
 When working with AI assistance (Claude Code) on this project:
 
 1. **Current State**: Binary consolidation and deployment infrastructure complete
-2. **Next Goal**: Implement S3 transfer optimization and AWS Open Data integration  
+2. **Next Goal**: Implement S3 transfer optimization and AWS Open Data integration
 3. **Architecture**: Go-based CLI with Cobra commands and Bubble Tea TUI
 4. **Working Directory**: `/Users/scttfrdmn/src/aws-research-wizard`
 5. **Build Command**: `cd go && make build`

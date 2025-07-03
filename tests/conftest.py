@@ -95,7 +95,7 @@ def mock_boto3_session():
     session = Mock()
     session.region_name = "us-east-1"
     session.profile_name = "default"
-    
+
     # Mock STS client
     sts_client = Mock()
     sts_client.get_caller_identity.return_value = {
@@ -103,7 +103,7 @@ def mock_boto3_session():
         "UserId": "AIDACKCEVSQ6C2EXAMPLE",
         "Arn": "arn:aws:iam::123456789012:user/test-user"
     }
-    
+
     # Mock EC2 client
     ec2_client = Mock()
     ec2_client.describe_instances.return_value = {"Reservations": []}
@@ -113,11 +113,11 @@ def mock_boto3_session():
             {"RegionName": "us-west-2", "Endpoint": "ec2.us-west-2.amazonaws.com"}
         ]
     }
-    
+
     # Mock S3 client
     s3_client = Mock()
     s3_client.list_buckets.return_value = {"Buckets": []}
-    
+
     # Client factory method
     def client(service_name, **kwargs):
         if service_name == "sts":
@@ -128,7 +128,7 @@ def mock_boto3_session():
             return s3_client
         else:
             return Mock()
-    
+
     session.client = client
     return session
 
@@ -231,11 +231,11 @@ def mock_streamlit():
          patch("streamlit.selectbox") as mock_selectbox, \
          patch("streamlit.button") as mock_button, \
          patch("streamlit.columns") as mock_columns:
-        
+
         mock_selectbox.return_value = "test_selection"
         mock_button.return_value = False
         mock_columns.return_value = [Mock(), Mock()]
-        
+
         yield {
             "title": mock_title,
             "write": mock_write,
@@ -278,7 +278,7 @@ def mock_subprocess():
     """Mock subprocess calls for testing command execution."""
     with patch("subprocess.run") as mock_run, \
          patch("subprocess.Popen") as mock_popen:
-        
+
         # Default successful response
         mock_run.return_value = Mock(
             returncode=0,
@@ -286,7 +286,7 @@ def mock_subprocess():
             stderr="",
             text=True
         )
-        
+
         yield {"run": mock_run, "popen": mock_popen}
 
 
@@ -332,9 +332,9 @@ def reset_environment():
     """Reset environment variables between tests."""
     # Store original values
     original_env = os.environ.copy()
-    
+
     yield
-    
+
     # Restore original environment
     os.environ.clear()
     os.environ.update(original_env)

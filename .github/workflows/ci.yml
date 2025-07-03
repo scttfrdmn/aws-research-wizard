@@ -224,20 +224,20 @@ jobs:
         run: |
           # Build with size optimization
           go build -ldflags "-s -w" -o build/aws-research-wizard-optimized ./cmd
-          
+
           # Check sizes
           echo "## Binary Sizes" >> size-report.md
           echo "| Binary | Size |" >> size-report.md
           echo "|--------|------|" >> size-report.md
-          
+
           if [ -f build/aws-research-wizard ]; then
             SIZE=$(du -h build/aws-research-wizard | cut -f1)
             echo "| Standard | $SIZE |" >> size-report.md
           fi
-          
+
           SIZE_OPT=$(du -h build/aws-research-wizard-optimized | cut -f1)
           echo "| Optimized | $SIZE_OPT |" >> size-report.md
-          
+
           echo "### Size Report" >> $GITHUB_STEP_SUMMARY
           cat size-report.md >> $GITHUB_STEP_SUMMARY
 
@@ -248,7 +248,7 @@ jobs:
           script: |
             const fs = require('fs');
             const sizeReport = fs.readFileSync('go/size-report.md', 'utf8');
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -275,7 +275,7 @@ jobs:
           echo "| Integration | ${{ needs.integration.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Dependencies | ${{ needs.dependencies.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Size Check | ${{ needs.size-check.result }} |" >> $GITHUB_STEP_SUMMARY
-          
+
           if [[ "${{ needs.test.result }}" == "failure" || "${{ needs.lint.result }}" == "failure" || "${{ needs.security.result }}" == "failure" || "${{ needs.build.result }}" == "failure" ]]; then
             echo "❌ CI Failed - One or more critical jobs failed"
             exit 1

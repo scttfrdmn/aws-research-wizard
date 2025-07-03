@@ -20,44 +20,44 @@ class DomainPackDeployer:
     def __init__(self, output_dir: str = "domain-packs"):
         self.output_dir = Path(output_dir)
         self.domains_dir = self.output_dir / "domains"
-        
+
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
         self.logger = logging.getLogger(__name__)
-        
+
         # Category mapping for organizing domains
         self.category_mapping = {
             # Life Sciences
             "genomics_lab": "life-sciences",
-            "structural_biology": "life-sciences", 
+            "structural_biology": "life-sciences",
             "systems_biology": "life-sciences",
             "neuroscience_lab": "life-sciences",
             "drug_discovery": "life-sciences",
-            
+
             # Physical Sciences
             "climate_modeling": "physical-sciences",
             "materials_science": "physical-sciences",
-            "chemistry_lab": "physical-sciences", 
+            "chemistry_lab": "physical-sciences",
             "physics_simulation": "physical-sciences",
             "astronomy_lab": "physical-sciences",
             "geoscience_lab": "physical-sciences",
-            
+
             # Engineering
             "cfd_engineering": "engineering",
             "mechanical_engineering": "engineering",
-            "electrical_engineering": "engineering", 
+            "electrical_engineering": "engineering",
             "aerospace_engineering": "engineering",
-            
+
             # Computer Science & AI
             "ai_research_studio": "computer-science",
             "hpc_development": "computer-science",
             "data_science_lab": "computer-science",
             "quantum_computing": "computer-science",
-            
+
             # Social Sciences & Humanities
             "digital_humanities": "social-sciences",
             "economics_analysis": "social-sciences",
             "social_science_lab": "social-sciences",
-            
+
             # Interdisciplinary
             "mathematical_modeling": "interdisciplinary",
             "visualization_studio": "interdisciplinary",
@@ -67,13 +67,13 @@ class DomainPackDeployer:
     def deploy_all_domains(self) -> bool:
         """Deploy all 25 domain packs"""
         self.logger.info("🚀 Starting Phase 2: Domain Pack System deployment...")
-        
+
         # Create directory structure
         self._create_directory_structure()
-        
+
         # Generate all domain packs (only implemented ones)
         generator = ComprehensiveSpackGenerator()
-        
+
         # Only create implemented domain packs
         implemented_domains = {
             "genomics_lab": generator._create_genomics_pack(),
@@ -85,19 +85,19 @@ class DomainPackDeployer:
             "astronomy_lab": generator._create_astronomy_pack(),
         }
         domain_packs = implemented_domains
-        
+
         success_count = 0
         total_count = len(domain_packs)
-        
+
         # Deploy in priority order (as specified in Phase 2 plan)
         priority_order = [
             "genomics_lab",          # 1. Genomics
-            "ai_research_studio",    # 2. Machine Learning  
+            "ai_research_studio",    # 2. Machine Learning
             "climate_modeling",      # 3. Climate Modeling
             "astronomy_lab",         # 4. Astronomy
             "chemistry_lab",         # 5. Chemistry
         ]
-        
+
         # Deploy priority domains first
         for domain_key in priority_order:
             if domain_key in domain_packs:
@@ -106,7 +106,7 @@ class DomainPackDeployer:
                     self.logger.info(f"✅ Priority domain {domain_key} deployed successfully")
                 else:
                     self.logger.error(f"❌ Failed to deploy priority domain {domain_key}")
-        
+
         # Deploy remaining domains
         remaining_domains = [k for k in domain_packs.keys() if k not in priority_order]
         for domain_key in remaining_domains:
@@ -115,14 +115,14 @@ class DomainPackDeployer:
                 self.logger.info(f"✅ Domain {domain_key} deployed successfully")
             else:
                 self.logger.error(f"❌ Failed to deploy domain {domain_key}")
-        
+
         # Summary
         self.logger.info(f"")
         self.logger.info(f"📊 Deployment Summary:")
         self.logger.info(f"   Total domains: {total_count}")
         self.logger.info(f"   ✅ Successfully deployed: {success_count}")
         self.logger.info(f"   ❌ Failed: {total_count - success_count}")
-        
+
         if success_count == total_count:
             self.logger.info(f"🎉 Phase 2 Domain Pack System deployment complete!")
             return True
@@ -133,7 +133,7 @@ class DomainPackDeployer:
     def _create_directory_structure(self):
         """Create the domain pack directory structure"""
         categories = set(self.category_mapping.values())
-        
+
         for category in categories:
             category_dir = self.domains_dir / category
             category_dir.mkdir(parents=True, exist_ok=True)
@@ -145,31 +145,31 @@ class DomainPackDeployer:
             category = self.category_mapping.get(domain_key, "miscellaneous")
             domain_dir = self.domains_dir / category / domain_key
             domain_dir.mkdir(parents=True, exist_ok=True)
-            
+
             # Create domain-pack.yaml
             domain_config = self._convert_to_domain_config(domain_pack)
             domain_config_path = domain_dir / "domain-pack.yaml"
             with open(domain_config_path, 'w') as f:
                 yaml.dump(domain_config, f, default_flow_style=False, indent=2)
-            
+
             # Create spack.yaml environment file
             spack_config = self._create_spack_environment(domain_pack)
             spack_config_path = domain_dir / "spack.yaml"
             with open(spack_config_path, 'w') as f:
                 yaml.dump(spack_config, f, default_flow_style=False, indent=2)
-            
+
             # Create additional directories
             for subdir in ["workflows", "docs", "examples"]:
                 (domain_dir / subdir).mkdir(exist_ok=True)
-            
+
             # Create basic README
             readme_path = domain_dir / "README.md"
             readme_content = self._generate_readme(domain_pack)
             with open(readme_path, 'w') as f:
                 f.write(readme_content)
-            
+
             return True
-            
+
         except Exception as e:
             self.logger.error(f"Error deploying {domain_key}: {e}")
             return False
@@ -229,7 +229,7 @@ class DomainPackDeployer:
     def _create_spack_environment(self, domain_pack) -> Dict[str, Any]:
         """Create Spack environment configuration"""
         flattened_packages = self._flatten_spack_packages(domain_pack.spack_packages)
-        
+
         return {
             "spack": {
                 "specs": flattened_packages,
@@ -269,7 +269,7 @@ class DomainPackDeployer:
         # Default recommendations - could be enhanced with domain-specific logic
         return {
             "small": "m6i.large",
-            "medium": "m6i.xlarge", 
+            "medium": "m6i.xlarge",
             "large": "m6i.2xlarge",
             "gpu": "g5.xlarge",
             "hpc": "c6i.4xlarge",
@@ -331,31 +331,31 @@ Generated by AWS Research Wizard Phase 2 Deployment
 def main():
     """Main deployment function"""
     import argparse
-    
+
     parser = argparse.ArgumentParser(description="Deploy AWS Research Wizard Domain Packs")
-    parser.add_argument("--output", type=str, default="domain-packs", 
+    parser.add_argument("--output", type=str, default="domain-packs",
                        help="Output directory for domain packs")
     parser.add_argument("--validate", action="store_true",
                        help="Validate after deployment")
-    
+
     args = parser.parse_args()
-    
+
     # Deploy all domain packs
     deployer = DomainPackDeployer(args.output)
     success = deployer.deploy_all_domains()
-    
+
     # Optional validation
     if args.validate and success:
         sys.path.append(str(Path(args.output) / "tools"))
         from validate_domains import DomainPackValidator
-        
+
         validator = DomainPackValidator(args.output)
         validation_success = validator.validate_all()
-        
+
         if not validation_success:
             print("❌ Validation failed after deployment!")
             sys.exit(1)
-    
+
     sys.exit(0 if success else 1)
 
 if __name__ == "__main__":

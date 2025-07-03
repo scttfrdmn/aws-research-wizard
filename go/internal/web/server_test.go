@@ -52,7 +52,7 @@ func TestHealthEndpoint(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	
+
 	// Create a simple handler that mimics the health endpoint
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

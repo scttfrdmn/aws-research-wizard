@@ -14,21 +14,21 @@ properties:
   name:
     type: string
     description: "Human-readable name of the research pack"
-    
+
   description:
     type: string
     description: "Detailed description of the pack's purpose and capabilities"
-    
+
   primary_domains:
     type: array
     items:
       type: string
     description: "List of primary research domains this pack serves"
-    
+
   target_users:
     type: string
     description: "Description of intended user base and scale"
-    
+
   spack_packages:
     type: object
     description: "Categorized Spack package specifications"
@@ -38,7 +38,7 @@ properties:
         items:
           type: string
           pattern: "^[a-zA-Z0-9@.+_-]+.*$"
-          
+
   aws_instance_recommendations:
     type: object
     description: "AWS instance configurations for different use cases"
@@ -80,7 +80,7 @@ properties:
             enum: ["sr-iov", "standard"]
           network_performance:
             type: string
-            
+
   estimated_cost:
     type: object
     required:
@@ -103,19 +103,19 @@ properties:
       total:
         type: number
         minimum: 0
-        
+
   research_capabilities:
     type: array
     items:
       type: string
     description: "List of specific research capabilities enabled"
-    
+
   aws_data_sources:
     type: array
     items:
       type: string
     description: "Optional AWS data sources and services used"
-    
+
   demo_workflows:
     type: array
     items:
@@ -135,7 +135,7 @@ properties:
           type: string
         cost_estimate:
           type: number
-          
+
   mpi_optimizations:
     type: object
     properties:

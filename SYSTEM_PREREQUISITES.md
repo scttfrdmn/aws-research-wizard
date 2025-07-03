@@ -7,7 +7,7 @@ The AWS Research Wizard provides comprehensive research computing environments o
 ## 🎯 Quick Start Checklist
 
 - [ ] Python 3.9+ installed
-- [ ] AWS CLI v2 configured  
+- [ ] AWS CLI v2 configured
 - [ ] Git installed
 - [ ] 8GB+ RAM available
 - [ ] 10GB+ free disk space
@@ -22,7 +22,7 @@ The AWS Research Wizard provides comprehensive research computing environments o
 - **Storage**: 10GB free space (50GB+ for local Spack builds)
 - **Network**: Reliable internet connection (>10 Mbps recommended)
 - **Python**: 3.9 or higher
-- **Operating System**: 
+- **Operating System**:
   - macOS 11.0+ (Big Sur or later)
   - Windows 11 (64-bit)
   - Ubuntu 20.04 LTS or later
