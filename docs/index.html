@@ -273,6 +273,20 @@
             color: var(--dark-color);
         }
 
+        .category-section {
+            margin: 3rem 0;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
         /* Performance Section */
         .performance {
             padding: 4rem 0;
@@ -549,37 +563,156 @@
     <section id="domains" class="domains">
         <div class="container">
             <h2 class="section-title">🔬 Research Domain Packs</h2>
-            <div class="domains-grid">
-                <div class="domain-card">
-                    <div class="domain-icon">🧬</div>
-                    <div class="domain-name">Genomics & Bioinformatics</div>
-                    <p>GATK variant calling, RNA-seq analysis, genome assembly with BWA, STAR, Canu, and Bioconductor</p>
+            <p style="text-align: center; margin-bottom: 3rem; font-size: 1.1rem; color: var(--text-secondary);">22 pre-configured research environments optimized for every field</p>
+            
+            <!-- Life Sciences -->
+            <div class="category-section">
+                <h3 class="category-title">🧬 Life Sciences (6 domains)</h3>
+                <div class="domains-grid">
+                    <div class="domain-card">
+                        <div class="domain-icon">🧬</div>
+                        <div class="domain-name">Genomics & Bioinformatics</div>
+                        <p>GATK variant calling, RNA-seq analysis, genome assembly with BWA, STAR, Canu, and Bioconductor</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">🏥</div>
+                        <div class="domain-name">Neuroscience</div>
+                        <p>Brain imaging analysis, neural network modeling, and computational neuroscience tools</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">🌊</div>
+                        <div class="domain-name">Marine Biology & Oceanography</div>
+                        <p>Ocean data analysis, marine ecosystem modeling, and aquatic research workflows</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">🥗</div>
+                        <div class="domain-name">Food Science & Nutrition</div>
+                        <p>Nutritional analysis, food safety research, and agricultural biotechnology</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">🌲</div>
+                        <div class="domain-name">Forestry & Natural Resources</div>
+                        <p>Forest management, biodiversity analysis, and environmental conservation tools</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">🌾</div>
+                        <div class="domain-name">Agricultural Sciences</div>
+                        <p>Crop modeling, precision agriculture, and sustainable farming research</p>
+                    </div>
                 </div>
-                <div class="domain-card">
-                    <div class="domain-icon">🌍</div>
-                    <div class="domain-name">Climate Modeling</div>
-                    <p>Weather prediction, climate simulations with WRF, CESM, and atmospheric modeling tools</p>
+            </div>
+
+            <!-- Physical Sciences -->
+            <div class="category-section">
+                <h3 class="category-title">🌍 Physical Sciences (5 domains)</h3>
+                <div class="domains-grid">
+                    <div class="domain-card">
+                        <div class="domain-icon">🌍</div>
+                        <div class="domain-name">Climate Modeling</div>
+                        <p>Weather prediction, climate simulations with WRF, CESM, and atmospheric modeling tools</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">🔭</div>
+                        <div class="domain-name">Astronomy & Astrophysics</div>
+                        <p>Image processing, survey analysis, cosmological simulations with specialized astronomy software</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">⚛️</div>
+                        <div class="domain-name">Computational Physics</div>
+                        <p>High-performance computing for particle physics, quantum mechanics, and materials science</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">🌬️</div>
+                        <div class="domain-name">Atmospheric Chemistry</div>
+                        <p>Air quality modeling, atmospheric reactions, and environmental chemistry analysis</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">⚡</div>
+                        <div class="domain-name">Renewable Energy Systems</div>
+                        <p>Solar and wind energy modeling, grid optimization, and sustainable energy research</p>
+                    </div>
                 </div>
-                <div class="domain-card">
-                    <div class="domain-icon">🤖</div>
-                    <div class="domain-name">Machine Learning & AI</div>
-                    <p>Deep learning training, model deployment with PyTorch, TensorFlow, and GPU-optimized environments</p>
+            </div>
+
+            <!-- Engineering & Technology -->
+            <div class="category-section">
+                <h3 class="category-title">🔧 Engineering & Technology (6 domains)</h3>
+                <div class="domains-grid">
+                    <div class="domain-card">
+                        <div class="domain-icon">🤖</div>
+                        <div class="domain-name">Machine Learning & AI</div>
+                        <p>Deep learning training, model deployment with PyTorch, TensorFlow, and GPU-optimized environments</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">🔐</div>
+                        <div class="domain-name">Cybersecurity Research</div>
+                        <p>Security analysis, threat detection, and cybersecurity tool development</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">⚗️</div>
+                        <div class="domain-name">Chemistry & Materials</div>
+                        <p>Molecular dynamics, quantum chemistry, drug discovery with specialized computational chemistry tools</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">🧪</div>
+                        <div class="domain-name">Materials Science</div>
+                        <p>Materials simulation, property prediction, and advanced materials research</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">📊</div>
+                        <div class="domain-name">Benchmarking & Performance</div>
+                        <p>System performance analysis, computational benchmarking, and optimization studies</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">🎨</div>
+                        <div class="domain-name">Visualization Studio</div>
+                        <p>Scientific visualization, data rendering, and interactive graphics development</p>
+                    </div>
                 </div>
-                <div class="domain-card">
-                    <div class="domain-icon">🔭</div>
-                    <div class="domain-name">Astronomy & Astrophysics</div>
-                    <p>Image processing, survey analysis, cosmological simulations with specialized astronomy software</p>
+            </div>
+
+            <!-- Computer Science & Data -->
+            <div class="category-section">
+                <h3 class="category-title">💻 Computer Science & Data (3 domains)</h3>
+                <div class="domains-grid">
+                    <div class="domain-card">
+                        <div class="domain-icon">🗺️</div>
+                        <div class="domain-name">Geospatial Research</div>
+                        <p>GIS analysis, satellite processing, mapping workflows with GDAL, QGIS, and spatial tools</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">💰</div>
+                        <div class="domain-name">FinOps & Economics</div>
+                        <p>Financial modeling, economic analysis, and cloud cost optimization research</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">📚</div>
+                        <div class="domain-name">Digital Humanities</div>
+                        <p>Text analysis, cultural data mining, and computational humanities research</p>
+                    </div>
                 </div>
-                <div class="domain-card">
-                    <div class="domain-icon">🗺️</div>
-                    <div class="domain-name">Geospatial Research</div>
-                    <p>GIS analysis, satellite processing, mapping workflows with GDAL, QGIS, and spatial tools</p>
+            </div>
+
+            <!-- Social Sciences -->
+            <div class="category-section">
+                <h3 class="category-title">👥 Social Sciences (2 domains)</h3>
+                <div class="domains-grid">
+                    <div class="domain-card">
+                        <div class="domain-icon">📈</div>
+                        <div class="domain-name">Social Sciences</div>
+                        <p>Social network analysis, survey research, and computational social science</p>
+                    </div>
+                    <div class="domain-card">
+                        <div class="domain-icon">🏃</div>
+                        <div class="domain-name">Sports Science & Biomechanics</div>
+                        <p>Motion analysis, performance optimization, and sports technology research</p>
+                    </div>
                 </div>
-                <div class="domain-card">
-                    <div class="domain-icon">⚗️</div>
-                    <div class="domain-name">Chemistry & Materials</div>
-                    <p>Molecular dynamics, quantum chemistry, drug discovery with specialized computational chemistry tools</p>
-                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="domains/" class="btn btn-primary">Explore All Domain Details</a>
+                <a href="tutorials/quickstart.html" class="btn btn-secondary">Get Started Now</a>
             </div>
         </div>
     </section>
