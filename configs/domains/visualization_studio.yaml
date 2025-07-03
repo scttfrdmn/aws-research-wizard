@@ -15,6 +15,9 @@ domain:
     - "Geospatial & Environmental Visualization"
     - "Molecular & Materials Visualization"
 
+  target_users: "Data scientists, visualization specialists, research software engineers, domain scientists (1-8 users)"
+  monthly_cost: 2400
+
   primary_applications:
     - "Large-scale scientific data visualization"
     - "Interactive dashboard development"

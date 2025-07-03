@@ -16,6 +16,9 @@ domain:
     - "Food Systems Modeling & Supply Chain"
     - "Nutritional Epidemiology & Public Health"
 
+  target_users: "Food scientists, nutritionists, food safety researchers, agricultural researchers (1-15 users)"
+  monthly_cost: 1250
+
   primary_applications:
     - "Food composition analysis"
     - "Nutritional assessment and intervention studies"

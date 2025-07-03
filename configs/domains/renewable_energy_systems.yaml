@@ -16,6 +16,9 @@ domain:
     - "Energy Systems Modeling & Optimization"
     - "Smart Grid Analytics & Demand Response"
 
+  target_users: "Energy engineers, renewable energy researchers, grid analysts, policy researchers (1-20 users)"
+  monthly_cost: 1800
+
   primary_applications:
     - "Solar PV system design and optimization"
     - "Wind turbine performance and wake modeling"

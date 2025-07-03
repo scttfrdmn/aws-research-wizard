@@ -10,6 +10,7 @@ import (
 	"github.com/scttfrdmn/aws-research-wizard/go/internal/commands/config"
 	"github.com/scttfrdmn/aws-research-wizard/go/internal/commands/data"
 	"github.com/scttfrdmn/aws-research-wizard/go/internal/commands/deploy"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/commands/gui"
 	"github.com/scttfrdmn/aws-research-wizard/go/internal/commands/monitor"
 )
 
@@ -53,6 +54,7 @@ Perfect for:
 		config.NewConfigCommand(),
 		data.DataCmd,
 		deploy.NewDeployCommand(),
+		gui.GuiCmd,
 		monitor.NewMonitorCommand(),
 	)
 

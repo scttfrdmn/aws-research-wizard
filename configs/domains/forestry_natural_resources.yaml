@@ -16,6 +16,9 @@ domain:
     - "Forest Economics & Resource Optimization"
     - "Remote Sensing & Forest Monitoring"
 
+  target_users: "Forest managers, wildlife biologists, environmental scientists, conservation researchers (1-12 users)"
+  monthly_cost: 1400
+
   primary_applications:
     - "Forest inventory and growth modeling"
     - "Wildlife habitat assessment and management"
