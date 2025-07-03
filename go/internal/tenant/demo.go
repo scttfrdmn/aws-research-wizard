@@ -36,11 +36,11 @@ func (m *Manager) CreateDemoTenants() error {
 				"settings:read", "settings:update",
 			},
 			RestrictedFeatures:   []string{},
-			AllowedRegions:      []string{"us-east-1", "us-west-2", "eu-west-1"},
+			AllowedRegions:       []string{"us-east-1", "us-west-2", "eu-west-1"},
 			AllowedInstanceTypes: []string{"small", "medium", "large", "xlarge"},
 		},
 		Settings: TenantSettings{
-			DefaultRegion:     "us-east-1",
+			DefaultRegion:      "us-east-1",
 			AllowSpotInstances: true,
 			AutoShutdownHours:  8,
 			NotificationConfig: NotificationConfig{
@@ -98,11 +98,11 @@ func (m *Manager) CreateDemoTenants() error {
 				"settings:update", "admin:read",
 			},
 			RestrictedFeatures:   []string{"spot-instances"}, // Government restrictions
-			AllowedRegions:      []string{"us-gov-east-1", "us-gov-west-1"},
+			AllowedRegions:       []string{"us-gov-east-1", "us-gov-west-1"},
 			AllowedInstanceTypes: []string{"large", "xlarge", "2xlarge"},
 		},
 		Settings: TenantSettings{
-			DefaultRegion:     "us-gov-east-1",
+			DefaultRegion:      "us-gov-east-1",
 			AllowSpotInstances: false, // Government compliance
 			AutoShutdownHours:  12,
 			NotificationConfig: NotificationConfig{
@@ -159,11 +159,11 @@ func (m *Manager) CreateDemoTenants() error {
 				"settings:read",
 			},
 			RestrictedFeatures:   []string{"admin:*"},
-			AllowedRegions:      []string{"us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"},
+			AllowedRegions:       []string{"us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"},
 			AllowedInstanceTypes: []string{"small", "medium", "large"},
 		},
 		Settings: TenantSettings{
-			DefaultRegion:     "us-east-1",
+			DefaultRegion:      "us-east-1",
 			AllowSpotInstances: true,
 			AutoShutdownHours:  6,
 			NotificationConfig: NotificationConfig{

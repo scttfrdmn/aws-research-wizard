@@ -11,11 +11,11 @@ import (
 
 // Manager handles tenant operations and data isolation
 type Manager struct {
-	tenants    map[string]*TenantConfig
-	users      map[string]*TenantUser
+	tenants     map[string]*TenantConfig
+	users       map[string]*TenantUser
 	deployments map[string]*TenantDeployment
-	dataDir    string
-	mutex      sync.RWMutex
+	dataDir     string
+	mutex       sync.RWMutex
 }
 
 // NewManager creates a new tenant manager

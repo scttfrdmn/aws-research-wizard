@@ -38,21 +38,21 @@ const (
 
 // SLADefinition defines an SLA with its targets and measurement criteria
 type SLADefinition struct {
-	ID              string            `json:"id"`
-	Name            string            `json:"name"`
-	Type            SLAType           `json:"type"`
-	TenantID        string            `json:"tenantId"`
-	Description     string            `json:"description"`
-	TargetValue     float64           `json:"targetValue"`
-	Threshold       float64           `json:"threshold"`
-	Unit            string            `json:"unit"`
-	MetricQuery     string            `json:"metricQuery"`
-	EvaluationWindow time.Duration    `json:"evaluationWindow"`
-	AlertCondition  AlertCondition    `json:"alertCondition"`
-	IsActive        bool              `json:"isActive"`
-	CreatedAt       time.Time         `json:"createdAt"`
-	UpdatedAt       time.Time         `json:"updatedAt"`
-	Tags            map[string]string `json:"tags"`
+	ID               string            `json:"id"`
+	Name             string            `json:"name"`
+	Type             SLAType           `json:"type"`
+	TenantID         string            `json:"tenantId"`
+	Description      string            `json:"description"`
+	TargetValue      float64           `json:"targetValue"`
+	Threshold        float64           `json:"threshold"`
+	Unit             string            `json:"unit"`
+	MetricQuery      string            `json:"metricQuery"`
+	EvaluationWindow time.Duration     `json:"evaluationWindow"`
+	AlertCondition   AlertCondition    `json:"alertCondition"`
+	IsActive         bool              `json:"isActive"`
+	CreatedAt        time.Time         `json:"createdAt"`
+	UpdatedAt        time.Time         `json:"updatedAt"`
+	Tags             map[string]string `json:"tags"`
 }
 
 // AlertCondition defines when an alert should be triggered
@@ -82,30 +82,30 @@ type SLAMetric struct {
 type SLAStatus string
 
 const (
-	SLAStatusCompliant    SLAStatus = "compliant"
-	SLAStatusWarning      SLAStatus = "warning"
-	SLAStatusBreached     SLAStatus = "breached"
-	SLAStatusUnknown      SLAStatus = "unknown"
-	SLAStatusMaintenance  SLAStatus = "maintenance"
+	SLAStatusCompliant   SLAStatus = "compliant"
+	SLAStatusWarning     SLAStatus = "warning"
+	SLAStatusBreached    SLAStatus = "breached"
+	SLAStatusUnknown     SLAStatus = "unknown"
+	SLAStatusMaintenance SLAStatus = "maintenance"
 )
 
 // Alert represents a monitoring alert
 type Alert struct {
-	ID           string            `json:"id"`
-	TenantID     string            `json:"tenantId"`
-	SLAID        string            `json:"slaId"`
-	Type         AlertType         `json:"type"`
-	Severity     AlertSeverity     `json:"severity"`
-	Title        string            `json:"title"`
-	Description  string            `json:"description"`
-	Status       AlertStatus       `json:"status"`
-	TriggerValue float64           `json:"triggerValue"`
-	Threshold    float64           `json:"threshold"`
-	Metadata     map[string]string `json:"metadata"`
-	CreatedAt    time.Time         `json:"createdAt"`
-	ResolvedAt   time.Time         `json:"resolvedAt,omitempty"`
-	AcknowledgedAt time.Time       `json:"acknowledgedAt,omitempty"`
-	AcknowledgedBy string          `json:"acknowledgedBy,omitempty"`
+	ID             string            `json:"id"`
+	TenantID       string            `json:"tenantId"`
+	SLAID          string            `json:"slaId"`
+	Type           AlertType         `json:"type"`
+	Severity       AlertSeverity     `json:"severity"`
+	Title          string            `json:"title"`
+	Description    string            `json:"description"`
+	Status         AlertStatus       `json:"status"`
+	TriggerValue   float64           `json:"triggerValue"`
+	Threshold      float64           `json:"threshold"`
+	Metadata       map[string]string `json:"metadata"`
+	CreatedAt      time.Time         `json:"createdAt"`
+	ResolvedAt     time.Time         `json:"resolvedAt,omitempty"`
+	AcknowledgedAt time.Time         `json:"acknowledgedAt,omitempty"`
+	AcknowledgedBy string            `json:"acknowledgedBy,omitempty"`
 }
 
 // AlertType defines the type of alert
@@ -123,9 +123,9 @@ const (
 type AlertSeverity string
 
 const (
-	AlertSeverityInfo     AlertSeverity = "info"
-	AlertSeverityWarning  AlertSeverity = "warning"
-	AlertSeverityCritical AlertSeverity = "critical"
+	AlertSeverityInfo      AlertSeverity = "info"
+	AlertSeverityWarning   AlertSeverity = "warning"
+	AlertSeverityCritical  AlertSeverity = "critical"
 	AlertSeverityEmergency AlertSeverity = "emergency"
 )
 
@@ -156,28 +156,28 @@ type Dashboard struct {
 
 // DashboardWidget represents a widget on a dashboard
 type DashboardWidget struct {
-	ID          string            `json:"id"`
-	Type        WidgetType        `json:"type"`
-	Title       string            `json:"title"`
-	MetricQuery string            `json:"metricQuery"`
-	Position    WidgetPosition    `json:"position"`
-	Size        WidgetSize        `json:"size"`
+	ID          string                 `json:"id"`
+	Type        WidgetType             `json:"type"`
+	Title       string                 `json:"title"`
+	MetricQuery string                 `json:"metricQuery"`
+	Position    WidgetPosition         `json:"position"`
+	Size        WidgetSize             `json:"size"`
 	Config      map[string]interface{} `json:"config"`
-	RefreshRate time.Duration     `json:"refreshRate"`
+	RefreshRate time.Duration          `json:"refreshRate"`
 }
 
 // WidgetType defines the type of dashboard widget
 type WidgetType string
 
 const (
-	WidgetTypeLineChart   WidgetType = "line_chart"
-	WidgetTypeBarChart    WidgetType = "bar_chart"
-	WidgetTypePieChart    WidgetType = "pie_chart"
-	WidgetTypeGauge       WidgetType = "gauge"
-	WidgetTypeNumber      WidgetType = "number"
-	WidgetTypeTable       WidgetType = "table"
-	WidgetTypeHeatmap     WidgetType = "heatmap"
-	WidgetTypeSLAStatus   WidgetType = "sla_status"
+	WidgetTypeLineChart WidgetType = "line_chart"
+	WidgetTypeBarChart  WidgetType = "bar_chart"
+	WidgetTypePieChart  WidgetType = "pie_chart"
+	WidgetTypeGauge     WidgetType = "gauge"
+	WidgetTypeNumber    WidgetType = "number"
+	WidgetTypeTable     WidgetType = "table"
+	WidgetTypeHeatmap   WidgetType = "heatmap"
+	WidgetTypeSLAStatus WidgetType = "sla_status"
 )
 
 // WidgetPosition defines the position of a widget on the dashboard
@@ -194,22 +194,22 @@ type WidgetSize struct {
 
 // DashboardLayout defines the layout configuration for a dashboard
 type DashboardLayout struct {
-	Columns     int  `json:"columns"`
-	AutoResize  bool `json:"autoResize"`
-	Responsive  bool `json:"responsive"`
-	GridSize    int  `json:"gridSize"`
+	Columns    int  `json:"columns"`
+	AutoResize bool `json:"autoResize"`
+	Responsive bool `json:"responsive"`
+	GridSize   int  `json:"gridSize"`
 }
 
 // ComplianceReport represents a compliance report for SLA tracking
 type ComplianceReport struct {
-	ID               string                   `json:"id"`
-	TenantID         string                   `json:"tenantId"`
-	ReportPeriod     ReportPeriod            `json:"reportPeriod"`
-	GeneratedAt      time.Time                `json:"generatedAt"`
-	SLACompliance    []SLAComplianceResult   `json:"slaCompliance"`
-	OverallScore     float64                  `json:"overallScore"`
-	Summary          ComplianceSummary        `json:"summary"`
-	Recommendations  []string                 `json:"recommendations"`
+	ID              string                `json:"id"`
+	TenantID        string                `json:"tenantId"`
+	ReportPeriod    ReportPeriod          `json:"reportPeriod"`
+	GeneratedAt     time.Time             `json:"generatedAt"`
+	SLACompliance   []SLAComplianceResult `json:"slaCompliance"`
+	OverallScore    float64               `json:"overallScore"`
+	Summary         ComplianceSummary     `json:"summary"`
+	Recommendations []string              `json:"recommendations"`
 }
 
 // ReportPeriod defines the time period for a report
@@ -221,35 +221,35 @@ type ReportPeriod struct {
 
 // SLAComplianceResult represents the compliance result for a specific SLA
 type SLAComplianceResult struct {
-	SLAID           string    `json:"slaId"`
-	SLAName         string    `json:"slaName"`
-	ComplianceRate  float64   `json:"complianceRate"`
-	AverageValue    float64   `json:"averageValue"`
-	TargetValue     float64   `json:"targetValue"`
-	BreachCount     int       `json:"breachCount"`
-	BreachDuration  time.Duration `json:"breachDuration"`
-	Status          SLAStatus `json:"status"`
-	TrendDirection  string    `json:"trendDirection"`
+	SLAID          string        `json:"slaId"`
+	SLAName        string        `json:"slaName"`
+	ComplianceRate float64       `json:"complianceRate"`
+	AverageValue   float64       `json:"averageValue"`
+	TargetValue    float64       `json:"targetValue"`
+	BreachCount    int           `json:"breachCount"`
+	BreachDuration time.Duration `json:"breachDuration"`
+	Status         SLAStatus     `json:"status"`
+	TrendDirection string        `json:"trendDirection"`
 }
 
 // ComplianceSummary provides an overall summary of compliance
 type ComplianceSummary struct {
-	TotalSLAs           int     `json:"totalSlas"`
-	CompliantSLAs       int     `json:"compliantSlas"`
-	BreachedSLAs        int     `json:"breachedSlas"`
-	AverageCompliance   float64 `json:"averageCompliance"`
-	CriticalBreaches    int     `json:"criticalBreaches"`
-	ImprovementTrend    string  `json:"improvementTrend"`
+	TotalSLAs         int     `json:"totalSlas"`
+	CompliantSLAs     int     `json:"compliantSlas"`
+	BreachedSLAs      int     `json:"breachedSlas"`
+	AverageCompliance float64 `json:"averageCompliance"`
+	CriticalBreaches  int     `json:"criticalBreaches"`
+	ImprovementTrend  string  `json:"improvementTrend"`
 }
 
 // MonitoringConfig represents the monitoring system configuration
 type MonitoringConfig struct {
-	MetricsRetention    time.Duration     `json:"metricsRetention"`
-	SampleRate          time.Duration     `json:"sampleRate"`
-	AlertingEnabled     bool              `json:"alertingEnabled"`
+	MetricsRetention     time.Duration         `json:"metricsRetention"`
+	SampleRate           time.Duration         `json:"sampleRate"`
+	AlertingEnabled      bool                  `json:"alertingEnabled"`
 	NotificationChannels []NotificationChannel `json:"notificationChannels"`
-	SLADefinitions      []SLADefinition   `json:"slaDefinitions"`
-	Dashboards          []Dashboard       `json:"dashboards"`
+	SLADefinitions       []SLADefinition       `json:"slaDefinitions"`
+	Dashboards           []Dashboard           `json:"dashboards"`
 }
 
 // NotificationChannel defines how alerts are delivered

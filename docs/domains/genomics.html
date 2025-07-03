@@ -13,25 +13,25 @@
             padding: 3rem 0;
             text-align: center;
         }
-        
+
         .domain-icon-large {
             font-size: 4rem;
             margin-bottom: 1rem;
         }
-        
+
         .content-section {
             max-width: 1000px;
             margin: 0 auto;
             padding: 3rem 2rem;
         }
-        
+
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             margin: 2rem 0;
         }
-        
+
         .feature-item {
             background: white;
             padding: 1.5rem;
@@ -39,21 +39,21 @@
             border: 1px solid #e5e7eb;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        
+
         .software-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin: 2rem 0;
         }
-        
+
         .software-item {
             background: #f8fafc;
             padding: 1rem;
             border-radius: 6px;
             border-left: 4px solid #059669;
         }
-        
+
         .config-table {
             width: 100%;
             border-collapse: collapse;
@@ -63,19 +63,19 @@
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        
+
         .config-table th,
         .config-table td {
             padding: 1rem;
             text-align: left;
             border-bottom: 1px solid #e5e7eb;
         }
-        
+
         .config-table th {
             background: #f9fafb;
             font-weight: 600;
         }
-        
+
         .dataset-card {
             background: white;
             border: 1px solid #e5e7eb;
@@ -83,13 +83,13 @@
             padding: 1.5rem;
             margin: 1rem 0;
         }
-        
+
         .dataset-header {
             display: flex;
             align-items: center;
             margin-bottom: 1rem;
         }
-        
+
         .dataset-size {
             background: #dbeafe;
             color: #1e40af;
@@ -99,7 +99,7 @@
             font-weight: 600;
             margin-left: 1rem;
         }
-        
+
         .workflow-step {
             background: #f8fafc;
             border: 1px solid #e5e7eb;
@@ -108,7 +108,7 @@
             margin: 1rem 0;
             position: relative;
         }
-        
+
         .workflow-step::before {
             content: counter(step-counter);
             counter-increment: step-counter;
@@ -126,18 +126,18 @@
             font-weight: bold;
             font-size: 0.875rem;
         }
-        
+
         .workflow-container {
             counter-reset: step-counter;
         }
-        
+
         .performance-metrics {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
             margin: 2rem 0;
         }
-        
+
         .metric-card {
             background: linear-gradient(135deg, #059669, #047857);
             color: white;
@@ -145,13 +145,13 @@
             border-radius: 8px;
             text-align: center;
         }
-        
+
         .metric-value {
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
         }
-        
+
         .metric-label {
             font-size: 0.875rem;
             opacity: 0.9;
@@ -189,7 +189,7 @@
         <section>
             <h2>Domain Overview</h2>
             <p>The Genomics & Bioinformatics domain provides specialized computing environments optimized for large-scale genomic data analysis. With pre-configured software stacks and high-memory instances, researchers can process whole genome sequences, perform variant calling, and conduct population genetics studies without infrastructure complexity.</p>
-            
+
             <div class="feature-grid">
                 <div class="feature-item">
                     <h3>🔧 Pre-configured Tools</h3>
@@ -210,7 +210,7 @@
         <section>
             <h2>Pre-installed Software</h2>
             <p>The genomics environment includes industry-standard tools and the latest versions of essential bioinformatics software:</p>
-            
+
             <div class="software-list">
                 <div class="software-item">
                     <h4>GATK v4.4.0</h4>
@@ -267,7 +267,7 @@
         <section>
             <h2>Recommended Instance Configurations</h2>
             <p>Choose the optimal configuration based on your data size and analysis requirements:</p>
-            
+
             <table class="config-table">
                 <thead>
                     <tr>
@@ -325,7 +325,7 @@
         <section>
             <h2>Real-World Datasets</h2>
             <p>The genomics environment provides seamless access to major public genomics datasets:</p>
-            
+
             <div class="dataset-card">
                 <div class="dataset-header">
                     <h3>1000 Genomes Project</h3>
@@ -375,10 +375,10 @@
         <section>
             <h2>Common Workflows</h2>
             <p>Pre-configured workflows for standard genomics analyses:</p>
-            
+
             <div class="workflow-container">
                 <h3>Variant Calling Pipeline (GATK Best Practices)</h3>
-                
+
                 <div class="workflow-step">
                     <h4>Quality Control & Preprocessing</h4>
                     <p>Run FastQC for quality assessment, followed by Trimmomatic for adapter removal and quality trimming.</p>
@@ -421,7 +421,7 @@
         <section>
             <h2>Performance Benchmarks</h2>
             <p>Real-world performance metrics for common genomics tasks:</p>
-            
+
             <div class="performance-metrics">
                 <div class="metric-card">
                     <div class="metric-value">2.5 hrs</div>
@@ -446,7 +446,7 @@
         <section>
             <h2>Getting Started</h2>
             <p>Ready to start your genomics research? Follow these steps:</p>
-            
+
             <ol>
                 <li><strong>Launch Research Wizard:</strong> Start the web interface and navigate to the Domains tab</li>
                 <li><strong>Select Genomics:</strong> Choose "Genomics & Bioinformatics" from the life sciences category</li>
@@ -484,7 +484,7 @@
                     <a href="../user-guide/genomics-best-practices.html">Best Practices</a>
                     <a href="../api/genomics-api.html">API Reference</a>
                 </div>
-                
+
                 <div class="footer-section">
                     <h3>📚 Documentation</h3>
                     <a href="../user-guide/">User Guide</a>
@@ -492,7 +492,7 @@
                     <a href="../api/">API Reference</a>
                     <a href="../help/">Help Center</a>
                 </div>
-                
+
                 <div class="footer-section">
                     <h3>🔬 Other Domains</h3>
                     <a href="climate.html">Climate Modeling</a>
@@ -500,7 +500,7 @@
                     <a href="astronomy.html">Astronomy</a>
                     <a href="../domains/">All Domains</a>
                 </div>
-                
+
                 <div class="footer-section">
                     <h3>🤝 Support</h3>
                     <a href="../help/">Help Center</a>
@@ -509,7 +509,7 @@
                     <a href="../community.html">Community</a>
                 </div>
             </div>
-            
+
             <div class="footer-bottom">
                 <p>&copy; 2025 Research Wizard. Making research computing accessible to everyone.
                    <br>Visit us at <a href="https://researchwizard.app" style="color: var(--accent-color);">researchwizard.app</a></p>

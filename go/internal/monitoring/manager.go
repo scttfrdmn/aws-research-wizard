@@ -11,16 +11,16 @@ import (
 
 // Manager handles monitoring, SLA tracking, and alerting
 type Manager struct {
-	slaDefinitions  map[string]*SLADefinition
-	slaMetrics      map[string]*SLAMetric
-	alerts          map[string]*Alert
-	dashboards      map[string]*Dashboard
-	metrics         []Metric
-	config          *MonitoringConfig
-	dataDir         string
-	mutex           sync.RWMutex
-	collectors      map[string]MetricCollector
-	evaluators      map[string]SLAEvaluator
+	slaDefinitions map[string]*SLADefinition
+	slaMetrics     map[string]*SLAMetric
+	alerts         map[string]*Alert
+	dashboards     map[string]*Dashboard
+	metrics        []Metric
+	config         *MonitoringConfig
+	dataDir        string
+	mutex          sync.RWMutex
+	collectors     map[string]MetricCollector
+	evaluators     map[string]SLAEvaluator
 }
 
 // MetricCollector interface for collecting metrics from various sources
@@ -49,7 +49,7 @@ func NewManager(dataDir string) *Manager {
 			AlertingEnabled:      true,
 			NotificationChannels: make([]NotificationChannel, 0),
 			SLADefinitions:       make([]SLADefinition, 0),
-			Dashboards:          make([]Dashboard, 0),
+			Dashboards:           make([]Dashboard, 0),
 		},
 		dataDir:    dataDir,
 		collectors: make(map[string]MetricCollector),
@@ -359,10 +359,10 @@ func (m *Manager) GenerateComplianceReport(tenantID string, period ReportPeriod)
 	defer m.mutex.RUnlock()
 
 	report := &ComplianceReport{
-		ID:           fmt.Sprintf("report-%s-%d", tenantID, time.Now().Unix()),
-		TenantID:     tenantID,
-		ReportPeriod: period,
-		GeneratedAt:  time.Now(),
+		ID:            fmt.Sprintf("report-%s-%d", tenantID, time.Now().Unix()),
+		TenantID:      tenantID,
+		ReportPeriod:  period,
+		GeneratedAt:   time.Now(),
 		SLACompliance: make([]SLAComplianceResult, 0),
 	}
 
@@ -468,7 +468,7 @@ func (m *Manager) getMetricsUnsafe(query MetricQuery) ([]Metric, error) {
 func (m *Manager) evaluateSLACompliance(sla *SLADefinition, metrics []Metric) (*SLAMetric, error) {
 	// This is a simplified implementation - in practice, this would use
 	// more sophisticated evaluation logic based on the SLA type and metric query
-	
+
 	slaMetric := &SLAMetric{
 		SLADefinitionID: sla.ID,
 		TargetValue:     sla.TargetValue,
@@ -635,14 +635,14 @@ func (m *Manager) generateRecommendations(report *ComplianceReport) []string {
 // cleanupOldMetrics removes metrics older than the retention period
 func (m *Manager) cleanupOldMetrics() {
 	cutoff := time.Now().Add(-m.config.MetricsRetention)
-	
+
 	filteredMetrics := make([]Metric, 0, len(m.metrics))
 	for _, metric := range m.metrics {
 		if metric.Timestamp.After(cutoff) {
 			filteredMetrics = append(filteredMetrics, metric)
 		}
 	}
-	
+
 	m.metrics = filteredMetrics
 }
 

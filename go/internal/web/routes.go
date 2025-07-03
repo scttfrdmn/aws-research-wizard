@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/scttfrdmn/aws-research-wizard/go/internal/tenant"
 	"github.com/scttfrdmn/aws-research-wizard/go/internal/monitoring"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/tenant"
 )
 
 // setupRoutes configures all HTTP routes for the web interface
@@ -646,7 +646,7 @@ func (s *Server) handleTenantSwitch(w http.ResponseWriter, r *http.Request) {
 // handleSLAs manages SLA operations
 func (s *Server) handleSLAs(w http.ResponseWriter, r *http.Request) {
 	tenantID := tenant.GetTenantID(r.Context())
-	
+
 	switch r.Method {
 	case http.MethodGet:
 		slas := s.monitoringManager.ListSLAs(tenantID)
@@ -918,7 +918,7 @@ func (s *Server) handleCompliance(w http.ResponseWriter, r *http.Request) {
 	// Calculate report period based on type
 	var period monitoring.ReportPeriod
 	now := time.Now()
-	
+
 	switch reportType {
 	case "daily":
 		period = monitoring.ReportPeriod{

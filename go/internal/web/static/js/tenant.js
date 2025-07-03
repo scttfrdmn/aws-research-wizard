@@ -16,7 +16,7 @@ function TenantSelector() {
             const response = await fetch('/api/tenants');
             const data = await response.json();
             setTenants(data.tenants || []);
-            
+
             // Set first tenant as current if none selected
             if (data.tenants && data.tenants.length > 0 && !currentTenant) {
                 setCurrentTenant(data.tenants[0]);
@@ -57,23 +57,23 @@ function TenantSelector() {
     }
 
     return React.createElement('div', { className: 'tenant-selector' },
-        React.createElement('div', { 
+        React.createElement('div', {
             className: 'tenant-current',
             onClick: () => setShowDropdown(!showDropdown)
         },
             React.createElement('div', { className: 'tenant-info' },
-                React.createElement('div', { className: 'tenant-name' }, 
+                React.createElement('div', { className: 'tenant-name' },
                     currentTenant ? currentTenant.displayName : 'Select Organization'
                 ),
-                React.createElement('div', { className: 'tenant-id' }, 
+                React.createElement('div', { className: 'tenant-id' },
                     currentTenant ? `(${currentTenant.tenantId})` : ''
                 )
             ),
             React.createElement('div', { className: 'tenant-arrow' }, '▼')
         ),
-        
+
         showDropdown && React.createElement('div', { className: 'tenant-dropdown' },
-            tenants.map(tenant => 
+            tenants.map(tenant =>
                 React.createElement('div', {
                     key: tenant.tenantId,
                     className: `tenant-option ${currentTenant?.tenantId === tenant.tenantId ? 'active' : ''}`,
@@ -110,7 +110,7 @@ function TenantDashboard() {
 
     const loadTenantData = async (tenantId) => {
         if (!tenantId) return;
-        
+
         setLoading(true);
         try {
             // Load tenant configuration
@@ -145,8 +145,8 @@ function TenantDashboard() {
         React.createElement('div', { className: 'dashboard-header' },
             React.createElement('h2', null, `${tenantConfig?.displayName} Dashboard`),
             React.createElement('div', { className: 'tenant-status' },
-                React.createElement('span', { 
-                    className: `status-badge ${tenantConfig?.status}` 
+                React.createElement('span', {
+                    className: `status-badge ${tenantConfig?.status}`
                 }, tenantConfig?.status)
             )
         ),
@@ -155,32 +155,32 @@ function TenantDashboard() {
             React.createElement('div', { className: 'stat-card' },
                 React.createElement('div', { className: 'stat-value' }, tenantStats?.activeUsers || 0),
                 React.createElement('div', { className: 'stat-label' }, 'Active Users'),
-                React.createElement('div', { className: 'stat-limit' }, 
+                React.createElement('div', { className: 'stat-limit' },
                     `of ${tenantConfig?.userLimits?.maxUsers || 0} max`
                 )
             ),
             React.createElement('div', { className: 'stat-card' },
                 React.createElement('div', { className: 'stat-value' }, tenantStats?.activeDeployments || 0),
                 React.createElement('div', { className: 'stat-label' }, 'Active Deployments'),
-                React.createElement('div', { className: 'stat-limit' }, 
+                React.createElement('div', { className: 'stat-limit' },
                     `of ${tenantConfig?.userLimits?.maxDeployments || 0} max`
                 )
             ),
             React.createElement('div', { className: 'stat-card' },
-                React.createElement('div', { className: 'stat-value' }, 
+                React.createElement('div', { className: 'stat-value' },
                     `$${(tenantStats?.currentMonthlyCost || 0).toFixed(2)}`
                 ),
                 React.createElement('div', { className: 'stat-label' }, 'Monthly Cost'),
-                React.createElement('div', { className: 'stat-limit' }, 
+                React.createElement('div', { className: 'stat-limit' },
                     `of $${tenantConfig?.userLimits?.maxMonthlyCostUSD || 0} budget`
                 )
             ),
             React.createElement('div', { className: 'stat-card' },
-                React.createElement('div', { className: 'stat-value' }, 
+                React.createElement('div', { className: 'stat-value' },
                     `${(tenantStats?.storageUsedGB || 0).toFixed(1)} GB`
                 ),
                 React.createElement('div', { className: 'stat-label' }, 'Storage Used'),
-                React.createElement('div', { className: 'stat-limit' }, 
+                React.createElement('div', { className: 'stat-limit' },
                     `of ${tenantConfig?.userLimits?.maxStorageGB || 0} GB limit`
                 )
             )
@@ -204,7 +204,7 @@ function TenantDashboard() {
                     ),
                     React.createElement('div', { className: 'detail-item' },
                         React.createElement('span', { className: 'detail-label' }, 'Spot Instances:'),
-                        React.createElement('span', { className: 'detail-value' }, 
+                        React.createElement('span', { className: 'detail-value' },
                             tenantConfig?.settings?.allowSpotInstances ? 'Enabled' : 'Disabled'
                         )
                     )
@@ -252,7 +252,7 @@ function TenantUserManagement() {
 
     const loadUsers = async (tenantId) => {
         if (!tenantId) return;
-        
+
         setLoading(true);
         try {
             const response = await fetch('/api/tenant/users', {
@@ -292,22 +292,22 @@ function TenantUserManagement() {
                 React.createElement('div', { className: 'header-cell' }, 'Status'),
                 React.createElement('div', { className: 'header-cell' }, 'Last Login')
             ),
-            
-            users.map(user => 
-                React.createElement('div', { 
-                    key: user.userId, 
-                    className: 'table-row' 
+
+            users.map(user =>
+                React.createElement('div', {
+                    key: user.userId,
+                    className: 'table-row'
                 },
                     React.createElement('div', { className: 'table-cell' }, user.name),
                     React.createElement('div', { className: 'table-cell' }, user.username),
                     React.createElement('div', { className: 'table-cell' }, user.email),
-                    React.createElement('div', { className: 'table-cell' }, 
+                    React.createElement('div', { className: 'table-cell' },
                         React.createElement('span', { className: `role-badge ${user.role}` }, user.role)
                     ),
-                    React.createElement('div', { className: 'table-cell' }, 
+                    React.createElement('div', { className: 'table-cell' },
                         React.createElement('span', { className: `status-badge ${user.status}` }, user.status)
                     ),
-                    React.createElement('div', { className: 'table-cell' }, 
+                    React.createElement('div', { className: 'table-cell' },
                         user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'
                     )
                 )
@@ -336,7 +336,7 @@ function TenantBilling() {
 
     const loadBillingData = async (tenantId) => {
         if (!tenantId) return;
-        
+
         setLoading(true);
         try {
             const response = await fetch('/api/tenant/deployments', {
@@ -344,9 +344,9 @@ function TenantBilling() {
             });
             const data = await response.json();
             setDeployments(data.deployments || []);
-            
+
             // Calculate total cost
-            const total = (data.deployments || []).reduce((sum, deployment) => 
+            const total = (data.deployments || []).reduce((sum, deployment) =>
                 sum + (deployment.cost?.totalCostUSD || 0), 0
             );
             setTotalCost(total);
@@ -383,23 +383,23 @@ function TenantBilling() {
                 React.createElement('div', { className: 'header-cell' }, 'Hourly Cost'),
                 React.createElement('div', { className: 'header-cell' }, 'Total Cost')
             ),
-            
-            deployments.map(deployment => 
-                React.createElement('div', { 
-                    key: deployment.deploymentId, 
-                    className: 'table-row' 
+
+            deployments.map(deployment =>
+                React.createElement('div', {
+                    key: deployment.deploymentId,
+                    className: 'table-row'
                 },
                     React.createElement('div', { className: 'table-cell' }, deployment.deploymentId),
                     React.createElement('div', { className: 'table-cell' }, deployment.domain),
                     React.createElement('div', { className: 'table-cell' }, deployment.instanceType),
                     React.createElement('div', { className: 'table-cell' }, deployment.region),
-                    React.createElement('div', { className: 'table-cell' }, 
+                    React.createElement('div', { className: 'table-cell' },
                         React.createElement('span', { className: `status-badge ${deployment.status}` }, deployment.status)
                     ),
-                    React.createElement('div', { className: 'table-cell' }, 
+                    React.createElement('div', { className: 'table-cell' },
                         `$${(deployment.cost?.hourlyCostUSD || 0).toFixed(2)}/hr`
                     ),
-                    React.createElement('div', { className: 'table-cell' }, 
+                    React.createElement('div', { className: 'table-cell' },
                         `$${(deployment.cost?.totalCostUSD || 0).toFixed(2)}`
                     )
                 )

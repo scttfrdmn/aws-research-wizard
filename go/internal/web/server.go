@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/scttfrdmn/aws-research-wizard/go/internal/intelligence"
-	"github.com/scttfrdmn/aws-research-wizard/go/internal/tenant"
 	"github.com/scttfrdmn/aws-research-wizard/go/internal/monitoring"
+	"github.com/scttfrdmn/aws-research-wizard/go/internal/tenant"
 )
 
 //go:embed static/*
@@ -18,14 +18,14 @@ var staticFiles embed.FS
 
 // Server represents the web GUI server
 type Server struct {
-	port             int
-	server           *http.Server
-	domainLoader     intelligence.DomainPackLoaderInterface
-	tenantManager    *tenant.Manager
-	tenantMiddleware *tenant.Middleware
+	port              int
+	server            *http.Server
+	domainLoader      intelligence.DomainPackLoaderInterface
+	tenantManager     *tenant.Manager
+	tenantMiddleware  *tenant.Middleware
 	monitoringManager *monitoring.Manager
-	staticFS         fs.FS
-	developmentMode  bool
+	staticFS          fs.FS
+	developmentMode   bool
 }
 
 // ServerConfig holds configuration for the web server
