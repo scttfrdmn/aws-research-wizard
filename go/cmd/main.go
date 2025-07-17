@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	version   = "dev"
+	version   = "0.3.0"
 	buildTime = "unknown"
 	gitCommit = "unknown"
 )
@@ -23,14 +23,16 @@ var (
 func main() {
 	var rootCmd = &cobra.Command{
 		Use:   "aws-research-wizard",
-		Short: "AWS Research Wizard - Complete research environment management",
+		Short: "AWS Research Wizard - Alpha Release - Research environment management",
 		Long: `AWS Research Wizard provides comprehensive tools for configuring, deploying,
 and monitoring optimized AWS research environments across multiple scientific domains.
 
+🚧 ALPHA RELEASE - Under Heavy Development! 🚧
+
 Key Features:
-- Interactive domain configuration with 18+ research packs
+- Interactive domain configuration with 27+ research packs
 - S3 transfer optimization and AWS Open Data integration
-- Infrastructure deployment with CloudFormation automation
+- Infrastructure deployment with Terraform automation
 - Real-time monitoring with cost tracking and alerts
 - Data pipeline orchestration and progress tracking
 - Single binary distribution with zero dependencies

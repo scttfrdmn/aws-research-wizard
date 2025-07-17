@@ -7,8 +7,7 @@ primary_domains:
 - Cultural Analytics
 - Digital Archives
 - Humanities Data Science
-target_users: Humanists, digital scholars, cultural analysts, librarians
-  (1-10 users)
+target_users: Humanists, digital scholars, cultural analysts, librarians (1-10 users)
 spack_packages:
   text_processing:
   - python@3.11.5 %gcc@11.4.0 +optimizations+shared+ssl
@@ -180,10 +179,32 @@ demo_workflows:
   expected_runtime: 2-5 hours
   cost_estimate: 3.8
 digital_humanities_features:
-  text_formats: [plain_text, xml, json, csv, pdf, epub]
-  languages_supported: [english, spanish, french, german, italian, chinese, japanese]
-  analysis_methods: [topic_modeling, sentiment_analysis, ner, network_analysis]
-  visualization_tools: [matplotlib, plotly, gephi, leaflet, d3js]
+  text_formats:
+  - plain_text
+  - xml
+  - json
+  - csv
+  - pdf
+  - epub
+  languages_supported:
+  - english
+  - spanish
+  - french
+  - german
+  - italian
+  - chinese
+  - japanese
+  analysis_methods:
+  - topic_modeling
+  - sentiment_analysis
+  - ner
+  - network_analysis
+  visualization_tools:
+  - matplotlib
+  - plotly
+  - gephi
+  - leaflet
+  - d3js
 mpi_optimizations:
   efa_enabled: false
   max_nodes: 4
@@ -214,3 +235,13 @@ aws_integration:
     cost_optimized: S3 Standard-IA for archival texts
     performance_optimized: S3 Standard for active corpora
     security: Encrypted storage for sensitive historical documents
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

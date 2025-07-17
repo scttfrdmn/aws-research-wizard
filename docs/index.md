@@ -1,8 +1,8 @@
 # AWS Research Wizard
 
 <div class="hero">
-  <h1>Run Research Workloads on AWS</h1>
-  <p class="hero-subtitle">Execute complex research workloads effortlessly with pre-configured domain packs that handle all the AWS complexity for you.</p>
+  <h1>Build Powerful Research Computers in the Cloud</h1>
+  <p class="hero-subtitle">Easy-to-use tools that set up research computing for you. No cloud expertise needed. Clear costs. Works for 27 different science fields.</p>
 
   <div class="hero-buttons">
     <a href="getting-started/" class="btn btn-primary">🚀 Get Started</a>
@@ -12,12 +12,12 @@
 
 ## What is AWS Research Wizard?
 
-AWS Research Wizard is a comprehensive platform that simplifies research computing on AWS by providing:
+AWS Research Wizard helps you set up powerful research computers in the cloud. You get:
 
-- **🎯 Pre-configured Domain Packs**: Ready-to-use research environments for genomics, climate modeling, AI/ML, and more
-- **⚡ One-Command Deployment**: Deploy complex research infrastructure with a single command
-- **💰 Cost Optimization**: Intelligent instance selection and automatic scaling to minimize costs
-- **🔬 Research-Focused**: Optimized for scientific computing workflows and data-intensive research
+- **🎯 Ready-made research setups**: Pre-built environments for genomics, climate modeling, AI/ML, and 24 other fields
+- **⚡ One-command setup**: Launch complex research computing with a single command
+- **💰 Smart cost control**: Automatically picks the cheapest options and scales up/down as needed
+- **🔬 Built for researchers**: Designed specifically for scientific computing and big data research
 
 ## Quick Start
 
@@ -29,82 +29,83 @@ wget https://github.com/aws-research-wizard/releases/latest/aws-research-wizard-
 tar -xzf aws-research-wizard-linux-amd64.tar.gz
 sudo mv aws-research-wizard /usr/local/bin/
 
-# Configure AWS credentials
+# Set up your AWS account
 aws configure
 
-# Browse available domain packs
+# See what research areas are available
 aws-research-wizard config list
 
-# Deploy a research environment
+# Launch a genomics research environment
 aws-research-wizard deploy --domain genomics --size standard
 ```
 
-## Research Domains
+## Research Areas
 
 ### 🧬 Life Sciences
-- **[Genomics & Bioinformatics](domain-packs/life-sciences/genomics/)**: GATK, BWA, STAR, RNA-seq analysis
-- **[Structural Biology](domain-packs/life-sciences/structural-biology/)**: Molecular modeling, protein structure analysis
-- **[Neuroscience](domain-packs/life-sciences/neuroscience/)**: Brain imaging, connectivity analysis
-- **[Drug Discovery](domain-packs/life-sciences/drug-discovery/)**: Molecular dynamics, virtual screening
+- **[Genomics & DNA Analysis](domain-guides/genomics/getting-started.md)**: Process DNA sequences with GATK, BWA, STAR tools
+- **[Structural Biology](domain-guides/structural_biology/getting-started.md)**: Study protein structures and molecular movements
+- **[Neuroscience](domain-guides/neuroscience/getting-started.md)**: Brain imaging analysis and connectivity studies
+- **[Drug Discovery](domain-guides/drug_discovery/getting-started.md)**: Find new medicines using computer modeling
 
 ### 🌍 Physical Sciences
-- **[Climate Modeling](domain-packs/physical-sciences/climate-modeling/)**: WRF, CESM, weather forecasting
-- **[Materials Science](domain-packs/physical-sciences/materials-science/)**: DFT calculations, molecular dynamics
-- **[Chemistry](domain-packs/physical-sciences/chemistry/)**: Quantum chemistry, reaction modeling
-- **[Astronomy](domain-packs/physical-sciences/astronomy/)**: Survey data processing, cosmological simulations
+- **[Climate Modeling](domain-guides/climate_modeling/getting-started.md)**: Weather prediction with WRF and CESM models
+- **[Materials Science](domain-guides/materials_science/getting-started.md)**: Design new materials with quantum calculations
+- **[Chemistry & Materials](domain-guides/chemistry_materials/getting-started.md)**: Molecular dynamics and quantum chemistry
+- **[Astronomy](domain-guides/astronomy_astrophysics/getting-started.md)**: Process telescope data and cosmic simulations
 
 ### ⚙️ Engineering
-- **[CFD Engineering](domain-packs/engineering/cfd-engineering/)**: Fluid dynamics, aerodynamics simulation
-- **[Mechanical Engineering](domain-packs/engineering/mechanical-engineering/)**: FEA, structural analysis
-- **[Aerospace Engineering](domain-packs/engineering/aerospace-engineering/)**: Flight simulation, propulsion modeling
+- **[Machine Learning & AI](domain-guides/machine_learning/getting-started.md)**: Train neural networks with PyTorch and TensorFlow
+- **[Cybersecurity Research](domain-guides/cybersecurity_research/getting-started.md)**: Security analysis and threat detection
+- **[Benchmarking & Performance](domain-guides/benchmarking_performance/getting-started.md)**: System performance analysis and optimization
 
 ### 🤖 Computer Science
-- **[AI/ML Research](domain-packs/computer-science/ai-research/)**: PyTorch, TensorFlow, distributed training
-- **[HPC Development](domain-packs/computer-science/hpc-development/)**: Parallel computing, performance optimization
-- **[Data Science](domain-packs/computer-science/data-science/)**: Large-scale analytics, visualization
-- **[Quantum Computing](domain-packs/computer-science/quantum-computing/)**: Quantum algorithms, simulation
+- **[Geospatial Research](domain-guides/geospatial_research/getting-started.md)**: GIS analysis and satellite data processing
+- **[Quantum Computing](domain-guides/quantum_computing/getting-started.md)**: Quantum algorithm development and simulation
+- **[Mathematical Modeling](domain-guides/mathematical_modeling/getting-started.md)**: Numerical analysis and optimization
 
-## Key Features
+**[See All 27 Research Areas →](domain-guides/index.md)**
 
-### 📦 Pre-Configured Environments
-Each domain pack includes optimized software stacks with research-specific tools, libraries, and configurations. No more spending weeks setting up your computing environment.
+## What You Get
 
-### 🚀 Intelligent Infrastructure
-Smart instance selection based on your workload characteristics. The system analyzes your research requirements and recommends the most cost-effective AWS infrastructure.
+### 📦 Ready-to-Use Research Environments
+Each research area includes optimized software with all the tools you need. No more spending weeks setting up your computing environment.
 
-### 💰 Cost Optimization
-- Spot instance recommendations for 70-90% savings
-- Right-sizing based on actual resource usage
-- Automatic scaling and shutdown policies
-- Cost monitoring and budget alerts
+### 🚀 Smart Computer Selection
+The system analyzes your research needs and picks the most cost-effective cloud computers automatically.
+
+### 💰 Smart Cost Control
+- Save 70-90% with spot pricing recommendations
+- Right-size computers based on your actual usage
+- Automatic scaling and shutdown when not in use
+- Real-time cost monitoring and budget alerts
 
 ### 🔬 Research Workflows
 Built-in workflows for common research tasks:
-- Genomics variant calling pipelines
+- Genomics DNA analysis pipelines
 - Climate model simulation workflows
 - Deep learning training pipelines
 - High-throughput screening workflows
 
 ## Performance & Scale
 
-- **18+ Research Domain Packs** covering major scientific disciplines
-- **100% AWS Integration Success** rate across all supported services
-- **8.0 GB/s Peak Transfer Speeds** for large dataset handling
-- **50+ PB AWS Open Data Access** for public research datasets
+- **27 Research Areas** covering major scientific disciplines
+- **100% AWS Integration** - works with all supported cloud services
+- **8.0 GB/s Transfer Speeds** for handling large datasets
+- **50+ Petabytes of Research Data** - access to public research datasets
 
 ## Getting Help
 
-- 📖 **[Documentation](getting-started/)**: Comprehensive guides and tutorials
+- 📖 **[Step-by-Step Tutorials](domain-guides/index.md)**: 20-minute guides for each research area
 - 🚀 **[Quick Start Guide](getting-started/)**: Get running in 5 minutes
-- 💬 **[GitHub Discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)**: Community support
-- 🐛 **[Issue Tracker](https://github.com/aws-research-wizard/aws-research-wizard/issues)**: Bug reports and feature requests
+- 💬 **[Community Forum](https://github.com/aws-research-wizard/aws-research-wizard/discussions)**: Ask questions and get help
+- 🐛 **[Report Problems](https://github.com/aws-research-wizard/aws-research-wizard/issues)**: Bug reports and feature requests
 
 ## Contributing
 
 AWS Research Wizard is open source and welcomes contributions:
 
 - **[Development Guide](contributing/development/)**: Set up your development environment
-- **[Creating Domain Packs](contributing/domain-packs/)**: Add support for new research domains
+- **[Creating Research Areas](contributing/domain-packs/)**: Add support for new research domains
 - **[Testing](contributing/testing/)**: Help improve reliability and coverage
 
 ## License

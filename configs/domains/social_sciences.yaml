@@ -185,10 +185,28 @@ demo_workflows:
   expected_runtime: 1-2 hours
   cost_estimate: 1.0
 social_science_features:
-  analysis_types: [descriptive, inferential, causal, predictive]
-  data_sources: [surveys, social_media, administrative, experimental]
-  methods: [regression, multilevel, network, text_analysis, machine_learning]
-  visualization: [ggplot2, plotly, leaflet, shiny, streamlit]
+  analysis_types:
+  - descriptive
+  - inferential
+  - causal
+  - predictive
+  data_sources:
+  - surveys
+  - social_media
+  - administrative
+  - experimental
+  methods:
+  - regression
+  - multilevel
+  - network
+  - text_analysis
+  - machine_learning
+  visualization:
+  - ggplot2
+  - plotly
+  - leaflet
+  - shiny
+  - streamlit
 mpi_optimizations:
   efa_enabled: false
   max_nodes: 4
@@ -219,3 +237,13 @@ aws_integration:
     cost_optimized: S3 Standard-IA for longitudinal survey data
     performance_optimized: S3 Standard for active research datasets
     security: Encrypted storage for sensitive demographic data
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

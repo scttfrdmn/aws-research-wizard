@@ -1,6 +1,23 @@
 # Domain Pack Configuration Schema
+schema_version: "0.2.1-alpha"
+schema_metadata:
+  version: "0.2.1-alpha"
+  created: "2024-12-15"
+  last_modified: "2025-07-10"
+  compatibility:
+    min_config_version: "0.2.0-alpha"
+    max_config_version: "0.x.x"
+  breaking_changes:
+    - version: "2.0.0"
+      description: "Added required aws_instance_recommendations field and config versioning"
+      migration: "Use migration tool: scripts/migrate-v1-to-v2.py"
+    - version: "2.1.0"
+      description: "Added config_version requirement and metadata tracking"
+      migration: "Add config_version and config_metadata fields"
+
 type: object
 required:
+  - config_version
   - name
   - description
   - primary_domains
@@ -11,6 +28,43 @@ required:
   - research_capabilities
 
 properties:
+  config_version:
+    type: string
+    pattern: "^\\d+\\.\\d+\\.\\d+(-alpha|-beta|-rc\\d+)?$"
+    description: "Semantic version of this configuration (MAJOR.MINOR.PATCH with optional pre-release)"
+
+  config_metadata:
+    type: object
+    properties:
+      created:
+        type: string
+        format: date
+        description: "Date when this configuration was first created"
+      last_modified:
+        type: string
+        format: date
+        description: "Date when this configuration was last modified"
+      schema_compatibility:
+        type: string
+        pattern: "^\\d+\\.\\d+\\.\\d+(-alpha|-beta|-rc\\d+)?$"
+        description: "Compatible schema version"
+      change_log:
+        type: array
+        items:
+          type: object
+          properties:
+            version:
+              type: string
+              pattern: "^\\d+\\.\\d+\\.\\d+(-alpha|-beta|-rc\\d+)?$"
+            date:
+              type: string
+              format: date
+            changes:
+              type: array
+              items:
+                type: string
+    required: ["created", "last_modified", "schema_compatibility"]
+
   name:
     type: string
     description: "Human-readable name of the research pack"

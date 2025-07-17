@@ -1,0 +1,50 @@
+---
+# yamllint configuration for AWS Research Wizard
+
+extends: default
+
+rules:
+  # Line length is often exceeded in research domain descriptions
+  line-length:
+    max: 120
+    level: warning
+
+  # Allow longer lines in comments and descriptions
+  comments:
+    min-spaces-from-content: 1
+
+  # Research domain names often use underscores
+  # Note: key-naming is not a default yamllint rule, handled by custom validation
+
+  # Spack package specs can be complex and long
+  indentation:
+    spaces: 2
+    indent-sequences: consistent  # Allow both hanging and block style
+    check-multi-line-strings: false
+
+  # Allow trailing spaces in multi-line strings (common in descriptions)
+  trailing-spaces:
+    level: warning
+
+  # Be flexible with document start markers (not all YAML needs ---)
+  document-start:
+    present: false
+
+  # Research configurations can have many keys
+  key-ordering: disable
+
+  # Scientific data often requires precise formatting
+  float-values: disable
+
+  # Allow empty values for optional configuration
+  empty-values:
+    forbid-in-block-mappings: false
+    forbid-in-flow-mappings: true
+
+# Ignore patterns for generated or temporary files
+ignore: |
+  .terraform/
+  dist/
+  build/
+  coverage.out
+  *.tfstate*

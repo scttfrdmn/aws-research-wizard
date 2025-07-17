@@ -1,11 +1,13 @@
 name: Quantum Computing Research Laboratory
-description: Quantum algorithm development, quantum simulation, and quantum machine learning research
+description: Quantum algorithm development, quantum simulation, and quantum machine
+  learning research
 primary_domains:
 - Quantum Computing
 - Quantum Information Science
 - Quantum Algorithms
 - Quantum Machine Learning
-target_users: Quantum researchers, quantum algorithm developers, quantum physicists (1-10 users)
+target_users: Quantum researchers, quantum algorithm developers, quantum physicists
+  (1-10 users)
 spack_packages:
   quantum_frameworks:
   - qiskit@0.45.0
@@ -123,8 +125,8 @@ demo_workflows:
 mpi_optimizations:
   efa_enabled: false
   max_nodes: 1
-  placement_strategy: single
-  network_backend: enhanced
+  placement_strategy: cluster
+  network_backend: enhanced_networking
 scaling_profiles:
   small_circuits:
     nodes: 1
@@ -147,3 +149,13 @@ aws_integration:
     cost_optimized: Use S3 for quantum algorithm libraries and results
     performance_optimized: High-memory instances for large state vectors
     security: Encrypted storage for proprietary quantum algorithms
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

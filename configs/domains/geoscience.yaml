@@ -1,11 +1,13 @@
 name: Geoscience Research Laboratory
-description: Earthquake simulation, geological modeling, seismic analysis, and Earth system research
+description: Earthquake simulation, geological modeling, seismic analysis, and Earth
+  system research
 primary_domains:
 - Geoscience
 - Seismology
 - Geological Modeling
 - Earth System Science
-target_users: Geoscientists, seismologists, geological engineers, Earth scientists (1-20 users)
+target_users: Geoscientists, seismologists, geological engineers, Earth scientists
+  (1-20 users)
 spack_packages:
   seismic_analysis:
   - obspy@1.4.0 %gcc@11.4.0 +python
@@ -148,3 +150,13 @@ aws_integration:
     cost_optimized: Use S3 for seismic archives and geological databases
     performance_optimized: Local NVMe for active simulations and processing
     security: Encrypted storage for sensitive geological survey data
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

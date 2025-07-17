@@ -6,7 +6,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	"github.com/aws/aws-sdk-go-v2/service/costexplorer"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -16,14 +15,13 @@ import (
 
 // Client provides comprehensive AWS service access
 type Client struct {
-	cfg            aws.Config
-	EC2            *ec2.Client
-	CloudFormation *cloudformation.Client
-	CloudWatch     *cloudwatch.Client
-	CostExplorer   *costexplorer.Client
-	IAM            *iam.Client
-	S3             *s3.Client
-	Region         string
+	cfg          aws.Config
+	EC2          *ec2.Client
+	CloudWatch   *cloudwatch.Client
+	CostExplorer *costexplorer.Client
+	IAM          *iam.Client
+	S3           *s3.Client
+	Region       string
 }
 
 // NewClient creates a new AWS client with all required services
@@ -36,14 +34,13 @@ func NewClient(ctx context.Context, region string) (*Client, error) {
 	}
 
 	return &Client{
-		cfg:            cfg,
-		EC2:            ec2.NewFromConfig(cfg),
-		CloudFormation: cloudformation.NewFromConfig(cfg),
-		CloudWatch:     cloudwatch.NewFromConfig(cfg),
-		CostExplorer:   costexplorer.NewFromConfig(cfg),
-		IAM:            iam.NewFromConfig(cfg),
-		S3:             s3.NewFromConfig(cfg),
-		Region:         region,
+		cfg:          cfg,
+		EC2:          ec2.NewFromConfig(cfg),
+		CloudWatch:   cloudwatch.NewFromConfig(cfg),
+		CostExplorer: costexplorer.NewFromConfig(cfg),
+		IAM:          iam.NewFromConfig(cfg),
+		S3:           s3.NewFromConfig(cfg),
+		Region:       region,
 	}, nil
 }
 

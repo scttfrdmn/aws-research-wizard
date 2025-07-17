@@ -1,11 +1,13 @@
 name: Mathematical Modeling Laboratory
-description: Numerical analysis, optimization, mathematical simulation, and computational mathematics research
+description: Numerical analysis, optimization, mathematical simulation, and computational
+  mathematics research
 primary_domains:
 - Mathematical Modeling
 - Numerical Analysis
 - Optimization
 - Computational Mathematics
-target_users: Applied mathematicians, numerical analysts, optimization researchers (1-15 users)
+target_users: Applied mathematicians, numerical analysts, optimization researchers
+  (1-15 users)
 spack_packages:
   numerical_libraries:
   - openblas@0.3.23 %gcc@11.4.0 threads=openmp
@@ -157,3 +159,13 @@ aws_integration:
     cost_optimized: Use S3 for mathematical datasets and solution archives
     performance_optimized: Local NVMe for active computations and temporary files
     security: Encrypted storage for proprietary mathematical models
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

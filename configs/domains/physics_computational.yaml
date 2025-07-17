@@ -7,8 +7,7 @@ primary_domains:
 - High Energy Physics
 - Quantum Mechanics
 - Statistical Physics
-target_users: Physicists, theoretical researchers, HEP analysts
-  (1-25 users)
+target_users: Physicists, theoretical researchers, HEP analysts (1-25 users)
 spack_packages:
   quantum_mechanics:
   - quantum-espresso@7.2 %gcc@11.4.0 +mpi +openmp +scalapack +elpa
@@ -27,7 +26,8 @@ spack_packages:
   - crystal@23 %gcc@11.4.0 +mpi
   - kwant@1.4.3 %gcc@11.4.0 +python +mumps
   high_energy_physics:
-  - root@6.28.06 %gcc@11.4.0 +fortran +gdml +http +mathmore +minuit +python +roofit +tmva +unuran +vc +vdt +veccore +x
+  - root@6.28.06 %gcc@11.4.0 +fortran +gdml +http +mathmore +minuit +python +roofit
+    +tmva +unuran +vc +vdt +veccore +x
   - geant4@11.1.2 %gcc@11.4.0 +mpi +opengl +python +qt +threads +vecgeom
   - pythia8@8.309 %gcc@11.4.0 +shared +python +fastjet +hepmc
   - fastjet@3.4.0 %gcc@11.4.0 +python +plugins
@@ -65,7 +65,8 @@ spack_packages:
   - py-dolfin@2019.1.0 %gcc@11.4.0 +mpi +petsc +hdf5
   - py-firedrake@0.13.0 %gcc@11.4.0 +mpi +petsc
   machine_learning_physics:
-  - pytorch@2.0.1 %gcc@11.4.0 +cuda +distributed +kineto +magma +nccl +numa +onnx_ml +qnnpack +tensorpipe +xnnpack
+  - pytorch@2.0.1 %gcc@11.4.0 +cuda +distributed +kineto +magma +nccl +numa +onnx_ml
+    +qnnpack +tensorpipe +xnnpack
   - tensorflow@2.13.0 %gcc@11.4.0 +cuda +nccl +tensorrt
   - py-scikit-learn@1.3.0 %gcc@11.4.0 +blas+lapack
   - py-jax@0.4.14 %gcc@11.4.0 +cuda
@@ -169,10 +170,27 @@ demo_workflows:
   expected_runtime: 1-4 hours
   cost_estimate: 13.1
 physics_features:
-  quantum_frameworks: [Qiskit, Cirq, PennyLane, OpenFermion]
-  simulation_methods: [Monte_Carlo, DMRG, DFT, Molecular_Dynamics]
-  hep_tools: [ROOT, Geant4, Pythia, MadGraph, Sherpa]
-  numerical_solvers: [PETSc, Trilinos, SUNDIALS, HYPRE]
+  quantum_frameworks:
+  - Qiskit
+  - Cirq
+  - PennyLane
+  - OpenFermion
+  simulation_methods:
+  - Monte_Carlo
+  - DMRG
+  - DFT
+  - Molecular_Dynamics
+  hep_tools:
+  - ROOT
+  - Geant4
+  - Pythia
+  - MadGraph
+  - Sherpa
+  numerical_solvers:
+  - PETSc
+  - Trilinos
+  - SUNDIALS
+  - HYPRE
 mpi_optimizations:
   efa_enabled: true
   max_nodes: 32
@@ -203,3 +221,13 @@ aws_integration:
     cost_optimized: S3 Intelligent Tiering for simulation results
     performance_optimized: EFS for active calculations
     security: Encrypted storage for proprietary physics research
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

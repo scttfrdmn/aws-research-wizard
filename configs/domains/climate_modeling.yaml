@@ -150,3 +150,13 @@ aws_integration:
     cost_optimized: Use S3 Intelligent Tiering
     performance_optimized: Access from same AWS region
     security: Data encrypted in transit and at rest
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

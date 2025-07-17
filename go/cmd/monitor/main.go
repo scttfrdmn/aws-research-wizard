@@ -43,7 +43,7 @@ func main() {
 	// Add flags
 	rootCmd.PersistentFlags().StringVar(&region, "region", "us-east-1", "AWS region")
 	rootCmd.PersistentFlags().IntVar(&refreshRate, "refresh", 30, "Refresh interval in seconds")
-	rootCmd.PersistentFlags().StringVar(&stackName, "stack", "", "CloudFormation stack name to monitor")
+	rootCmd.PersistentFlags().StringVar(&stackName, "stack", "", "Terraform deployment name to monitor")
 	rootCmd.PersistentFlags().StringVar(&instanceID, "instance", "", "EC2 instance ID to monitor")
 	rootCmd.PersistentFlags().BoolVar(&showCosts, "costs", true, "Show cost tracking")
 	rootCmd.PersistentFlags().BoolVar(&showAlerts, "alerts", true, "Show alert status")
@@ -83,7 +83,7 @@ func runInteractiveMonitor(cmd *cobra.Command, args []string) {
 
 	// Create monitoring manager
 	monitoringManager := aws.NewMonitoringManager(awsClient)
-	infraManager := aws.NewInfrastructureManager(awsClient)
+	infraManager := aws.NewTerraformManager(awsClient, "")
 
 	// Configuration for the monitoring dashboard
 	config := &tui.MonitoringConfig{
@@ -227,7 +227,7 @@ func createInstancesCommand() *cobra.Command {
 				log.Fatalf("Failed to initialize AWS client: %v", err)
 			}
 
-			infraManager := aws.NewInfrastructureManager(awsClient)
+			infraManager := aws.NewTerraformManager(awsClient, "")
 
 			// List instances
 			filters := make(map[string][]string)
@@ -284,7 +284,7 @@ func createInstancesCommand() *cobra.Command {
 func createStacksCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "stacks",
-		Short: "Show CloudFormation stack status",
+		Short: "Show Terraform deployment status",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
 
@@ -293,16 +293,16 @@ func createStacksCommand() *cobra.Command {
 				log.Fatalf("Failed to initialize AWS client: %v", err)
 			}
 
-			infraManager := aws.NewInfrastructureManager(awsClient)
+			infraManager := aws.NewTerraformManager(awsClient, "")
 
 			if stackName != "" {
 				// Show specific stack
-				stackInfo, err := infraManager.GetStackInfo(ctx, stackName)
+				stackInfo, err := infraManager.GetDeploymentInfo(ctx)
 				if err != nil {
 					log.Fatalf("Failed to get stack info: %v", err)
 				}
 
-				fmt.Printf("📚 Stack: %s\n\n", stackInfo.StackName)
+				fmt.Printf("📚 Deployment: %s\n\n", stackInfo.WorkspaceName)
 				fmt.Printf("Status: %s\n", stackInfo.Status)
 				fmt.Printf("Created: %s\n", stackInfo.CreatedTime.Format(time.RFC3339))
 
@@ -317,14 +317,14 @@ func createStacksCommand() *cobra.Command {
 					}
 				}
 
-				if len(stackInfo.Parameters) > 0 {
-					fmt.Printf("\nParameters:\n")
-					for key, value := range stackInfo.Parameters {
-						fmt.Printf("  %s: %s\n", key, value)
+				if len(stackInfo.Resources) > 0 {
+					fmt.Printf("\nResources:\n")
+					for _, resource := range stackInfo.Resources {
+						fmt.Printf("  %s: %s\n", resource.Name, resource.Type)
 					}
 				}
 			} else {
-				fmt.Printf("📚 CloudFormation Stacks\n\n")
+				fmt.Printf("📚 Terraform Deployments\n\n")
 				fmt.Printf("Use --stack flag to view details of a specific stack.\n")
 				fmt.Printf("Example: aws-research-wizard-monitor stacks --stack my-research-stack\n")
 			}

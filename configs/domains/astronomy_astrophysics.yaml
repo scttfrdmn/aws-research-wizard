@@ -7,8 +7,7 @@ primary_domains:
 - Cosmological Simulations
 - Stellar Evolution
 - Gravitational Wave Analysis
-target_users: Astronomers, astrophysicists, cosmologists, data scientists
-  (1-30 users)
+target_users: Astronomers, astrophysicists, cosmologists, data scientists (1-30 users)
 spack_packages:
   astronomical_software:
   - casa@6.5.4 %gcc@11.4.0 +python +mpi
@@ -58,7 +57,8 @@ spack_packages:
   - py-reproject@0.11.0 %gcc@11.4.0
   - py-regions@0.7 %gcc@11.4.0
   machine_learning_astro:
-  - pytorch@2.0.1 %gcc@11.4.0 +cuda +distributed +kineto +magma +nccl +numa +onnx_ml +qnnpack +tensorpipe +xnnpack
+  - pytorch@2.0.1 %gcc@11.4.0 +cuda +distributed +kineto +magma +nccl +numa +onnx_ml
+    +qnnpack +tensorpipe +xnnpack
   - tensorflow@2.13.0 %gcc@11.4.0 +cuda +nccl +tensorrt
   - py-keras@2.13.1 %gcc@11.4.0
   - py-sklearn@1.3.0 %gcc@11.4.0
@@ -160,10 +160,30 @@ demo_workflows:
   expected_runtime: 2-6 hours
   cost_estimate: 8.2
 astronomy_features:
-  survey_support: [SDSS, LSST, HST, JWST, Gaia, TESS, Kepler]
-  simulation_codes: [GADGET, AREPO, RAMSES, ENZO, FLASH]
-  wave_analysis: [LALSUITE, bilby, PyCBC, GWpy]
-  ml_applications: [classification, regression, clustering, anomaly_detection]
+  survey_support:
+  - SDSS
+  - LSST
+  - HST
+  - JWST
+  - Gaia
+  - TESS
+  - Kepler
+  simulation_codes:
+  - GADGET
+  - AREPO
+  - RAMSES
+  - ENZO
+  - FLASH
+  wave_analysis:
+  - LALSUITE
+  - bilby
+  - PyCBC
+  - GWpy
+  ml_applications:
+  - classification
+  - regression
+  - clustering
+  - anomaly_detection
 mpi_optimizations:
   efa_enabled: true
   max_nodes: 64
@@ -194,3 +214,13 @@ aws_integration:
     cost_optimized: Glacier Deep Archive for historical survey data
     performance_optimized: S3 Standard for active research datasets
     security: Encrypted storage for pre-publication discoveries
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

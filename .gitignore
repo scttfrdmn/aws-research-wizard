@@ -1,0 +1,10 @@
+coverage.txt
+*.log
+.env
+.DS_Store
+dist/
+build/
+*.test
+*.out
+gosec.sarif
+releases/

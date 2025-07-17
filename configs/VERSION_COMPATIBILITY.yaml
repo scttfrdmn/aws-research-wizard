@@ -1,0 +1,121 @@
+---
+# Configuration Version Compatibility Matrix
+# AWS Research Wizard Configuration Versioning
+
+compatibility_matrix:
+  schema_versions:
+    "2.1.0":
+      release_date: "2025-07-03"
+      domain_config_versions: ["2.1.0", "2.0.0"]
+      terraform_versions: ["1.5.x", "1.6.x", "1.7.x"]
+      spack_versions: ["0.20.x", "0.21.x"]
+      aws_cli_versions: ["2.x.x"]
+      breaking_changes: []
+      new_features:
+        - "Added configuration versioning metadata"
+        - "Enhanced schema validation with version compatibility"
+        - "Terraform infrastructure integration"
+
+    "2.0.0":
+      release_date: "2025-01-15"
+      domain_config_versions: ["2.0.0"]
+      terraform_versions: ["1.4.x", "1.5.x"]
+      spack_versions: ["0.19.x", "0.20.x"]
+      aws_cli_versions: ["2.x.x"]
+      breaking_changes:
+        - "Added required aws_instance_recommendations field"
+        - "Restructured spack_packages from flat list to categorized format"
+        - "Changed cost estimation format to include detailed breakdown"
+      migration_required: true
+      migration_script: "scripts/migrate-v1-to-v2.py"
+
+deprecated_versions:
+  "1.x.x":
+    deprecation_date: "2025-01-15"
+    end_of_life: "2025-07-01"
+    migration_path: "Use scripts/migrate-v1-to-v2.py"
+    last_supported_version: "1.5.2"
+
+# Tool and Infrastructure Compatibility
+infrastructure_compatibility:
+  localstack_pro:
+    supported_versions: ["3.0.x", "3.1.x", "4.x.x"]
+    config_schema_versions: ["2.0.0", "2.1.0"]
+
+  terraform:
+    supported_versions: ["1.5.x", "1.6.x", "1.7.x"]
+    config_schema_versions: ["2.0.0", "2.1.0"]
+    provider_versions:
+      aws: "~> 5.0"
+      random: "~> 3.7"
+
+  spack:
+    supported_versions: ["0.20.x", "0.21.x"]
+    environment_format: "spack.yaml v1"
+    config_schema_versions: ["2.0.0", "2.1.0"]
+
+# Migration Support
+migration_support:
+  automated_migrations:
+    "1.x.x -> 2.0.0":
+      script: "scripts/migrate-v1-to-v2.py"
+      status: "available"
+      test_coverage: "100%"
+
+  manual_migrations:
+    "2.0.0 -> 2.1.0":
+      requirements:
+        - "Add config_version field"
+        - "Add config_metadata section"
+      effort: "minimal"
+      backward_compatible: true
+
+# Version Policy
+version_policy:
+  major_versions:
+    support_duration: "2 years"
+    deprecation_notice: "6 months"
+    breaking_changes: "allowed"
+
+  minor_versions:
+    support_duration: "1 year"
+    backward_compatible: "required"
+    new_features: "allowed"
+
+  patch_versions:
+    support_duration: "6 months"
+    bug_fixes_only: true
+    backward_compatible: "required"
+
+# Current Status
+current_status:
+  active_schema_version: "2.1.0"
+  recommended_config_version: "2.1.0"
+  minimum_supported_version: "2.0.0"
+
+  domain_configurations:
+    total: 27
+    needs_migration: 27  # All need config_version added
+    deprecated: 0
+
+  compatibility_issues:
+    critical: 0
+    warnings: 27  # Missing config_version fields
+
+# Validation Rules
+validation_rules:
+  version_format: "^\\d+\\.\\d+\\.\\d+$"
+
+  compatibility_checks:
+    - "config_version must be compatible with schema_version"
+    - "terraform_version must support current infrastructure modules"
+    - "spack_version must support package specifications"
+
+  required_migrations:
+    - from: "1.x.x"
+      to: "2.0.0"
+      mandatory: true
+    - from: "2.0.0"
+      to: "2.1.0"
+      mandatory: false
+      recommended: true

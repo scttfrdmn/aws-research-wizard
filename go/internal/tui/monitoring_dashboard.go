@@ -30,12 +30,12 @@ type MonitoringConfig struct {
 type MonitoringDashboard struct {
 	client            *aws.Client
 	monitoringManager *aws.MonitoringManager
-	infraManager      *aws.InfrastructureManager
+	infraManager      *aws.TerraformManager
 	config            *MonitoringConfig
 }
 
 // NewMonitoringDashboard creates a new monitoring dashboard
-func NewMonitoringDashboard(client *aws.Client, monitoring *aws.MonitoringManager, infra *aws.InfrastructureManager, config *MonitoringConfig) *MonitoringDashboard {
+func NewMonitoringDashboard(client *aws.Client, monitoring *aws.MonitoringManager, infra *aws.TerraformManager, config *MonitoringConfig) *MonitoringDashboard {
 	return &MonitoringDashboard{
 		client:            client,
 		monitoringManager: monitoring,

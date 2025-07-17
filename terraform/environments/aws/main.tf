@@ -170,6 +170,7 @@ resource "aws_instance" "research_node" {
     Budget      = var.monthly_budget
     Environment = "aws"
     Testing     = "true"
+    CreatedBy   = "AWS-Research-Wizard"
   }
 
   lifecycle {

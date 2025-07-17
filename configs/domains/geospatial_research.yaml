@@ -187,17 +187,17 @@ scaling_profiles:
     nodes: 1
     efficiency: 100
     use_case: Site-specific studies
-    spatial_extent: "< 100 km\xB2"
+    spatial_extent: < 100 km²
   regional_analysis:
     nodes: 2-4
     efficiency: 95
     use_case: Regional environmental monitoring
-    spatial_extent: "100 - 10,000 km\xB2"
+    spatial_extent: 100 - 10,000 km²
   continental_analysis:
     nodes: 8-16
     efficiency: 85
     use_case: Continental-scale land cover mapping
-    spatial_extent: "> 10,000 km\xB2"
+    spatial_extent: '> 10,000 km²'
 aws_integration:
   datasets_available: 4
   demo_workflows_available: 0
@@ -207,3 +207,13 @@ aws_integration:
     cost_optimized: Use S3 Intelligent Tiering
     performance_optimized: Access from same AWS region
     security: Data encrypted in transit and at rest
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

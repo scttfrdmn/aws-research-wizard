@@ -23,7 +23,8 @@ spack_packages:
   - gromacs@2023.3 %gcc@11.4.0 +mpi +openmp +cuda +python +blas +lapack +hwloc +plumed
   - amber@22 %gcc@11.4.0 +mpi +openmp +cuda +python +update
   - namd@3.0 %gcc@11.4.0 +mpi +cuda +python
-  - lammps@2023.08.02 %gcc@11.4.0 +mpi +openmp +python +molecule +class2 +kspace +manybody +mc +replica
+  - lammps@2023.08.02 %gcc@11.4.0 +mpi +openmp +python +molecule +class2 +kspace +manybody
+    +mc +replica
   - openmm@8.0.0 %gcc@11.4.0 +python +cuda +opencl
   - charmm@c48b2 %gcc@11.4.0 +mpi +openmp +cuda
   - tinker@8.10.3 %gcc@11.4.0 +openmp
@@ -62,7 +63,8 @@ spack_packages:
   - pmda@0.4.0 %gcc@11.4.0 +python +mpi
   - cpptraj@6.19.7 %gcc@11.4.0 +mpi +openmp +cuda
   machine_learning_chem:
-  - pytorch@2.0.1 %gcc@11.4.0 +cuda +distributed +kineto +magma +nccl +numa +onnx_ml +qnnpack +tensorpipe +xnnpack
+  - pytorch@2.0.1 %gcc@11.4.0 +cuda +distributed +kineto +magma +nccl +numa +onnx_ml
+    +qnnpack +tensorpipe +xnnpack
   - tensorflow@2.13.0 %gcc@11.4.0 +cuda +nccl +tensorrt
   - py-scikit-learn@1.3.0 %gcc@11.4.0 +blas+lapack
   - deepchem@2.7.1 %gcc@11.4.0 +python +tensorflow +torch
@@ -174,10 +176,28 @@ demo_workflows:
   expected_runtime: 1-4 hours
   cost_estimate: 12.2
 chemistry_features:
-  qm_methods: [DFT, HF, MP2, CCSD, CASSCF, TDDFT]
-  md_forcefields: [CHARMM, AMBER, OPLS, GROMOS]
-  sampling_methods: [metadynamics, umbrella_sampling, REMD, WHAM]
-  ml_applications: [QSAR, ADMET, drug_design, property_prediction]
+  qm_methods:
+  - DFT
+  - HF
+  - MP2
+  - CCSD
+  - CASSCF
+  - TDDFT
+  md_forcefields:
+  - CHARMM
+  - AMBER
+  - OPLS
+  - GROMOS
+  sampling_methods:
+  - metadynamics
+  - umbrella_sampling
+  - REMD
+  - WHAM
+  ml_applications:
+  - QSAR
+  - ADMET
+  - drug_design
+  - property_prediction
 mpi_optimizations:
   efa_enabled: true
   max_nodes: 16
@@ -208,3 +228,13 @@ aws_integration:
     cost_optimized: S3 Intelligent Tiering for simulation trajectories
     performance_optimized: EFS for active calculations
     security: Encrypted storage for proprietary drug discovery data
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

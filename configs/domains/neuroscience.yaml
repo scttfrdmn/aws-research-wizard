@@ -1,6 +1,6 @@
 name: Neuroscience & Brain Research Laboratory
-description: Comprehensive platform for computational neuroscience, brain imaging analysis,
-  neural network modeling, and neuroinformatics research
+description: Comprehensive platform for computational neuroscience, brain imaging
+  analysis, neural network modeling, and neuroinformatics research
 primary_domains:
 - Computational Neuroscience
 - Brain Imaging Analysis
@@ -57,7 +57,8 @@ spack_packages:
   - py-seaborn@0.12.2 %gcc@11.4.0
   - py-plotly@5.15.0 %gcc@11.4.0
   machine_learning_neuro:
-  - pytorch@2.0.1 %gcc@11.4.0 +cuda +distributed +kineto +magma +nccl +numa +onnx_ml +qnnpack +tensorpipe +xnnpack
+  - pytorch@2.0.1 %gcc@11.4.0 +cuda +distributed +kineto +magma +nccl +numa +onnx_ml
+    +qnnpack +tensorpipe +xnnpack
   - tensorflow@2.13.0 %gcc@11.4.0 +cuda +nccl +tensorrt
   - py-keras@2.13.1 %gcc@11.4.0
   - py-torch-geometric@2.3.1 %gcc@11.4.0
@@ -167,10 +168,30 @@ demo_workflows:
   expected_runtime: 6-12 hours
   cost_estimate: 45.2
 neuroscience_features:
-  imaging_modalities: [MRI, fMRI, DTI, EEG, MEG, PET, SPECT]
-  analysis_types: [structural, functional, connectivity, electrophysiology]
-  simulation_tools: [NEURON, NEST, Brian2, GENESIS, MOOSE]
-  ml_applications: [classification, segmentation, prediction, clustering]
+  imaging_modalities:
+  - MRI
+  - fMRI
+  - DTI
+  - EEG
+  - MEG
+  - PET
+  - SPECT
+  analysis_types:
+  - structural
+  - functional
+  - connectivity
+  - electrophysiology
+  simulation_tools:
+  - NEURON
+  - NEST
+  - Brian2
+  - GENESIS
+  - MOOSE
+  ml_applications:
+  - classification
+  - segmentation
+  - prediction
+  - clustering
 mpi_optimizations:
   efa_enabled: true
   max_nodes: 16
@@ -201,3 +222,13 @@ aws_integration:
     cost_optimized: Use S3 Intelligent Tiering for imaging archives
     performance_optimized: EFS for active analysis, S3 for long-term storage
     security: HIPAA-compliant encryption for clinical neuroimaging data
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

@@ -6,8 +6,19 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
+        args: ['--unsafe']  # Allow custom YAML tags
       - id: check-json
       - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-case-conflict
+
+  # YAML linting and validation
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        args: ['-c', '.yamllint.yaml']
+        types: [yaml]
 
   # Go linting and formatting (configured for go subdirectory)
   - repo: https://github.com/dnephin/pre-commit-golang
@@ -38,6 +49,22 @@ repos:
   #       pass_filenames: false
 
   # Security scanning will be handled by the comprehensive linting script
+
+  # Domain Pack Validation
+  - repo: local
+    hooks:
+      - id: domain-pack-validation
+        name: Domain Pack Schema Validation
+        entry: python3 scripts/validate-domain-configs.py
+        language: system
+        files: '^configs/domains/.*\.yaml$'
+        pass_filenames: false
+
+      - id: yaml-syntax-check
+        name: Advanced YAML Syntax Check
+        entry: python3 -c "import yaml; import sys; [yaml.safe_load(open(f)) for f in sys.argv[1:]]"
+        language: system
+        files: '\.ya?ml$'
 
   # Basic Go checks
   - repo: local

@@ -32,7 +32,7 @@ func main() {
 domain packs, monitoring, and cost optimization.
 
 This deployment tool provides:
-- CloudFormation stack management
+- Terraform infrastructure management
 - EC2 instance provisioning
 - Security group configuration
 - Monitoring setup
@@ -43,7 +43,7 @@ This deployment tool provides:
 	// Add flags
 	rootCmd.PersistentFlags().StringVar(&configRoot, "config", "", "Configuration root directory")
 	rootCmd.PersistentFlags().StringVar(&region, "region", "us-east-1", "AWS region")
-	rootCmd.PersistentFlags().StringVar(&stackName, "stack", "", "CloudFormation stack name")
+	rootCmd.PersistentFlags().StringVar(&stackName, "stack", "", "Terraform deployment name")
 	rootCmd.PersistentFlags().StringVar(&domainName, "domain", "", "Research domain name")
 	rootCmd.PersistentFlags().StringVar(&instanceType, "instance", "", "EC2 instance type")
 	rootCmd.PersistentFlags().BoolVar(&dryRun, "dry-run", false, "Show deployment plan without executing")
@@ -142,7 +142,7 @@ func deployDomain(ctx context.Context, awsClient *aws.Client) error {
 
 	if dryRun {
 		fmt.Printf("🔍 DRY RUN - Deployment plan:\n")
-		fmt.Printf("  1. Create CloudFormation stack: %s\n", stackName)
+		fmt.Printf("  1. Initialize Terraform workspace: %s\n", stackName)
 		fmt.Printf("  2. Launch EC2 instance: %s\n", selectedInstance)
 		fmt.Printf("  3. Configure security groups\n")
 		fmt.Printf("  4. Set up monitoring and alarms\n")
@@ -152,13 +152,10 @@ func deployDomain(ctx context.Context, awsClient *aws.Client) error {
 	}
 
 	// Create infrastructure manager
-	infraManager := aws.NewInfrastructureManager(awsClient)
+	infraManager := aws.NewTerraformManager(awsClient, "")
 
-	// Generate CloudFormation template
-	template, err := generateCloudFormationTemplate(domain, selectedInstance)
-	if err != nil {
-		return fmt.Errorf("failed to generate CloudFormation template: %w", err)
-	}
+	// Template generation no longer needed for Terraform
+	// CloudFormation template generation removed
 
 	// Create stack parameters
 	parameters := map[string]string{
@@ -167,31 +164,30 @@ func deployDomain(ctx context.Context, awsClient *aws.Client) error {
 		"KeyName":      "", // User should specify key pair
 	}
 
-	fmt.Printf("🏗️ Creating CloudFormation stack...\n")
+	fmt.Printf("🏗️ Deploying Terraform infrastructure...\n")
 
-	// Create the stack
-	stackInfo, err := infraManager.CreateStack(ctx, stackName, template, parameters)
-	if err != nil {
-		return fmt.Errorf("failed to create stack: %w", err)
+	// Initialize Terraform
+	if err := infraManager.InitTerraform(ctx); err != nil {
+		return fmt.Errorf("failed to initialize Terraform: %w", err)
 	}
 
-	fmt.Printf("✅ Stack creation initiated: %s\n", stackInfo.StackID)
-	fmt.Printf("⏳ Waiting for stack completion (timeout: %v)...\n", timeout)
-
-	// Wait for stack completion
-	finalStackInfo, err := infraManager.WaitForStackComplete(ctx, stackName, timeout)
+	// Apply deployment
+	deploymentInfo, err := infraManager.ApplyDeployment(ctx, parameters)
 	if err != nil {
-		return fmt.Errorf("stack deployment failed: %w", err)
+		return fmt.Errorf("failed to apply deployment: %w", err)
 	}
+
+	fmt.Printf("✅ Deployment completed successfully!\n")
+	finalStackInfo := deploymentInfo
 
 	fmt.Printf("🎉 Deployment completed successfully!\n\n")
-	fmt.Printf("Stack Details:\n")
-	fmt.Printf("  Name: %s\n", finalStackInfo.StackName)
+	fmt.Printf("Deployment Details:\n")
+	fmt.Printf("  Name: %s\n", finalStackInfo.WorkspaceName)
 	fmt.Printf("  Status: %s\n", finalStackInfo.Status)
 	fmt.Printf("  Created: %s\n", finalStackInfo.CreatedTime.Format(time.RFC3339))
 
 	if len(finalStackInfo.Outputs) > 0 {
-		fmt.Printf("\nStack Outputs:\n")
+		fmt.Printf("\nDeployment Outputs:\n")
 		for key, value := range finalStackInfo.Outputs {
 			fmt.Printf("  %s: %s\n", key, value)
 		}
@@ -205,112 +201,10 @@ func deployDomain(ctx context.Context, awsClient *aws.Client) error {
 	return nil
 }
 
+// generateCloudFormationTemplate is deprecated - replaced with Terraform
+// This function is kept for reference only and should not be used
 func generateCloudFormationTemplate(domain *config.DomainPack, instanceType string) (string, error) {
-	// This is a simplified template - in production, you'd have more sophisticated templates
-	template := fmt.Sprintf(`{
-  "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "AWS Research Wizard - %s Environment",
-  "Parameters": {
-    "InstanceType": {
-      "Type": "String",
-      "Default": "%s",
-      "Description": "EC2 instance type for the research environment"
-    },
-    "DomainName": {
-      "Type": "String",
-      "Default": "%s",
-      "Description": "Research domain name"
-    },
-    "KeyName": {
-      "Type": "AWS::EC2::KeyPair::KeyName",
-      "Description": "EC2 Key Pair for SSH access"
-    }
-  },
-  "Resources": {
-    "ResearchSecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "GroupDescription": "Security group for research environment",
-        "SecurityGroupIngress": [
-          {
-            "IpProtocol": "tcp",
-            "FromPort": 22,
-            "ToPort": 22,
-            "CidrIp": "0.0.0.0/0"
-          },
-          {
-            "IpProtocol": "tcp",
-            "FromPort": 8888,
-            "ToPort": 8888,
-            "CidrIp": "0.0.0.0/0"
-          }
-        ],
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "research-wizard-sg"
-          },
-          {
-            "Key": "Domain",
-            "Value": {"Ref": "DomainName"}
-          }
-        ]
-      }
-    },
-    "ResearchInstance": {
-      "Type": "AWS::EC2::Instance",
-      "Properties": {
-        "InstanceType": {"Ref": "InstanceType"},
-        "ImageId": "ami-0c02fb55956c7d316",
-        "KeyName": {"Ref": "KeyName"},
-        "SecurityGroupIds": [{"Ref": "ResearchSecurityGroup"}],
-        "UserData": {
-          "Fn::Base64": {
-            "Fn::Sub": "#!/bin/bash\nyum update -y\nyum install -y docker git\nservice docker start\necho 'Research environment setup complete' > /tmp/setup.log\n"
-          }
-        },
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "research-wizard-instance"
-          },
-          {
-            "Key": "Domain",
-            "Value": {"Ref": "DomainName"}
-          },
-          {
-            "Key": "CreatedBy",
-            "Value": "AWS-Research-Wizard"
-          }
-        ]
-      }
-    }
-  },
-  "Outputs": {
-    "InstanceId": {
-      "Description": "Instance ID of the research environment",
-      "Value": {"Ref": "ResearchInstance"}
-    },
-    "PublicIP": {
-      "Description": "Public IP address of the research environment",
-      "Value": {"Fn::GetAtt": ["ResearchInstance", "PublicIp"]}
-    },
-    "PrivateIP": {
-      "Description": "Private IP address of the research environment",
-      "Value": {"Fn::GetAtt": ["ResearchInstance", "PrivateIp"]}
-    },
-    "SecurityGroupId": {
-      "Description": "Security Group ID",
-      "Value": {"Ref": "ResearchSecurityGroup"}
-    },
-    "SSHCommand": {
-      "Description": "SSH command to connect to the instance",
-      "Value": {"Fn::Sub": "ssh -i ~/.ssh/${KeyName}.pem ec2-user@${ResearchInstance.PublicIp}"}
-    }
-  }
-}`, domain.Name, instanceType, domain.Name)
-
-	return template, nil
+	return "", fmt.Errorf("CloudFormation templates are deprecated - please use Terraform infrastructure in terraform/environments/aws/")
 }
 
 func createDeployCommand() *cobra.Command {
@@ -354,9 +248,9 @@ func createStatusCommand() *cobra.Command {
 				log.Fatalf("Failed to initialize AWS client: %v", err)
 			}
 
-			infraManager := aws.NewInfrastructureManager(awsClient)
+			infraManager := aws.NewTerraformManager(awsClient, "")
 
-			stackInfo, err := infraManager.GetStackInfo(ctx, stackName)
+			stackInfo, err := infraManager.GetDeploymentInfo(ctx)
 			if err != nil {
 				log.Fatalf("Failed to get stack info: %v", err)
 			}
@@ -394,7 +288,7 @@ func createDeleteCommand() *cobra.Command {
 				log.Fatalf("Failed to initialize AWS client: %v", err)
 			}
 
-			infraManager := aws.NewInfrastructureManager(awsClient)
+			infraManager := aws.NewTerraformManager(awsClient, "")
 
 			fmt.Printf("⚠️  Deleting stack: %s\n", stackName)
 			fmt.Printf("This action cannot be undone. Continue? (y/N): ")
@@ -407,7 +301,7 @@ func createDeleteCommand() *cobra.Command {
 				return
 			}
 
-			if err := infraManager.DeleteStack(ctx, stackName); err != nil {
+			if err := infraManager.DestroyDeployment(ctx, map[string]string{}); err != nil {
 				log.Fatalf("Failed to delete stack: %v", err)
 			}
 
@@ -427,7 +321,7 @@ func createListCommand() *cobra.Command {
 				log.Fatalf("Failed to initialize AWS client: %v", err)
 			}
 
-			infraManager := aws.NewInfrastructureManager(awsClient)
+			infraManager := aws.NewTerraformManager(awsClient, "")
 
 			// List instances with research wizard tags
 			filters := map[string][]string{

@@ -1,11 +1,13 @@
 name: Drug Discovery Laboratory
-description: Virtual screening, molecular docking, and ADMET prediction for computational drug discovery and pharmaceutical research
+description: Virtual screening, molecular docking, and ADMET prediction for computational
+  drug discovery and pharmaceutical research
 primary_domains:
 - Drug Discovery
 - Pharmaceutical Sciences
 - Computational Chemistry
 - Cheminformatics
-target_users: Medicinal chemists, pharmaceutical researchers, drug discovery teams (1-25 users)
+target_users: Medicinal chemists, pharmaceutical researchers, drug discovery teams
+  (1-25 users)
 spack_packages:
   molecular_docking:
   - autodock-vina@1.2.3 %gcc@11.4.0
@@ -147,3 +149,13 @@ aws_integration:
     cost_optimized: Use S3 for compound libraries and results storage
     performance_optimized: Local NVMe for active screening campaigns
     security: Encrypted storage for proprietary compound data
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

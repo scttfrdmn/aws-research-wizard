@@ -1,0 +1,46 @@
+# Conda package template for aws-research-wizard
+# This will be used to create the conda-forge recipe
+
+package:
+  name: aws-research-wizard
+  version: 0.3.0
+
+source:
+  url: https://github.com/aws-research-wizard/aws-research-wizard/releases/download/v0.3.0/aws-research-wizard-linux-amd64.tar.gz
+  sha256: # TO BE FILLED WITH ACTUAL SHA256
+
+build:
+  number: 0
+  script: |
+    mkdir -p ${PREFIX}/bin
+    cp aws-research-wizard ${PREFIX}/bin/
+    chmod +x ${PREFIX}/bin/aws-research-wizard
+
+requirements:
+  build:
+    - go >=1.21
+  run:
+    - terraform >=1.0
+    - aws-cli >=2.0
+
+test:
+  commands:
+    - aws-research-wizard --version
+    - aws-research-wizard config --help
+
+about:
+  home: https://github.com/aws-research-wizard/aws-research-wizard
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+  summary: Comprehensive AWS research environment creation and management tool
+  description: |
+    AWS Research Wizard provides pre-configured research packs with integrated
+    AWS Open Data access, high-performance computing optimizations, and automated
+    workflow execution capabilities across 27 scientific domains.
+  doc_url: https://github.com/aws-research-wizard/aws-research-wizard
+  dev_url: https://github.com/aws-research-wizard/aws-research-wizard
+
+extra:
+  recipe-maintainers:
+    - scttfrdmn

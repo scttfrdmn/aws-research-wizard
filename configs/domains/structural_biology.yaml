@@ -1,11 +1,13 @@
 name: Structural Biology Laboratory
-description: Molecular visualization, protein structure analysis, and molecular dynamics simulations for structural biology research
+description: Molecular visualization, protein structure analysis, and molecular dynamics
+  simulations for structural biology research
 primary_domains:
 - Structural Biology
 - Computational Biology
 - Protein Science
 - Molecular Dynamics
-target_users: Structural biologists, computational chemists, protein researchers (1-15 users)
+target_users: Structural biologists, computational chemists, protein researchers (1-15
+  users)
 spack_packages:
   visualization:
   - pymol@2.5.5 %gcc@11.4.0 +python
@@ -137,3 +139,13 @@ aws_integration:
     cost_optimized: Use S3 for structure storage and archival
     performance_optimized: Local NVMe for active simulations
     security: Encrypted trajectory storage for proprietary research
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning

@@ -1,6 +1,6 @@
 name: Economics & Finance Research Laboratory
-description: Quantitative platform for economic modeling, financial analysis,
-  risk management, and econometric research
+description: Quantitative platform for economic modeling, financial analysis, risk
+  management, and econometric research
 primary_domains:
 - Econometrics
 - Financial Economics
@@ -127,7 +127,7 @@ aws_instance_recommendations:
     vcpus: 32
     memory_gb: 64
     storage_gb: 2000
-    enhanced_networking: 100_Gbps
+    enhanced_networking: sr-iov
     cost_per_hour: 1.536
     use_case: High-frequency data analysis and low-latency trading
   portfolio_optimization:
@@ -188,10 +188,27 @@ demo_workflows:
   expected_runtime: 2-5 hours
   cost_estimate: 24.5
 finance_features:
-  asset_classes: [equities, bonds, commodities, currencies, derivatives, crypto]
-  risk_measures: [VaR, CVaR, expected_shortfall, maximum_drawdown]
-  optimization_methods: [mean_variance, black_litterman, risk_parity, robust]
-  ml_applications: [algorithmic_trading, risk_prediction, fraud_detection]
+  asset_classes:
+  - equities
+  - bonds
+  - commodities
+  - currencies
+  - derivatives
+  - crypto
+  risk_measures:
+  - VaR
+  - CVaR
+  - expected_shortfall
+  - maximum_drawdown
+  optimization_methods:
+  - mean_variance
+  - black_litterman
+  - risk_parity
+  - robust
+  ml_applications:
+  - algorithmic_trading
+  - risk_prediction
+  - fraud_detection
 mpi_optimizations:
   efa_enabled: false
   max_nodes: 8
@@ -222,3 +239,13 @@ aws_integration:
     cost_optimized: S3 Intelligent Tiering for historical market data
     performance_optimized: ElastiCache for real-time trading data
     security: Encrypted storage for proprietary trading algorithms
+config_version: 0.2.1-alpha
+config_metadata:
+  created: '2024-12-15'
+  last_modified: '2025-07-02'
+  schema_compatibility: 0.2.1-alpha
+  change_log:
+  - version: 0.2.1-alpha
+    date: '2025-07-02'
+    changes:
+    - Added configuration versioning
