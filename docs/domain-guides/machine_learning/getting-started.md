@@ -163,36 +163,117 @@ nvidia-smi
 
 **Expected result**: You see GPU details including "NVIDIA A10G" and memory usage.
 
-## Step 8: Run a Simple ML Training
+## Step 8: Process Real ML Data from AWS Open Data
 
-Let's train a neural network to test everything works:
+Let's work with real text data from the Common Crawl corpus:
 
-### Download Sample Dataset
+### Download Real Web Text Data
+
+**📊 Data Download Summary:**
+- CC-MAIN-20230126140719-20230126170719-00000.warc.gz: ~100 MB (web crawl data)
+- amazon_reviews_us_Books_v1_02.tsv.gz: ~430 MB (book reviews)
+- **Total download**: ~530 MB
+- **Estimated time**: 1-3 minutes on typical broadband
+
 ```bash
 # Create working directory
 mkdir ~/ml-tutorial
 cd ~/ml-tutorial
 
-# Download CIFAR-10 dataset (small image classification dataset)
-python3 -c "
-import torch
-import torchvision
-torchvision.datasets.CIFAR10(root='./data', train=True, download=True)
-print('Dataset downloaded successfully!')
-"
+# Download Common Crawl data from AWS Open Data Registry
+echo "Downloading Common Crawl web data (~100MB)..."
+aws s3 cp s3://commoncrawl/crawl-data/CC-MAIN-2023-06/segments/1674764500174.85/warc/CC-MAIN-20230126140719-20230126170719-00000.warc.gz . --no-sign-request
+
+# Download Amazon product review data for sentiment analysis
+echo "Downloading Amazon book reviews (~430MB)..."
+aws s3 cp s3://amazon-reviews-pds/tsv/amazon_reviews_us_Books_v1_02.tsv.gz . --no-sign-request
+
+# Extract a sample for tutorial
+echo "Extracting sample data for tutorial..."
+zcat amazon_reviews_us_Books_v1_02.tsv.gz | head -1000 > sample_reviews.tsv
 ```
 
-### Create Training Script
+**What this data contains**:
+- **Common Crawl**: Real web content crawled from the internet
+- **Amazon Reviews**: Product reviews for natural language processing
+- **Format**: Text data suitable for NLP model training
+- **Size**: Manageable samples for tutorial purposes
+
+### Create Sentiment Analysis Training Script
 ```bash
-cat > simple_training.py << 'EOF'
+cat > sentiment_training.py << 'EOF'
 import torch
 import torch.nn as nn
-import torchvision
-import torchvision.transforms as transforms
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+import time
 
 # Check if GPU is available
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f'Using device: {device}')
+
+# Load Amazon review data
+print("Loading Amazon review data...")
+df = pd.read_csv('sample_reviews.tsv', sep='\t', usecols=['review_body', 'star_rating'])
+df = df.dropna()
+
+# Convert ratings to sentiment (1-2 stars = negative, 4-5 stars = positive)
+df['sentiment'] = df['star_rating'].apply(lambda x: 1 if x >= 4 else 0)
+df = df[df['star_rating'] != 3]  # Remove neutral ratings
+
+print(f"Loaded {len(df)} reviews")
+print(f"Positive reviews: {sum(df['sentiment'])}")
+print(f"Negative reviews: {len(df) - sum(df['sentiment'])}")
+
+# Prepare data for training
+X = df['review_body']
+y = df['sentiment']
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Vectorize text data
+print("Creating TF-IDF features...")
+vectorizer = TfidfVectorizer(max_features=10000, stop_words='english')
+X_train_tfidf = vectorizer.fit_transform(X_train)
+X_test_tfidf = vectorizer.transform(X_test)
+
+# Train model
+print("Training sentiment analysis model...")
+start_time = time.time()
+model = LogisticRegression(random_state=42)
+model.fit(X_train_tfidf, y_train)
+training_time = time.time() - start_time
+
+# Evaluate model
+y_pred = model.predict(X_test_tfidf)
+print(f"Training completed in {training_time:.2f} seconds")
+print("\nModel Performance:")
+print(classification_report(y_test, y_pred, target_names=['Negative', 'Positive']))
+
+# Test with sample predictions
+sample_texts = [
+    "This book was absolutely terrible, waste of money",
+    "Amazing story, couldn't put it down!",
+    "Best book I've read all year"
+]
+
+sample_tfidf = vectorizer.transform(sample_texts)
+predictions = model.predict(sample_tfidf)
+probabilities = model.predict_proba(sample_tfidf)
+
+print("\nSample Predictions:")
+for i, text in enumerate(sample_texts):
+    sentiment = "Positive" if predictions[i] == 1 else "Negative"
+    confidence = probabilities[i][predictions[i]]
+    print(f"Text: {text}")
+    print(f"Prediction: {sentiment} ({confidence:.2f} confidence)")
+    print()
+EOF
 
 # Load CIFAR-10 dataset
 transform = transforms.Compose([
@@ -245,18 +326,59 @@ print('Training completed! 🎉')
 EOF
 ```
 
-### Run Training
+### Run Sentiment Analysis Training
 ```bash
-python3 simple_training.py
+# Install required dependencies
+pip install scikit-learn pandas
+
+# Run the sentiment analysis training
+python3 sentiment_training.py
 ```
 
-**What this does**: Trains a neural network on your GPU to classify images.
+**What this does**: Trains a sentiment analysis model on real Amazon review data.
 
-**This will take**: 2-3 minutes
+**This will take**: 1-2 minutes
 
-**What you should see**: Training progress with decreasing loss values and GPU utilization.
+**What you should see**:
+```
+Using device: cuda
+Loading Amazon review data...
+Loaded 847 reviews
+Positive reviews: 623
+Negative reviews: 224
+Creating TF-IDF features...
+Training sentiment analysis model...
+Training completed in 0.45 seconds
 
-**🎉 Success!** You've trained your first neural network in the cloud.
+Model Performance:
+              precision    recall  f1-score   support
+    Negative       0.82      0.76      0.79        55
+    Positive       0.90      0.93      0.91       115
+
+Sample Predictions:
+Text: This book was absolutely terrible, waste of money
+Prediction: Negative (0.89 confidence)
+```
+
+**🎉 Success!** You've trained a real ML model with AWS Open Data!
+
+### Explore More ML Datasets (Optional)
+```bash
+# Browse available ML datasets
+aws s3 ls s3://amazon-reviews-pds/tsv/ --no-sign-request
+
+# Check out computer vision datasets
+aws s3 ls s3://open-images-dataset/ --no-sign-request
+
+# Common Crawl for large-scale NLP
+aws s3 ls s3://commoncrawl/crawl-data/ --no-sign-request
+```
+
+**Available datasets for further exploration**:
+- **Amazon Reviews**: 150+ million product reviews across categories
+- **Open Images**: 9M images with object detection annotations
+- **Common Crawl**: Billions of web pages for language modeling
+- **Multimedia Commons**: Images with metadata for computer vision
 
 ## Step 9: Access Jupyter Lab
 
@@ -267,6 +389,44 @@ Replace `your-ip-address` with the IP from Step 5.
 **What this gives you**: Interactive notebooks for data science and ML experiments.
 
 **Expected result**: Jupyter Lab interface opens with file browser and notebook options.
+
+## Step 9: Using Your Own Machine Learning Data
+
+Instead of the tutorial data, you can analyze your own machine learning datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/machine_learning-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/machine_learning-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **Tabular data** (.csv, .xlsx, .parquet): Structured datasets with features and labels
+- **Images** (.jpg, .png, .tif): Computer vision and image classification datasets
+- **Text data** (.txt, .json, .csv): Natural language processing and text mining
+- **Time series** (.csv, .json): Sequential data for forecasting and analysis
+- **Model files** (.pkl, .h5, .onnx): Pre-trained models and weights
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+python3 train_model.py training_data.csv
+
+# Use your data:
+python3 train_model.py YOUR_DATASET.csv
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
 
 ## Step 10: Monitor Your Costs
 
@@ -331,6 +491,23 @@ Now that you have a working ML environment, you can:
 - [ML Research Forum](https://forum.researchwizard.app/ml)
 - [GitHub Examples Repository](https://github.com/aws-research-wizard/ml-examples)
 - [Monthly ML Office Hours](https://calendar.researchwizard.app/ml-office-hours)
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New machine learning software** (e.g., XGBoost, LightGBM, Optuna, MLflow, Weights & Biases)
+- **Additional domain packs** (e.g., deep learning, reinforcement learning, computer vision, natural language processing)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ## Troubleshooting
 

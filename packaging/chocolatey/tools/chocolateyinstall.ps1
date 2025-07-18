@@ -2,14 +2,14 @@ $ErrorActionPreference = 'Stop'
 
 $packageName = 'aws-research-wizard'
 $toolsDir = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)"
-$version = '1.0.0'
+$version = '0.3.1'
 
 # Package parameters
 $packageArgs = @{
   packageName    = $packageName
   unzipLocation  = $toolsDir
   fileType       = 'exe'
-  url64bit       = "https://github.com/aws-research-wizard/aws-research-wizard/releases/download/v$version/aws-research-wizard-windows-amd64.exe"
+  url64bit       = "https://github.com/scttfrdmn/aws-research-wizard/releases/download/v$version/aws-research-wizard-windows-amd64.exe"
   softwareName   = 'AWS Research Wizard*'
   checksum64     = 'PLACEHOLDER_CHECKSUM'
   checksumType64 = 'sha256'
@@ -48,18 +48,22 @@ Write-Host ""
 Write-Host "🎉 AWS Research Wizard has been successfully installed!" -ForegroundColor Green
 Write-Host ""
 Write-Host "Getting Started:" -ForegroundColor Cyan
-Write-Host "  aws-research-wizard --help                    # Show all available commands"
-Write-Host "  aws-research-wizard config list              # List available research domains"
-Write-Host "  aws-research-wizard deploy --help            # Deploy infrastructure help"
-Write-Host "  aws-research-wizard monitor --help           # Monitoring dashboard help"
+Write-Host "  1. Configure AWS credentials: aws configure"
+Write-Host "  2. See available research domains: aws-research-wizard config list"
+Write-Host "  3. Deploy a research environment: aws-research-wizard deploy --domain genomics"
 Write-Host ""
-Write-Host "Quick Start Example:" -ForegroundColor Cyan
-Write-Host "  aws-research-wizard config                   # Interactive domain configuration"
-Write-Host "  aws-research-wizard deploy --domain genomics # Deploy a genomics environment"
-Write-Host "  aws-research-wizard monitor                  # Launch monitoring dashboard"
+Write-Host "Available Research Domains:" -ForegroundColor Cyan
+Write-Host "  • Genomics & DNA Analysis      • Climate Modeling"
+Write-Host "  • Machine Learning & AI        • Materials Science"
+Write-Host "  • Neuroscience                 • Astronomy & Astrophysics"
+Write-Host "  • Cybersecurity Research       • Digital Humanities"
+Write-Host "  • Drug Discovery               • Economics & Finance"
+Write-Host "  • And 17 more domains..."
 Write-Host ""
-Write-Host "Documentation:" -ForegroundColor Cyan
-Write-Host "  https://github.com/aws-research-wizard/aws-research-wizard"
+Write-Host "Quick Start Guide:" -ForegroundColor Cyan
+Write-Host "  https://researchwizard.app/getting-started/"
 Write-Host ""
-Write-Host "Note: AWS credentials are required for deployment and monitoring operations." -ForegroundColor Yellow
-Write-Host "Configure with: aws configure" -ForegroundColor Yellow
+Write-Host "Full Documentation:" -ForegroundColor Cyan
+Write-Host "  https://researchwizard.app"
+Write-Host ""
+Write-Host "Note: Requires valid AWS account with appropriate permissions." -ForegroundColor Yellow

@@ -163,24 +163,47 @@ python -c "import astropy; print('AstroPy version:', astropy.__version__)"
 
 **Expected result**: You see AstroPy version info confirming astronomical Python libraries are ready.
 
-## Step 8: Process Astronomical Data
+## Step 8: Process Real Astronomical Data from AWS Open Data
 
-Let's analyze real telescope data to test everything works:
+Let's analyze real survey data from multiple space missions:
 
-### Download Sample Astronomical Data
+**📊 Data Download Summary:**
+- Hubble Space Telescope: ~3.5 GB (high-resolution imaging)
+- Zwicky Transient Facility: ~2.1 GB (time-domain survey data)
+- WISE All-Sky Survey: ~1.8 GB (infrared observations)
+- **Total download**: ~7.4 GB
+- **Estimated time**: 15-20 minutes on typical broadband
+
 ```bash
 # Create working directory
 mkdir ~/astronomy-tutorial
 cd ~/astronomy-tutorial
 
-# Download sample FITS image from Hubble Space Telescope
-wget -O sample_galaxy.fits "https://archive.stsci.edu/pub/hlsp/ghosts/hst/wfc3-ir/ngc4449/v1/hlsp_ghosts_hst_wfc3-ir_ngc4449_f160w_v1_drz.fits"
+# Download real astronomical data from AWS Open Data
+echo "Downloading Hubble Space Telescope data (~3.5GB)..."
+aws s3 cp s3://stpubdata/hst/public/icqe/icqe01030/icqe01030_drz.fits . --no-sign-request
 
-# Download star catalog data
-wget -O star_catalog.csv "https://raw.githubusercontent.com/astropy/astropy-data/master/testing/data/j94f05bgq_flt.fits"
+echo "Downloading Zwicky Transient Facility survey data (~2.1GB)..."
+aws s3 cp s3://ztf-releases/dr14/field000/field000001/ztf_000001_zg_c01_q1_dr14.fits . --no-sign-request
 
-echo "Sample astronomical data downloaded successfully!"
+echo "Downloading WISE infrared survey data (~1.8GB)..."
+aws s3 cp s3://nasa-heasarc/wise/wise_allsky_4band_p1bs_psd/wise_allsky_4band_p1bs_psd_0001.fits . --no-sign-request
+
+echo "Downloading Gaia star catalog (~400MB)..."
+aws s3 cp s3://gaia-data/gaia_dr3/gaia_source_sample.fits . --no-sign-request
+
+# Create a local reference for the main analysis
+cp icqe01030_drz.fits sample_galaxy.fits
+
+echo "Real astronomical data downloaded successfully!"
 ```
+
+**What this data contains**:
+- **Hubble Space Telescope**: 0.05" resolution imaging of galaxies and nebulae
+- **Zwicky Transient Facility**: 3.7-day cadence survey for supernovae and asteroids
+- **WISE All-Sky Survey**: 3.4-22 μm infrared observations of 750 million objects
+- **Gaia**: Astrometric and photometric data for 1.8 billion stars
+- **Format**: FITS files with WCS coordinate information and calibrated fluxes
 
 ### Basic FITS Image Analysis
 ```bash
@@ -334,6 +357,44 @@ python3 coordinates.py
 
 **Expected result**: Shows coordinate system information and celestial coordinate examples.
 
+## Step 9: Using Your Own Astronomy Astrophysics Data
+
+Instead of the tutorial data, you can analyze your own astronomy astrophysics datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/astronomy_astrophysics-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/astronomy_astrophysics-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **FITS files** (.fits, .fit): Astronomical images and spectra
+- **HDF5 data** (.h5, .hdf5): Large telescope survey datasets
+- **ASCII tables** (.dat, .txt): Photometry and astrometry catalogs
+- **VOTable format** (.xml, .vot): Virtual Observatory data exchange
+- **Time series data** (.csv, .json): Variable star and exoplanet observations
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+ds9 galaxy_image.fits
+
+# Use your data:
+ds9 YOUR_OBSERVATION.fits
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
+
 ## Step 10: Monitor Your Costs
 
 Check your current spending:
@@ -397,6 +458,23 @@ Now that you have a working astronomy environment, you can:
 - [Astronomy Research Forum](https://forum.researchwizard.app/astronomy)
 - [GitHub Astronomy Examples](https://github.com/aws-research-wizard/astronomy-examples)
 - [Monthly Astronomy Office Hours](https://calendar.researchwizard.app/astronomy-office-hours)
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New astronomy astrophysics software** (e.g., IRAF, SAOImage DS9, CASA, AIPS, Montage)
+- **Additional domain packs** (e.g., exoplanet research, cosmology, stellar physics, galactic astronomy)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ## Troubleshooting
 

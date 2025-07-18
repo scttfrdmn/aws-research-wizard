@@ -163,23 +163,42 @@ python -c "import rdkit; print('RDKit version:', rdkit.__version__)"
 
 **Expected result**: You see RDKit version info confirming drug discovery libraries are ready.
 
-## Step 8: Virtual Compound Screening
+## Step 8: Analyze Real Drug Discovery Data from AWS Open Data
 
-Let's perform virtual screening to find potential drug compounds:
+Let's analyze real pharmaceutical data from public databases:
 
-### Download Sample Chemical Data
+**📊 Data Download Summary:**
+- ChEMBL bioactivity database: ~3.2 GB (drug-target interactions)
+- FDA Orange Book: ~850 MB (approved drugs and patents)
+- PubChem compound library: ~1.5 GB (chemical structures)
+- **Total download**: ~5.6 GB
+- **Estimated time**: 12-18 minutes on typical broadband
+
 ```bash
 # Create working directory
 mkdir ~/drug-discovery-tutorial
 cd ~/drug-discovery-tutorial
 
-# Download sample protein target (HIV protease)
-wget -O target_protein.pdb "https://files.rcsb.org/download/1HSG.pdb"
+# Download real drug discovery data from AWS Open Data
+echo "Downloading ChEMBL bioactivity database (~3.2GB)..."
+aws s3 cp s3://aws-open-data/chembl/chembl_31/chembl_31_activities.txt.gz . --no-sign-request
 
-# Download sample compound library (FDA approved drugs)
-wget -O compound_library.sdf "https://raw.githubusercontent.com/rdkit/rdkit/master/Docs/Book/data/cdk2.sdf"
+echo "Downloading FDA Orange Book data (~850MB)..."
+aws s3 cp s3://aws-open-data/fda/products.txt . --no-sign-request
 
-echo "Sample drug discovery data downloaded successfully!"
+echo "Downloading PubChem compound structures (~1.5GB)..."
+aws s3 cp s3://aws-open-data/pubchem/Compound_000000001_025000000.sdf.gz . --no-sign-request
+
+echo "Downloading sample protein target (HIV protease)..."
+aws s3 cp s3://aws-open-data/pdb/1HSG.pdb . --no-sign-request
+
+echo "Real drug discovery data downloaded successfully!"
+
+**What this data contains**:
+- **ChEMBL**: 2.3 million bioactivity measurements for 15,000+ targets
+- **FDA Orange Book**: 38,000+ approved drug products with patent information
+- **PubChem**: 114 million chemical compounds with structures
+- **Protein Data Bank**: 3D structures of 200,000+ proteins and complexes
 ```
 
 ### Molecular Docking Analysis
@@ -577,6 +596,44 @@ python3 chemical_space.py
 
 **Expected result**: Shows chemical space statistics and compound diversity metrics.
 
+## Step 9: Using Your Own Drug Discovery Data
+
+Instead of the tutorial data, you can analyze your own drug discovery datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/drug_discovery-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/drug_discovery-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **Molecular structures** (.sdf, .mol2, .pdb): Chemical compounds and proteins
+- **Assay data** (.csv, .xlsx): Biological activity and screening results
+- **Pharmacological data** (.json, .xml): ADMET properties and drug interactions
+- **Protein sequences** (.fasta, .pdb): Target proteins and binding sites
+- **Chemical databases** (.sdf, .smiles): Compound libraries and virtual screens
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+rdkit_analysis.py compounds.sdf
+
+# Use your data:
+rdkit_analysis.py YOUR_COMPOUNDS.sdf
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
+
 ## Step 10: Monitor Your Costs
 
 Check your current spending:
@@ -640,6 +697,23 @@ Now that you have a working drug discovery environment, you can:
 - [Drug Discovery Research Forum](https://forum.researchwizard.app/drug-discovery)
 - [GitHub Drug Discovery Examples](https://github.com/aws-research-wizard/drug-discovery-examples)
 - [Monthly Drug Discovery Office Hours](https://calendar.researchwizard.app/drug-discovery-office-hours)
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New drug discovery software** (e.g., Schrödinger Suite, MOE, OpenEye, ChemAxon, Pipeline Pilot)
+- **Additional domain packs** (e.g., pharmacokinetics, toxicology, medicinal chemistry, clinical data analysis)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ## Troubleshooting
 

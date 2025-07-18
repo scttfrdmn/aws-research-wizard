@@ -1,0 +1,160 @@
+name: Feature Request
+description: Suggest a new feature or improvement for AWS Research Wizard
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please fill out the form below to help us understand your request.
+
+  - type: checkboxes
+    id: preliminary-checks
+    attributes:
+      label: Preliminary Checks
+      description: Please verify the following before submitting a feature request
+      options:
+        - label: I have searched existing issues to make sure this isn't a duplicate
+          required: true
+        - label: I have checked the roadmap to see if this feature is already planned
+          required: true
+        - label: This feature would benefit multiple users, not just my specific use case
+          required: true
+
+  - type: dropdown
+    id: feature-category
+    attributes:
+      label: Feature Category
+      description: What type of feature are you requesting?
+      options:
+        - New Research Domain
+        - Existing Domain Enhancement
+        - User Interface Improvement
+        - Performance Optimization
+        - Security Enhancement
+        - Documentation Improvement
+        - API/Integration Feature
+        - Installation/Deployment
+        - Other (please specify in description)
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: A clear and detailed description of the feature you'd like to see
+      placeholder: Describe the feature and what it would do
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve?
+      placeholder: Describe the problem or limitation this feature would address
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like this feature to work?
+      placeholder: Describe your proposed solution in detail
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Are there any alternative solutions or workarounds you've considered?
+      placeholder: Describe any alternative approaches you've thought about
+    validations:
+      required: false
+
+  - type: dropdown
+    id: research-domain
+    attributes:
+      label: Related Research Domain
+      description: Which research domain(s) would this feature primarily benefit?
+      options:
+        - All domains
+        - Genomics
+        - Climate Modeling
+        - Machine Learning
+        - Materials Science
+        - Neuroscience
+        - Astronomy & Astrophysics
+        - Cybersecurity Research
+        - Digital Humanities
+        - Drug Discovery
+        - Economics & Finance
+        - Chemistry & Materials
+        - Geoscience
+        - Mathematical Modeling
+        - Quantum Computing
+        - Other (please specify in description)
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would be helpful
+        - High - Important for my work
+        - Critical - Blocking my research
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Can you provide a specific use case or scenario where this feature would be valuable?
+      placeholder: Describe a real-world scenario where this feature would be used
+    validations:
+      required: true
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups or Examples
+      description: If applicable, provide mockups, screenshots, or examples of how this feature might look or work
+      placeholder: You can attach images or provide links to examples
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: implementation-help
+    attributes:
+      label: Implementation Help
+      description: Are you willing to help implement this feature?
+      options:
+        - label: I would be interested in helping implement this feature
+        - label: I can provide testing and feedback during development
+        - label: I can help with documentation for this feature
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that might be helpful
+      placeholder: Add any other context, links, or information about the feature request
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

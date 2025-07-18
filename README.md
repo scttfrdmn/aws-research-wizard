@@ -1,6 +1,6 @@
 # AWS Research Wizard
 
-> Build powerful research computers in the cloud. Works with 27 different science fields. Easy to use and cost-effective.
+> Easily run research workloads in the cloud. Works with 27 different science fields. Easy to use and cost-effective.
 
 ## 🚀 **v0.3.0 RELEASED** - Distribution & Documentation Release!
 
@@ -31,7 +31,7 @@
 
 ## 🎯 What This Does
 
-The AWS Research Wizard helps you set up powerful research computers in the cloud. You get:
+The AWS Research Wizard helps you easily run research workloads in the cloud. You get:
 
 - **Ready-to-use research environments** for 27 different science fields
 - **Access to massive datasets** - over 50 petabytes of real research data

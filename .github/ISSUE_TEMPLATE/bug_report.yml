@@ -1,0 +1,140 @@
+name: Bug Report
+description: Report a bug or issue with AWS Research Wizard
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the form below to help us reproduce and fix the issue.
+
+  - type: checkboxes
+    id: preliminary-checks
+    attributes:
+      label: Preliminary Checks
+      description: Please verify the following before submitting a bug report
+      options:
+        - label: I have searched existing issues to make sure this isn't a duplicate
+          required: true
+        - label: I am using the latest version of AWS Research Wizard
+          required: true
+        - label: I have read the documentation and troubleshooting guide
+          required: true
+
+  - type: dropdown
+    id: research-domain
+    attributes:
+      label: Research Domain
+      description: Which research domain were you using when the bug occurred?
+      options:
+        - Not domain-specific
+        - Genomics
+        - Climate Modeling
+        - Machine Learning
+        - Materials Science
+        - Neuroscience
+        - Astronomy & Astrophysics
+        - Cybersecurity Research
+        - Digital Humanities
+        - Drug Discovery
+        - Economics & Finance
+        - Chemistry & Materials
+        - Geoscience
+        - Mathematical Modeling
+        - Quantum Computing
+        - Other (please specify in description)
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: Describe what happened and what you expected to happen instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the behavior
+      placeholder: |
+        1. Run command '...'
+        2. Navigate to '...'
+        3. Click on '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What should have happened instead?
+      placeholder: Describe the expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and Error Messages
+      description: Please include any relevant log output or error messages
+      placeholder: |
+        Paste logs here (use triple backticks to format as code)
+        ```
+        Error message or log output
+        ```
+    validations:
+      required: false
+
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: Operating System
+      description: Which operating system are you using?
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other (please specify in description)
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: AWS Research Wizard Version
+      description: What version of AWS Research Wizard are you using?
+      placeholder: e.g., v0.3.0
+    validations:
+      required: true
+
+  - type: input
+    id: aws-region
+    attributes:
+      label: AWS Region
+      description: Which AWS region were you using?
+      placeholder: e.g., us-east-1
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other context about the problem
+      placeholder: Add any other context, screenshots, or information that might help
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

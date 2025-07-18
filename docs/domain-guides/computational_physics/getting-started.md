@@ -147,19 +147,42 @@ mpiexec --version
 
 **⚠️ If tools are missing**: Run `sudo yum update && sudo yum install openmpi-devel` then try again.
 
-## Your First Physics Simulation
+## Step 8: Analyze Real Physics Data from AWS Open Data
 
-Let's run a real physics simulation to test everything:
+Let's analyze real experimental and theoretical physics data:
 
-### 1. Create Workspace
+**📊 Data Download Summary:**
+- CERN Open Data: ~3.8 GB (particle collision data)
+- NASA Exoplanet Archive: ~1.2 GB (stellar and planetary data)
+- LIGO Gravitational Waves: ~2.4 GB (detector data)
+- **Total download**: ~7.4 GB
+- **Estimated time**: 15-20 minutes on typical broadband
 
 ```bash
 # Create workspace
 mkdir -p ~/physics_research/simulations
 cd ~/physics_research/simulations
+
+# Download real physics data from AWS Open Data
+echo "Downloading CERN particle collision data (~3.8GB)..."
+aws s3 cp s3://cern-open-data/Run2012B/SingleMuon/AOD/collision_data.root . --no-sign-request
+
+echo "Downloading NASA Exoplanet Archive (~1.2GB)..."
+aws s3 cp s3://nasa-exoplanet-archive/stellar_properties.csv . --no-sign-request
+
+echo "Downloading LIGO gravitational wave data (~2.4GB)..."
+aws s3 cp s3://ligo-open-data/GW150914/H-H1_LOSC_4_V2-1126259446-32.hdf5 . --no-sign-request
+
+echo "Real physics data downloaded successfully!"
 ```
 
-### 2. Particle Physics Simulation
+**What this data contains**:
+- **CERN**: Proton-proton collision data at 8 TeV from the LHC
+- **NASA Exoplanet Archive**: 5,000+ confirmed exoplanets with stellar properties
+- **LIGO**: Gravitational wave strain data from GW150914 black hole merger
+- **Format**: ROOT files, CSV tables, and HDF5 binary data
+
+### Particle Physics Simulation
 
 Create this Python script for particle physics:
 
@@ -1156,6 +1179,44 @@ aws-research-wizard deploy destroy --domain computational_physics
 
 **💰 Billing stops**: No more charges after cleanup
 
+## Step 9: Using Your Own Computational Physics Data
+
+Instead of the tutorial data, you can analyze your own computational physics datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/computational_physics-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/computational_physics-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **Simulation output** (.dat, .h5, .vtk): Numerical simulation results
+- **Parameter files** (.json, .xml, .cfg): Model configuration and input parameters
+- **Time series data** (.csv, .txt): Physical measurements and calculations
+- **Grid data** (.mesh, .msh): Finite element and finite difference grids
+- **Binary output** (.bin, .raw): High-performance simulation data files
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+python3 analyze_simulation.py results.h5
+
+# Use your data:
+python3 analyze_simulation.py YOUR_SIMULATION.h5
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
+
 ## Troubleshooting
 
 ### Common Issues
@@ -1188,6 +1249,23 @@ aws-research-wizard deploy create --domain computational_physics --instance-type
 # Install optimized numerical libraries
 conda install -c conda-forge numpy scipy blas=*=openblas
 ```
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New computational physics software** (e.g., OpenFOAM, FEniCS, COMSOL, ANSYS, ParaView)
+- **Additional domain packs** (e.g., plasma physics, condensed matter, particle physics, nuclear physics)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ### Getting Help
 

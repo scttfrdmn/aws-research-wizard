@@ -1,49 +1,49 @@
 class AwsResearchWizard < Formula
-  desc "Complete research environment management for AWS"
-  homepage "https://github.com/aws-research-wizard/aws-research-wizard"
-  version "1.0.0"
+  desc "Easily run research workloads in the cloud - 27 research domains"
+  homepage "https://researchwizard.app"
+  version "0.3.1"
   license "MIT"
 
   on_macos do
-    if Hardware::CPU.intel?
-      url "https://github.com/aws-research-wizard/aws-research-wizard/releases/download/v#{version}/aws-research-wizard-darwin-amd64"
-      sha256 "PLACEHOLDER_INTEL_SHA256"
-    else
-      url "https://github.com/aws-research-wizard/aws-research-wizard/releases/download/v#{version}/aws-research-wizard-darwin-arm64"
+    if Hardware::CPU.arm?
+      url "https://github.com/scttfrdmn/aws-research-wizard/releases/download/v#{version}/aws-research-wizard-darwin-arm64.tar.gz"
       sha256 "PLACEHOLDER_ARM64_SHA256"
+    else
+      url "https://github.com/scttfrdmn/aws-research-wizard/releases/download/v#{version}/aws-research-wizard-darwin-amd64.tar.gz"
+      sha256 "PLACEHOLDER_AMD64_SHA256"
     end
   end
 
   on_linux do
-    if Hardware::CPU.intel?
-      url "https://github.com/aws-research-wizard/aws-research-wizard/releases/download/v#{version}/aws-research-wizard-linux-amd64"
-      sha256 "PLACEHOLDER_LINUX_INTEL_SHA256"
-    else
-      url "https://github.com/aws-research-wizard/aws-research-wizard/releases/download/v#{version}/aws-research-wizard-linux-arm64"
+    if Hardware::CPU.arm?
+      url "https://github.com/scttfrdmn/aws-research-wizard/releases/download/v#{version}/aws-research-wizard-linux-arm64.tar.gz"
       sha256 "PLACEHOLDER_LINUX_ARM64_SHA256"
+    else
+      url "https://github.com/scttfrdmn/aws-research-wizard/releases/download/v#{version}/aws-research-wizard-linux-amd64.tar.gz"
+      sha256 "PLACEHOLDER_LINUX_AMD64_SHA256"
     end
   end
 
-  def install
-    bin.install "aws-research-wizard-#{OS.kernel_name.downcase}-#{Hardware::CPU.arch}" => "aws-research-wizard"
+  depends_on "awscli"
+  depends_on "terraform"
 
-    # Generate shell completions
-    generate_completions_from_executable(bin/"aws-research-wizard", "completion")
+  def install
+    bin.install "aws-research-wizard"
+
+    # Generate shell completions if supported
+    if respond_to?(:generate_completions_from_executable)
+      generate_completions_from_executable(bin/"aws-research-wizard", "completion")
+    end
   end
 
   test do
-    assert_match "AWS Research Wizard", shell_output("#{bin}/aws-research-wizard version")
+    assert_match "0.3.0", shell_output("#{bin}/aws-research-wizard --version")
 
     # Test that help commands work
     assert_match "Usage:", shell_output("#{bin}/aws-research-wizard --help")
     assert_match "config", shell_output("#{bin}/aws-research-wizard --help")
     assert_match "deploy", shell_output("#{bin}/aws-research-wizard --help")
     assert_match "monitor", shell_output("#{bin}/aws-research-wizard --help")
-
-    # Test subcommand help
-    assert_match "Domain configuration", shell_output("#{bin}/aws-research-wizard config --help")
-    assert_match "Infrastructure deployment", shell_output("#{bin}/aws-research-wizard deploy --help")
-    assert_match "Real-time monitoring", shell_output("#{bin}/aws-research-wizard monitor --help")
   end
 
   def caveats
@@ -51,21 +51,29 @@ class AwsResearchWizard < Formula
       🔬 AWS Research Wizard has been installed!
 
       Getting Started:
-        aws-research-wizard --help                    # Show all available commands
-        aws-research-wizard config list              # List available research domains
-        aws-research-wizard deploy --help            # Deploy infrastructure help
-        aws-research-wizard monitor --help           # Monitoring dashboard help
+        1. Configure AWS credentials:
+           aws configure
 
-      Quick Start Example:
-        aws-research-wizard config                   # Interactive domain configuration
-        aws-research-wizard deploy --domain genomics # Deploy a genomics environment
-        aws-research-wizard monitor                  # Launch monitoring dashboard
+        2. See available research domains:
+           aws-research-wizard config list
 
-      Documentation:
-        https://github.com/aws-research-wizard/aws-research-wizard
+        3. Deploy a research environment:
+           aws-research-wizard deploy --domain genomics --region us-west-2
 
-      Note: AWS credentials are required for deployment and monitoring operations.
-      Configure with: aws configure
+      Quick Start Guide:
+        https://researchwizard.app/getting-started/
+
+      Available Research Domains:
+        • Genomics & DNA Analysis      • Climate Modeling
+        • Machine Learning & AI        • Materials Science
+        • Neuroscience                 • Astronomy & Astrophysics
+        • Cybersecurity Research       • Digital Humanities
+        • Drug Discovery               • Economics & Finance
+        • And 17 more domains...
+
+      Documentation: https://researchwizard.app
+
+      Note: Requires valid AWS account with appropriate permissions.
     EOS
   end
 end

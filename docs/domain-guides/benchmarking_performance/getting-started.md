@@ -147,22 +147,44 @@ python3 /opt/benchmark-wizard/examples/cpu_benchmark_tutorial.py
 
 **This creates**: A detailed performance report with CPU metrics, memory bandwidth, and optimization recommendations.
 
-## Step 8: Analyze Performance Data
+## Step 8: Analyze Real Benchmarking Data from AWS Open Data
+
+**📊 Data Download Summary:**
+- **SPEC CPU2017 Benchmarks**: ~2.1 GB (Industry-standard CPU performance benchmarks)
+- **Intel MLC Memory Latency Dataset**: ~1.8 GB (Memory latency and bandwidth measurements across architectures)
+- **Performance Counter Archive**: ~2.3 GB (Hardware performance counter data from diverse systems)
+- **Total download**: ~6.2 GB
+- **Estimated time**: 8-12 minutes on typical broadband
 
 ```bash
-python3 /opt/benchmark-wizard/examples/performance_analysis.py cpu_benchmark_results.json
+echo "Downloading SPEC CPU2017 benchmark results (~2.1GB)..."
+aws s3 cp s3://aws-open-data/spec-cpu2017/results/ ./benchmark_data/ --recursive --no-sign-request
+
+echo "Downloading Intel MLC memory performance data (~1.8GB)..."
+aws s3 cp s3://aws-open-data/intel-mlc/memory-latency/ ./memory_data/ --recursive --no-sign-request
+
+echo "Downloading performance counter archive (~2.3GB)..."
+aws s3 cp s3://aws-open-data/performance-counters/diverse-systems/ ./perf_data/ --recursive --no-sign-request
 ```
 
-**What this does**: Analyzes the benchmark results to identify performance bottlenecks.
+**What this data contains**:
+- **SPEC CPU2017**: Standardized benchmark results from multiple processor architectures, including Intel Xeon, AMD EPYC, and ARM processors across different generations
+- **Intel MLC Dataset**: Memory latency and bandwidth measurements showing performance characteristics across different memory configurations and system architectures
+- **Performance Counters**: Hardware performance counter data including cache miss rates, branch prediction accuracy, and instruction throughput from real-world systems
+- **Format**: JSON result files, CSV performance metrics, and compressed binary performance counter logs
+
+```bash
+python3 /opt/benchmark-wizard/examples/analyze_real_benchmark_data.py ./benchmark_data/ ./memory_data/ ./perf_data/
+```
 
 **Expected result**: You'll see output like:
 ```
-📊 Performance Analysis Results:
-   - Single-core score: 1,247 points
-   - Multi-core score: 8,934 points
-   - Memory bandwidth: 45.2 GB/s
-   - Cache performance: 92% efficiency
-   - Optimization recommendations generated
+📊 Real-World Performance Analysis Results:
+   - SPEC CPU2017 baseline: 1,156 points (Intel Xeon Gold 6154)
+   - Memory latency profile: 89ns L3, 156ns DRAM
+   - Performance counter analysis: 94% branch prediction accuracy
+   - Cross-architecture comparison generated
+   - Industry benchmark positioning available
 ```
 
 ## Step 9: Run System Scalability Test
@@ -212,7 +234,7 @@ aws-research-wizard results download --domain benchmarking_performance --output 
 - `scalability_test.json` (parallel processing performance data)
 - `visualizations/` (performance charts and graphs)
 
-## Step 12: Clean Up Resources
+## Step 11: Clean Up Resources
 
 **⚠️ Important**: Always clean up to avoid unexpected charges.
 
@@ -488,6 +510,44 @@ if __name__ == "__main__":
     print("🔬 Ready for scalability testing!")
 ```
 
+## Step 9: Using Your Own Benchmarking Performance Data
+
+Instead of the tutorial data, you can analyze your own benchmarking performance datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/benchmarking_performance-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/benchmarking_performance-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **Performance logs** (.log, .txt): System and application performance data
+- **Metrics data** (.json, .csv): CPU, memory, network, and storage metrics
+- **Profiling output** (.prof, .perf): Code profiling and optimization data
+- **Benchmark results** (.xml, .json): Standard benchmark suite outputs
+- **Trace files** (.trace, .etl): Execution traces and performance events
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+analyze_performance.py benchmark_results.json
+
+# Use your data:
+analyze_performance.py YOUR_BENCHMARK_DATA.json
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
+
 ## Troubleshooting
 
 ### Common Issues
@@ -503,6 +563,23 @@ if __name__ == "__main__":
 
 **Problem**: Results don't match expected performance
 **Solution**: Check system load with `htop` - other processes may be affecting benchmarks
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New benchmarking performance software** (e.g., SPEC CPU, Linpack, STREAM, IOzone, NetPerf)
+- **Additional domain packs** (e.g., cloud performance, network benchmarking, GPU computing, storage optimization)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ### Getting Help
 

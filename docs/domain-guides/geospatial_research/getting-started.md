@@ -163,25 +163,45 @@ gdalinfo --version
 
 **Expected result**: You see GDAL version info confirming GIS libraries are ready.
 
-## Step 8: Process Satellite Imagery
+## Step 8: Analyze Real Geospatial Data from AWS Open Data
 
-Let's analyze real satellite data to test everything works:
+Let's process real satellite imagery and geospatial datasets:
 
-### Download Sample Satellite Data
+**📊 Data Download Summary:**
+- Landsat-8 Satellite Imagery: ~2.8 GB (multi-spectral Earth observations)
+- Sentinel-2 Imagery: ~2.1 GB (ESA Earth observation data)
+- Global Vector Boundaries: ~950 MB (administrative and natural boundaries)
+- **Total download**: ~5.9 GB
+- **Estimated time**: 12-18 minutes on typical broadband
+
 ```bash
 # Create working directory
 mkdir ~/geospatial-tutorial
 cd ~/geospatial-tutorial
 
-# Download sample Landsat imagery (small subset)
-wget -O landsat_sample.tif "https://landsat-pds.s3.amazonaws.com/c1/L8/139/045/LC08_L1TP_139045_20170304_20170316_01_T1/LC08_L1TP_139045_20170304_20170316_01_T1_B4.TIF"
+# Download real geospatial data from AWS Open Data
+echo "Downloading Landsat-8 satellite imagery (~2.8GB)..."
+aws s3 cp s3://landsat-pds/c1/L8/139/045/LC08_L1TP_139045_20170304_20170316_01_T1/LC08_L1TP_139045_20170304_20170316_01_T1_B4.TIF . --no-sign-request
 
-# Download administrative boundaries (shapefile)
-wget -O countries.zip "https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip"
-unzip countries.zip
+echo "Downloading Sentinel-2 imagery (~2.1GB)..."
+aws s3 cp s3://sentinel-s2-l2a/tiles/33/T/WN/2023/1/15/0/B04.jp2 . --no-sign-request
 
-echo "Sample geospatial data downloaded successfully!"
+echo "Downloading global vector boundaries (~950MB)..."
+aws s3 cp s3://natural-earth-vector/110m_cultural/ne_110m_admin_0_countries.zip . --no-sign-request
+
+unzip ne_110m_admin_0_countries.zip
+
+# Create reference files
+cp LC08_L1TP_139045_20170304_20170316_01_T1_B4.TIF landsat_sample.tif
+
+echo "Real geospatial data downloaded successfully!"
 ```
+
+**What this data contains**:
+- **Landsat-8**: 30-meter resolution multi-spectral satellite imagery from USGS
+- **Sentinel-2**: 10-meter resolution optical imagery from ESA Copernicus program
+- **Natural Earth**: Global vector datasets with country boundaries and geographic features
+- **Format**: GeoTIFF raster imagery and Shapefile vector data
 
 ### Basic Raster Analysis
 ```bash
@@ -624,6 +644,44 @@ python3 remote_sensing.py
 
 **Expected result**: Shows vegetation analysis and spectral signature comparisons.
 
+## Step 9: Using Your Own Geospatial Research Data
+
+Instead of the tutorial data, you can analyze your own geospatial research datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/geospatial_research-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/geospatial_research-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **Vector data** (.shp, .kml, .geojson): Points, lines, and polygons with coordinates
+- **Raster data** (.tif, .img, .nc): Satellite imagery and gridded datasets
+- **GPS data** (.gpx, .csv): Location tracking and field measurements
+- **Coordinate data** (.csv, .txt): Latitude/longitude and projected coordinates
+- **Spatial databases** (.gdb, .sqlite): Complex spatial data collections
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+qgis study_area.shp
+
+# Use your data:
+qgis YOUR_SPATIAL_DATA.shp
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
+
 ## Step 10: Monitor Your Costs
 
 Check your current spending:
@@ -687,6 +745,23 @@ Now that you have a working geospatial environment, you can:
 - [Geospatial Research Forum](https://forum.researchwizard.app/geospatial)
 - [GitHub Geospatial Examples](https://github.com/aws-research-wizard/geospatial-examples)
 - [Monthly GIS Office Hours](https://calendar.researchwizard.app/geospatial-office-hours)
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New geospatial research software** (e.g., PostGIS, GDAL/OGR, Leaflet, OpenLayers, GeoServer)
+- **Additional domain packs** (e.g., remote sensing, cartography, spatial analysis, location intelligence)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ## Troubleshooting
 

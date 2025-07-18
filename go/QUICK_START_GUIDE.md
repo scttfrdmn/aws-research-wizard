@@ -2,7 +2,7 @@
 
 ## 🚀 Get Started in 5 Minutes
 
-The AWS Research Wizard helps you set up powerful research computers in the cloud. It finds the best options for your work and saves you money.
+The AWS Research Wizard helps you easily run research workloads in the cloud. It finds the best options for your work and saves you money.
 
 ## ⚡ Easy Installation
 

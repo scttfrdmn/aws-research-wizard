@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Community Discussion
+    url: https://github.com/scttfrdmn/aws-research-wizard/discussions
+    about: Ask questions and discuss with the community
+  - name: 📖 Documentation
+    url: https://researchwizard.app
+    about: Read the documentation and tutorials
+  - name: 🚀 Quick Start Guide
+    url: https://researchwizard.app/getting-started/
+    about: Get started with AWS Research Wizard in 5 minutes

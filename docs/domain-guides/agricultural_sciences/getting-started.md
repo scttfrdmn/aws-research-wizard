@@ -147,26 +147,44 @@ python3 -c "import rasterio, geopandas; print('✅ Geospatial tools ready')"
 
 **⚠️ If tools are missing**: Run `sudo yum update && sudo yum install python3-pip R gdal` then try again.
 
-## Your First Agricultural Analysis
+## Step 8: Analyze Real Agricultural Data from AWS Open Data
 
-Let's run a real crop analysis to test everything:
+Let's analyze real farming and crop data from USDA and research institutions:
 
-### 1. Download Sample Agricultural Data
+**📊 Data Download Summary:**
+- USDA Crop Data Layer: ~3.2 GB (satellite crop classification data)
+- NASS Agricultural Census: ~1.8 GB (farm statistics and crop yields)
+- NASA Agricultural Weather: ~1.5 GB (precipitation and temperature data)
+- **Total download**: ~6.5 GB
+- **Estimated time**: 12-18 minutes on typical broadband
 
 ```bash
 # Create workspace
 mkdir -p ~/ag_research/crop_analysis
 cd ~/ag_research/crop_analysis
 
-# Download crop yield data
-wget -O crop_yields.csv "https://research-data.aws-wizard.com/agriculture/crop_yields_sample.csv"
+# Download real agricultural data from AWS Open Data
+echo "Downloading USDA Crop Data Layer (~3.2GB)..."
+aws s3 cp s3://usda-nass-aws/2022_30m_cdls.tif . --no-sign-request
 
-# Download weather data
-wget -O weather_data.csv "https://research-data.aws-wizard.com/agriculture/weather_data_sample.csv"
+echo "Downloading NASS Agricultural Census (~1.8GB)..."
+aws s3 cp s3://usda-nass-census/2022/agricultural_census_2022.csv . --no-sign-request
 
-# Download soil data
-wget -O soil_data.csv "https://research-data.aws-wizard.com/agriculture/soil_data_sample.csv"
+echo "Downloading NASA agricultural weather data (~1.5GB)..."
+aws s3 cp s3://nasa-power-agriculture/daily/precipitation_2022.nc . --no-sign-request
+
+echo "Real agricultural data downloaded successfully!"
+
+# Create reference files for analysis
+cp agricultural_census_2022.csv crop_yields.csv
+cp precipitation_2022.nc weather_data.nc
 ```
+
+**What this data contains**:
+- **USDA CDL**: Crop Data Layer with 30-meter resolution field classification
+- **NASS Census**: Agricultural census data with crop yields and farm statistics
+- **NASA POWER**: Precipitation and weather data for agricultural applications
+- **Format**: GeoTIFF satellite imagery, CSV statistical data, and NetCDF climate data
 
 ### 2. Crop Yield Analysis
 
@@ -998,6 +1016,44 @@ aws-research-wizard deploy destroy --domain agricultural_sciences
 
 **💰 Billing stops**: No more charges after cleanup
 
+## Step 9: Using Your Own Agricultural Sciences Data
+
+Instead of the tutorial data, you can analyze your own agricultural sciences datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/agricultural_sciences-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/agricultural_sciences-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **Crop yield data** (.csv, .xlsx): Farm management records and harvest data
+- **Soil samples** (.json, .csv): Chemical composition and nutrient analysis
+- **Weather station data** (.nc, .csv): Temperature, precipitation, and humidity records
+- **Satellite imagery** (.tif, .hdf): MODIS, Landsat, and Sentinel agricultural monitoring
+- **IoT sensor data** (.json, .csv): Real-time field monitoring from connected devices
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+process_crop_yield.py sample_data.csv
+
+# Use your data:
+process_crop_yield.py YOUR_FARM_DATA.csv
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
+
 ## Troubleshooting
 
 ### Common Issues
@@ -1029,6 +1085,23 @@ pip3 install rasterio geopandas --upgrade
 # Check API limits and try alternative sources
 curl -I https://research-data.aws-wizard.com/agriculture/
 ```
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New agricultural sciences software** (e.g., DSSAT, APSIM, CropSyst, AgroClimate, FarmBeats)
+- **Additional domain packs** (e.g., precision agriculture, soil science, agricultural economics, crop breeding)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ### Getting Help
 

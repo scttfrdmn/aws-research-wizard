@@ -3,10 +3,10 @@
 
 package:
   name: aws-research-wizard
-  version: 0.3.0
+  version: 0.3.1
 
 source:
-  url: https://github.com/aws-research-wizard/aws-research-wizard/releases/download/v0.3.0/aws-research-wizard-linux-amd64.tar.gz
+  url: https://github.com/scttfrdmn/aws-research-wizard/releases/download/v0.3.1/aws-research-wizard-linux-amd64.tar.gz
   sha256: # TO BE FILLED WITH ACTUAL SHA256
 
 build:
@@ -29,17 +29,24 @@ test:
     - aws-research-wizard config --help
 
 about:
-  home: https://github.com/aws-research-wizard/aws-research-wizard
+  home: https://researchwizard.app
   license: MIT
   license_family: MIT
   license_file: LICENSE
-  summary: Comprehensive AWS research environment creation and management tool
+  summary: Easily run research workloads in the cloud - 27 research domains with 20-minute tutorials
   description: |
-    AWS Research Wizard provides pre-configured research packs with integrated
-    AWS Open Data access, high-performance computing optimizations, and automated
-    workflow execution capabilities across 27 scientific domains.
-  doc_url: https://github.com/aws-research-wizard/aws-research-wizard
-  dev_url: https://github.com/aws-research-wizard/aws-research-wizard
+    AWS Research Wizard helps you easily run research workloads in the cloud
+    with pre-configured environments for 27 research domains. Features include:
+
+    - 20-minute step-by-step tutorials using real research data
+    - Pre-configured environments for genomics, climate modeling, machine learning, and more
+    - Smart cost optimization with spot instances and automatic scaling
+    - Real research data from AWS Open Data Registry (1000 Genomes, ERA5, TCGA)
+    - One-command deployment of complete research environments
+
+    No cloud expertise needed - just follow the tutorials and start researching!
+  doc_url: https://researchwizard.app
+  dev_url: https://github.com/scttfrdmn/aws-research-wizard
 
 extra:
   recipe-maintainers:

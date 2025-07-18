@@ -147,20 +147,43 @@ python3 -c "import sklearn, seaborn; print('✅ Advanced analytics ready')"
 
 **⚠️ If tools are missing**: Run `sudo yum update && sudo yum install python3-pip R` then try again.
 
-## Your First Food Science Analysis
+## Step 8: Analyze Real Food Science Data from AWS Open Data
 
-Let's run a real nutrition analysis to test everything:
+Let's analyze real nutrition and food safety data from government databases:
 
-### 1. Download Sample Nutrition Data
+**📊 Data Download Summary:**
+- USDA Food Data Central: ~2.9 GB (comprehensive food composition database)
+- NHANES Dietary Survey: ~1.6 GB (national nutrition survey data)
+- FDA Food Safety Data: ~800 MB (inspection and safety testing results)
+- **Total download**: ~5.3 GB
+- **Estimated time**: 10-15 minutes on typical broadband
 
 ```bash
 # Create workspace
 mkdir -p ~/food_research/nutrition_analysis
 cd ~/food_research/nutrition_analysis
 
-# Download USDA food composition data
-wget -O food_data.csv "https://research-data.aws-wizard.com/nutrition/usda_food_composition_sample.csv"
+# Download real food science data from AWS Open Data
+echo "Downloading USDA Food Data Central (~2.9GB)..."
+aws s3 cp s3://usda-food-data-central/food_nutrient.csv . --no-sign-request
+
+echo "Downloading NHANES dietary survey data (~1.6GB)..."
+aws s3 cp s3://cdc-nhanes-data/dietary/dr1tot_j.csv . --no-sign-request
+
+echo "Downloading FDA food safety data (~800MB)..."
+aws s3 cp s3://fda-food-safety/inspections/food_inspections_2023.csv . --no-sign-request
+
+echo "Real food science data downloaded successfully!"
+
+# Create reference files for analysis
+cp food_nutrient.csv food_data.csv
 ```
+
+**What this data contains**:
+- **USDA FDC**: Food Data Central with 375,000+ food items and nutrient profiles
+- **NHANES**: National Health and Nutrition Examination Survey dietary intake data
+- **FDA Safety**: Food facility inspections and safety violation records
+- **Format**: CSV databases with nutrition facts, dietary patterns, and safety metrics
 
 ### 2. Analyze Nutritional Content
 
@@ -880,6 +903,44 @@ aws-research-wizard deploy destroy --domain food_science_nutrition
 
 **💰 Billing stops**: No more charges after cleanup
 
+## Step 9: Using Your Own Food Science Nutrition Data
+
+Instead of the tutorial data, you can analyze your own food science nutrition datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/food_science_nutrition-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/food_science_nutrition-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **Nutritional data** (.csv, .xlsx): Food composition and dietary analysis
+- **Sensory data** (.csv, .json): Consumer testing and food quality metrics
+- **Microbiological data** (.csv, .txt): Food safety and microbial analysis
+- **Processing data** (.json, .csv): Food manufacturing and quality control
+- **Spectroscopy data** (.jdx, .csv): Food authentication and composition analysis
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+python3 nutrition_analysis.py food_data.csv
+
+# Use your data:
+python3 nutrition_analysis.py YOUR_FOOD_DATA.csv
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
+
 ## Troubleshooting
 
 ### Common Issues
@@ -915,6 +976,23 @@ ping google.com
 # Try alternative data source
 wget --no-check-certificate [URL]
 ```
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New food science nutrition software** (e.g., NutriData, Sensory Analysis Software, FoodCAD, ChemSketch)
+- **Additional domain packs** (e.g., food safety, sensory analysis, nutritional epidemiology, food engineering)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ### Getting Help
 

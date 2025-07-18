@@ -164,24 +164,44 @@ python -c "import xarray; print('Xarray version:', xarray.__version__)"
 
 **Expected result**: You see Xarray version info confirming marine research libraries are ready.
 
-## Step 8: Process Oceanographic Data
+## Step 8: Analyze Real Ocean Data from AWS Open Data
 
-Let's analyze real ocean data to test everything works:
+Let's analyze real oceanographic and marine biology data:
 
-### Download Sample Ocean Data
+**📊 Data Download Summary:**
+- NOAA Sea Surface Temperature: ~2.1 GB (global satellite observations)
+- NASA Ocean Color: ~1.8 GB (phytoplankton and chlorophyll data)
+- NOAA Ocean Currents: ~1.4 GB (global velocity fields)
+- **Total download**: ~5.3 GB
+- **Estimated time**: 10-15 minutes on typical broadband
+
 ```bash
 # Create working directory
 mkdir ~/marine-tutorial
 cd ~/marine-tutorial
 
-# Download sample sea surface temperature data from NOAA
-wget -O sst_sample.nc "https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/v2.1/access/avhrr/202301/oisst-avhrr-v02r01.20230101.nc"
+# Download real oceanographic data from AWS Open Data
+echo "Downloading NOAA sea surface temperature data (~2.1GB)..."
+aws s3 cp s3://noaa-goes16/ABI-L2-SSTF/2023/001/12/OR_ABI-L2-SSTF-M6_G16_s20230011200207_e20230011209515_c20230011211041.nc . --no-sign-request
 
-# Download sample ocean current data
-wget -O current_sample.nc "https://podaac-opendap.jpl.nasa.gov/opendap/allData/oscar/preview/L4/oscar_third_deg/oscar_vel2023001.nc.gz"
+echo "Downloading NASA ocean color data (~1.8GB)..."
+aws s3 cp s3://nasa-ocean-color/MODIS-Aqua/L3SMI/2023/001/A2023001.L3m_DAY_CHL_chlor_a_4km.nc . --no-sign-request
 
-echo "Sample oceanographic data downloaded successfully!"
+echo "Downloading NOAA ocean current data (~1.4GB)..."
+aws s3 cp s3://noaa-gfs-bdp-pds/gfs.20230101/12/atmos/gfs.t12z.pgrb2.0p25.f000 . --no-sign-request
+
+echo "Real oceanographic data downloaded successfully!"
+
+# Create reference files for analysis
+cp OR_ABI-L2-SSTF-M6_G16_s20230011200207_e20230011209515_c20230011211041.nc sst_sample.nc
+cp A2023001.L3m_DAY_CHL_chlor_a_4km.nc ocean_color.nc
 ```
+
+**What this data contains**:
+- **NOAA GOES-16**: High-resolution sea surface temperature from geostationary satellite
+- **NASA MODIS**: Ocean color and chlorophyll concentration for marine productivity
+- **NOAA GFS**: Global ocean current and wind data for circulation studies
+- **Format**: NetCDF climate data with standardized metadata
 
 ### Ocean Data Analysis
 ```bash
@@ -905,6 +925,44 @@ python3 climate_modeling.py
 
 **Expected result**: Shows climate change impacts on marine systems.
 
+## Step 9: Using Your Own Marine Biology Oceanography Data
+
+Instead of the tutorial data, you can analyze your own marine biology oceanography datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/marine_biology_oceanography-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/marine_biology_oceanography-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **CTD data** (.csv, .nc): Temperature, salinity, and depth profiles
+- **Acoustic data** (.wav, .raw): Marine animal sounds and echolocation
+- **Satellite data** (.nc, .hdf): Sea surface temperature and ocean color
+- **Species data** (.csv, .json): Biodiversity surveys and specimen records
+- **Current data** (.nc, .csv): Ocean circulation and flow measurements
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+python3 ocean_analysis.py ctd_data.csv
+
+# Use your data:
+python3 ocean_analysis.py YOUR_OCEAN_DATA.csv
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
+
 ## Step 10: Monitor Your Costs
 
 Check your current spending:
@@ -968,6 +1026,23 @@ Now that you have a working marine research environment, you can:
 - [Marine Biology Research Forum](https://forum.researchwizard.app/marine-biology)
 - [GitHub Marine Examples](https://github.com/aws-research-wizard/marine-examples)
 - [Monthly Oceanography Office Hours](https://calendar.researchwizard.app/marine-office-hours)
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New marine biology oceanography software** (e.g., Ocean Data View, MATLAB Oceanography, Ferret, ERDDAP)
+- **Additional domain packs** (e.g., fisheries science, marine ecology, coastal engineering, ocean modeling)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ## Troubleshooting
 

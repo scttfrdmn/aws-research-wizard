@@ -1,0 +1,64 @@
+# AWS Research Wizard Documentation Site Configuration
+title: "AWS Research Wizard"
+description: "Easily run research workloads in the cloud - 27 research domains with 20-minute tutorials"
+baseurl: ""
+url: "https://researchwizard.app"
+
+# Theme and appearance
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Site settings
+lang: en
+author:
+  name: "AWS Research Wizard Team"
+  email: "support@researchwizard.app"
+
+# Collections
+collections:
+  domains:
+    output: true
+    permalink: /domains/:name/
+  guides:
+    output: true
+    permalink: /guides/:name/
+
+# Navigation
+header_pages:
+  - index.md
+  - domain-guides/index.md
+
+# Markdown settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# Search
+search_enabled: true
+
+# Analytics (privacy-respecting)
+google_analytics: # To be added when ready
+
+# Social media
+github_username: scttfrdmn
+twitter_username: # To be added
+
+# Exclude from processing
+exclude:
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - DOCUMENTATION_OVERHAUL_PLAN.md
+  - STYLE_GUIDE.md
+  - templates/

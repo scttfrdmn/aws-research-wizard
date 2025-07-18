@@ -1,0 +1,155 @@
+name: Support Question
+description: Get help with using AWS Research Wizard
+title: "[Support]: "
+labels: ["question", "support"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reaching out for support! Please fill out the form below to help us assist you.
+
+        **Note**: For general questions and community discussion, consider using [GitHub Discussions](https://github.com/scttfrdmn/aws-research-wizard/discussions) instead.
+
+  - type: checkboxes
+    id: preliminary-checks
+    attributes:
+      label: Preliminary Checks
+      description: Please verify the following before asking for support
+      options:
+        - label: I have read the documentation and getting started guide
+          required: true
+        - label: I have searched existing issues and discussions for similar questions
+          required: true
+        - label: I have tried basic troubleshooting steps
+          required: true
+
+  - type: dropdown
+    id: question-type
+    attributes:
+      label: Question Type
+      description: What type of support do you need?
+      options:
+        - Installation/Setup Help
+        - Tutorial/Guide Clarification
+        - AWS Configuration Issues
+        - Cost/Billing Questions
+        - Performance Issues
+        - Best Practices Guidance
+        - Domain-Specific Questions
+        - Other (please specify in description)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: research-domain
+    attributes:
+      label: Research Domain
+      description: Which research domain is your question about?
+      options:
+        - General/Not domain-specific
+        - Genomics
+        - Climate Modeling
+        - Machine Learning
+        - Materials Science
+        - Neuroscience
+        - Astronomy & Astrophysics
+        - Cybersecurity Research
+        - Digital Humanities
+        - Drug Discovery
+        - Economics & Finance
+        - Chemistry & Materials
+        - Geoscience
+        - Mathematical Modeling
+        - Quantum Computing
+        - Other (please specify in description)
+    validations:
+      required: false
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: Please describe your question or the help you need
+      placeholder: Clearly describe what you're trying to do and what you need help with
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-tried
+    attributes:
+      label: What You've Tried
+      description: What steps have you already taken to solve this?
+      placeholder: |
+        Describe what you've tried so far, including:
+        - Commands you've run
+        - Documentation you've read
+        - Troubleshooting steps you've taken
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-setup
+    attributes:
+      label: Current Setup
+      description: Describe your current setup and configuration
+      placeholder: |
+        Include relevant details about:
+        - Operating system
+        - AWS Research Wizard version
+        - AWS region
+        - Any custom configurations
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-outcome
+    attributes:
+      label: Expected Outcome
+      description: What are you trying to achieve?
+      placeholder: Describe what you expect to happen or what you're trying to accomplish
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs-output
+    attributes:
+      label: Logs and Output
+      description: Please include any relevant command output or error messages
+      placeholder: |
+        Paste any relevant logs or output here (use triple backticks to format as code)
+        ```
+        Command output or error messages
+        ```
+    validations:
+      required: false
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgency Level
+      description: How urgent is this question?
+      options:
+        - Low - General question, no rush
+        - Medium - Helpful for current work
+        - High - Blocking current research
+        - Critical - Urgent deadline or issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that might be helpful
+      placeholder: Add any other context, links, or information that might help us assist you
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

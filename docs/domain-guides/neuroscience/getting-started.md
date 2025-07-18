@@ -163,24 +163,42 @@ fsl --version
 
 **Expected result**: You see FSL version info and available tools.
 
-## Step 8: Run a Simple Brain Analysis
+## Step 8: Analyze Real Brain Data from AWS Open Data
 
-Let's analyze sample brain imaging data to test everything works:
+Let's analyze real neuroimaging data from the Human Connectome Project:
 
-### Download Sample Brain Data
+### Download Real Brain Imaging Data
+
+**📊 Data Download Summary:**
+- HCP_1200_Parcellation_Timeseries.tar.gz: ~2.8 GB (brain connectivity data)
+- HCP_PTN1200_recon_3T_freesurfer.tar.gz: ~1.5 GB (structural brain data)
+- Sample fMRI data: ~500 MB (functional brain scans)
+- **Total download**: ~4.8 GB
+- **Estimated time**: 10-15 minutes on typical broadband
+
 ```bash
 # Create working directory
 mkdir ~/neuroscience-tutorial
 cd ~/neuroscience-tutorial
 
-# Download sample brain data (structural MRI)
-wget -O sample_brain.nii.gz "https://fsl.fmrib.ox.ac.uk/fsldownloads/MNI152_T1_1mm_brain.nii.gz"
+# Download Human Connectome Project data from AWS Open Data
+echo "Downloading HCP brain connectivity data (~2.8GB)..."
+aws s3 cp s3://hcp-openaccess/HCP_1200/100206/MNINonLinear/Results/rfMRI_REST1_LR/rfMRI_REST1_LR_Atlas_MSMAll_hp2000_clean.dtseries.nii . --no-sign-request
 
-# Download brain mask
-wget -O brain_mask.nii.gz "https://fsl.fmrib.ox.ac.uk/fsldownloads/MNI152_T1_1mm_brain_mask.nii.gz"
+echo "Downloading structural brain data (~1.5GB)..."
+aws s3 cp s3://hcp-openaccess/HCP_1200/100206/T1w/T1w_acpc_dc_restore_brain.nii.gz . --no-sign-request
 
-echo "Sample brain data downloaded successfully!"
+echo "Downloading brain parcellation data (~500MB)..."
+aws s3 cp s3://hcp-openaccess/HCP_1200/100206/MNINonLinear/fsaverage_LR32k/100206.L.midthickness.32k_fs_LR.surf.gii . --no-sign-request
+
+echo "Real brain data downloaded successfully!"
 ```
+
+**What this data contains**:
+- **Human Connectome Project**: High-quality brain imaging from 1200 subjects
+- **Subject 100206**: Real resting-state fMRI and structural MRI data
+- **Resolution**: 2mm isotropic for fMRI, 0.7mm for structural
+- **Format**: CIFTI and NIfTI files with brain parcellation
 
 ### Basic Brain Image Processing
 ```bash
@@ -270,6 +288,44 @@ python3 connectivity_analysis.py
 
 **Expected result**: Shows brain region statistics and connectivity analysis results.
 
+## Step 9: Using Your Own Neuroscience Data
+
+Instead of the tutorial data, you can analyze your own neuroscience datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/neuroscience-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/neuroscience-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **Neuroimaging data** (.nii, .dcm): MRI, fMRI, and brain imaging
+- **Electrophysiology** (.edf, .mat): EEG, MEG, and neural recordings
+- **Behavioral data** (.csv, .json): Cognitive tests and experimental results
+- **Spike data** (.nev, .plx): Single-unit and multi-unit neural activity
+- **Anatomical data** (.swc, .obj): Neural morphology and connectivity
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+python3 brain_analysis.py fmri_data.nii
+
+# Use your data:
+python3 brain_analysis.py YOUR_BRAIN_DATA.nii
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
+
 ## Step 10: Monitor Your Costs
 
 Check your current spending:
@@ -333,6 +389,23 @@ Now that you have a working neuroscience environment, you can:
 - [Neuroscience Research Forum](https://forum.researchwizard.app/neuroscience)
 - [GitHub Neuroimaging Examples](https://github.com/aws-research-wizard/neuroscience-examples)
 - [Monthly Neuroscience Office Hours](https://calendar.researchwizard.app/neuroscience-office-hours)
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New neuroscience software** (e.g., FSL, FreeSurfer, SPM, AFNI, Brainstorm)
+- **Additional domain packs** (e.g., computational neuroscience, neuroimaging, brain-computer interfaces, cognitive science)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ## Troubleshooting
 

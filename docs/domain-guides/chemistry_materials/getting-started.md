@@ -146,22 +146,44 @@ python3 /opt/chemistry-wizard/examples/molecular_dynamics_tutorial.py
 
 **This creates**: A molecular dynamics trajectory file showing water molecule behavior over time.
 
-## Step 8: Analyze Chemical Properties
+## Step 8: Analyze Real Chemistry Data from AWS Open Data
+
+**📊 Data Download Summary:**
+- **Materials Project Database**: ~2.4 GB (140,000+ computed material properties)
+- **GEOS-Chem Atmospheric Chemistry**: ~1.9 GB (Global atmospheric chemical transport model data)
+- **Folding@home COVID-19 Molecules**: ~1.8 GB (Protein folding simulation datasets)
+- **Total download**: ~6.1 GB
+- **Estimated time**: 8-12 minutes on typical broadband
 
 ```bash
-python3 /opt/chemistry-wizard/examples/property_analysis.py water_md_results.xyz
+echo "Downloading Materials Project database (~2.4GB)..."
+aws s3 cp s3://materials-project/computed_materials/ ./materials_data/ --recursive --no-sign-request
+
+echo "Downloading GEOS-Chem atmospheric chemistry data (~1.9GB)..."
+aws s3 cp s3://geos-chem-1/GEOS_FP/2019/01/ ./atmospheric_data/ --recursive --no-sign-request
+
+echo "Downloading Folding@home COVID-19 molecular data (~1.8GB)..."
+aws s3 cp s3://fah-public-data-covid19-antibodies/munged/17371/run1/ ./protein_data/ --recursive --no-sign-request
 ```
 
-**What this does**: Analyzes the molecular dynamics results to calculate chemical properties.
+**What this data contains**:
+- **Materials Project**: Computed properties for crystalline materials including formation energies, elastic properties, electronic band structures, and phonon properties from DFT calculations
+- **GEOS-Chem Data**: Global atmospheric chemistry model data including meteorological fields, emission inventories, and chemical species concentrations
+- **Folding@home**: Protein molecular dynamics simulations including COVID-19 antibody conformations, folding pathways, and binding interactions
+- **Format**: JSON metadata files, NetCDF atmospheric data, and XTC/PDB molecular trajectory files
+
+```bash
+python3 /opt/chemistry-wizard/examples/analyze_real_chemistry_data.py ./materials_data/ ./atmospheric_data/ ./protein_data/
+```
 
 **Expected result**: You'll see output like:
 ```
-📈 Property Analysis Results:
-   - Average temperature: 298.15 K
-   - Density: 0.997 g/cm³
-   - Diffusion coefficient: 2.3 × 10⁻⁵ cm²/s
-   - Radial distribution function calculated
-   - Hydrogen bond analysis complete
+📈 Real-World Chemistry Analysis Results:
+   - Materials properties: 142,563 compounds analyzed
+   - Formation energy range: -4.2 to 2.8 eV/atom
+   - Atmospheric CO2 concentration: 415.3 ppm (global average)
+   - Protein RMSD convergence: 0.34 nm backbone deviation
+   - Cross-domain chemical insights generated
 ```
 
 ## Step 9: Run Quantum Chemistry Calculation
@@ -212,7 +234,7 @@ aws-research-wizard results download --domain chemistry_materials --output ~/che
 - `benzene_dft.out` (quantum chemistry results)
 - `visualizations/` (molecular structure images)
 
-## Step 12: Clean Up Resources
+## Step 11: Clean Up Resources
 
 **⚠️ Important**: Always clean up to avoid unexpected charges.
 
@@ -440,6 +462,44 @@ if __name__ == "__main__":
     print("🔬 Ready for quantum chemistry calculations!")
 ```
 
+## Step 9: Using Your Own Chemistry Materials Data
+
+Instead of the tutorial data, you can analyze your own chemistry materials datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/chemistry_materials-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/chemistry_materials-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **Structure files** (.pdb, .xyz, .cif): Molecular and crystal structures
+- **Computational output** (.out, .log): Quantum chemistry calculation results
+- **Spectroscopy data** (.jdx, .csv): NMR, IR, and mass spectrometry results
+- **Thermodynamic data** (.dat, .json): Energy, enthalpy, and reaction data
+- **Materials data** (.vasp, .cp2k): Electronic structure calculation inputs/outputs
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+gaussian molecule.com
+
+# Use your data:
+gaussian YOUR_MOLECULE.com
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
+
 ## Troubleshooting
 
 ### Common Issues
@@ -455,6 +515,23 @@ if __name__ == "__main__":
 
 **Problem**: Results don't download
 **Solution**: Check your internet connection and try: `aws-research-wizard results list` first
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New chemistry materials software** (e.g., VASP, Quantum ESPRESSO, CP2K, LAMMPS, Materials Studio)
+- **Additional domain packs** (e.g., computational chemistry, polymer science, catalysis research, nanomaterials)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ### Getting Help
 

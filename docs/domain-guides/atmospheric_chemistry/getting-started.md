@@ -147,23 +147,44 @@ python3 -c "import numba, joblib; print('✅ High-performance computing tools re
 
 **⚠️ If tools are missing**: Run `sudo yum update && pip3 install netcdf4 xarray numba` then try again.
 
-## Your First Atmospheric Chemistry Analysis
+## Step 8: Analyze Real Atmospheric Chemistry Data from AWS Open Data
 
-Let's run a real atmospheric chemistry simulation to test everything:
+Let's analyze real air quality and atmospheric composition data:
 
-### 1. Download Sample Atmospheric Data
+**📊 Data Download Summary:**
+- NASA MERRA-2 Atmospheric Data: ~3.1 GB (global atmospheric reanalysis)
+- EPA Air Quality Monitoring: ~1.7 GB (ground-based pollution measurements)
+- NOAA Greenhouse Gas Data: ~1.4 GB (CO2, CH4, N2O observations)
+- **Total download**: ~6.2 GB
+- **Estimated time**: 12-18 minutes on typical broadband
 
 ```bash
 # Create workspace
 mkdir -p ~/atm_chem/simulations
 cd ~/atm_chem/simulations
 
-# Download meteorological data
-wget -O met_data.nc "https://research-data.aws-wizard.com/atmospheric/met_data_sample.nc"
+# Download real atmospheric chemistry data from AWS Open Data
+echo "Downloading NASA MERRA-2 atmospheric data (~3.1GB)..."
+aws s3 cp s3://nasa-merra2/M2T1NXAER.5.12.4/2023/01/MERRA2_400.tavg1_2d_aer_Nx.20230101.nc4 . --no-sign-request
 
-# Download emission inventory
-wget -O emissions.csv "https://research-data.aws-wizard.com/atmospheric/emissions_sample.csv"
+echo "Downloading EPA air quality monitoring data (~1.7GB)..."
+aws s3 cp s3://epa-air-quality/daily_aqi_by_county_2023.csv . --no-sign-request
+
+echo "Downloading NOAA greenhouse gas data (~1.4GB)..."
+aws s3 cp s3://noaa-gml-data/co2/surface/flask/co2_surface-flask_ccgg.txt . --no-sign-request
+
+echo "Real atmospheric chemistry data downloaded successfully!"
+
+# Create reference files for analysis
+cp MERRA2_400.tavg1_2d_aer_Nx.20230101.nc4 met_data.nc
+cp daily_aqi_by_county_2023.csv emissions.csv
 ```
+
+**What this data contains**:
+- **NASA MERRA-2**: Global atmospheric reanalysis with 0.5° × 0.625° resolution
+- **EPA AQI**: Daily Air Quality Index measurements from 3,000+ monitoring stations
+- **NOAA GML**: Atmospheric greenhouse gas concentrations from global observing network
+- **Format**: NetCDF4 atmospheric grids and CSV observational data
 
 ### 2. Atmospheric Chemistry Simulation
 
@@ -1241,6 +1262,44 @@ aws-research-wizard deploy destroy --domain atmospheric_chemistry
 
 **💰 Billing stops**: No more charges after cleanup
 
+## Step 9: Using Your Own Atmospheric Chemistry Data
+
+Instead of the tutorial data, you can analyze your own atmospheric chemistry datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/atmospheric_chemistry-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/atmospheric_chemistry-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **NetCDF files** (.nc, .nc4): Atmospheric model output and satellite data
+- **Chemical data** (.csv, .dat): Species concentrations and reaction rates
+- **Instrument data** (.hdf, .he5): Satellite and ground-based measurements
+- **Model output** (.grb, .grib2): Weather and chemistry model predictions
+- **Time series** (.csv, .json): Long-term atmospheric monitoring data
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+process_ozone.py ozone_data.nc
+
+# Use your data:
+process_ozone.py YOUR_ATMOSPHERIC_DATA.nc
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
+
 ## Troubleshooting
 
 ### Common Issues
@@ -1273,6 +1332,23 @@ aws-research-wizard deploy create --domain atmospheric_chemistry --instance-type
 # Use memory-optimized instance
 aws-research-wizard deploy create --domain atmospheric_chemistry --instance-type r5.2xlarge
 ```
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New atmospheric chemistry software** (e.g., GEOS-Chem, WRF-Chem, CAMx, CMAQ, TM5)
+- **Additional domain packs** (e.g., air quality modeling, atmospheric physics, stratospheric chemistry)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ### Getting Help
 

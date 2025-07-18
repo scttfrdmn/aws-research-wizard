@@ -1,18 +1,22 @@
-# AWS Research Wizard
+---
+layout: default
+title: AWS Research Wizard
+description: Easily run research workloads in the cloud - 27 research domains with 20-minute tutorials
+---
 
 <div class="hero">
-  <h1>Build Powerful Research Computers in the Cloud</h1>
+  <h1>Easily Run Research Workloads in the Cloud</h1>
   <p class="hero-subtitle">Easy-to-use tools that set up research computing for you. No cloud expertise needed. Clear costs. Works for 27 different science fields.</p>
 
   <div class="hero-buttons">
     <a href="getting-started/" class="btn btn-primary">🚀 Get Started</a>
-    <a href="https://github.com/aws-research-wizard/aws-research-wizard/releases" class="btn btn-secondary">📥 Download</a>
+    <a href="https://github.com/scttfrdmn/aws-research-wizard/releases" class="btn btn-secondary">📥 Download</a>
   </div>
 </div>
 
 ## What is AWS Research Wizard?
 
-AWS Research Wizard helps you set up powerful research computers in the cloud. You get:
+AWS Research Wizard helps you easily run research workloads in the cloud. You get:
 
 - **🎯 Ready-made research setups**: Pre-built environments for genomics, climate modeling, AI/ML, and 24 other fields
 - **⚡ One-command setup**: Launch complex research computing with a single command
@@ -25,7 +29,7 @@ Get up and running in 5 minutes:
 
 ```bash
 # Download and install
-wget https://github.com/aws-research-wizard/releases/latest/aws-research-wizard-linux-amd64.tar.gz
+wget https://github.com/scttfrdmn/aws-research-wizard/releases/latest/download/aws-research-wizard-linux-amd64.tar.gz
 tar -xzf aws-research-wizard-linux-amd64.tar.gz
 sudo mv aws-research-wizard /usr/local/bin/
 
@@ -97,17 +101,25 @@ Built-in workflows for common research tasks:
 
 - 📖 **[Step-by-Step Tutorials](domain-guides/index.md)**: 20-minute guides for each research area
 - 🚀 **[Quick Start Guide](getting-started/)**: Get running in 5 minutes
-- 💬 **[Community Forum](https://github.com/aws-research-wizard/aws-research-wizard/discussions)**: Ask questions and get help
-- 🐛 **[Report Problems](https://github.com/aws-research-wizard/aws-research-wizard/issues)**: Bug reports and feature requests
+- 💬 **[Community Forum](https://github.com/scttfrdmn/aws-research-wizard/discussions)**: Ask questions and get help
+- 🐛 **[Report Problems](https://github.com/scttfrdmn/aws-research-wizard/issues)**: Bug reports and feature requests
 
-## Contributing
+## Contributing & Extending
 
-AWS Research Wizard is open source and welcomes contributions:
+**🚀 AWS Research Wizard is an open research platform!** We welcome suggestions and contributions:
 
+### Suggest New Features
+- **[Request domain packs](https://github.com/scttfrdmn/aws-research-wizard/issues/new?template=domain_request.md)**: Missing your research field? Let us know!
+- **[Suggest software](https://github.com/scttfrdmn/aws-research-wizard/issues/new?template=software_request.md)**: Need specific tools added to a domain?
+- **[Share workflows](https://github.com/scttfrdmn/aws-research-wizard/discussions)**: Discuss research workflows and best practices
+
+### Contribute Code
 - **[Development Guide](contributing/development/)**: Set up your development environment
 - **[Creating Research Areas](contributing/domain-packs/)**: Add support for new research domains
 - **[Testing](contributing/testing/)**: Help improve reliability and coverage
 
+**Your suggestions drive our development roadmap** - this platform grows based on what researchers need!
+
 ## License
 
-AWS Research Wizard is released under the [MIT License](https://github.com/aws-research-wizard/aws-research-wizard/blob/main/LICENSE).
+AWS Research Wizard is released under the [MIT License](https://github.com/scttfrdmn/aws-research-wizard/blob/main/LICENSE).

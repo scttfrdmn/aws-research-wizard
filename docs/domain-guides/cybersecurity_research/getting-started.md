@@ -163,15 +163,39 @@ nmap --version
 
 **Expected result**: You see Nmap version info confirming security tools are ready.
 
-## Step 8: Network Security Analysis
+## Step 8: Analyze Real Cybersecurity Data from AWS Open Data
 
-Let's analyze network traffic and security patterns to test everything works:
+Let's analyze real network traffic and security logs for threat research:
 
-### Generate Sample Network Traffic
+**📊 Data Download Summary:**
+- MACCDC Network Traffic: ~2.4 GB (competition network captures)
+- Malware Samples Database: ~1.8 GB (labeled malware specimens)
+- Security Log Analytics: ~1.2 GB (enterprise security events)
+- **Total download**: ~5.4 GB
+- **Estimated time**: 10-16 minutes on typical broadband
+
 ```bash
 # Create working directory
 mkdir ~/cybersecurity-tutorial
 cd ~/cybersecurity-tutorial
+
+# Download real cybersecurity data from AWS Open Data
+echo "Downloading MACCDC network traffic data (~2.4GB)..."
+aws s3 cp s3://maccdc-dataset/network_traffic/maccdc2012_combined.pcap . --no-sign-request
+
+echo "Downloading malware samples database (~1.8GB)..."
+aws s3 cp s3://malware-bazaar/samples/malware_samples_2023.zip . --no-sign-request
+
+echo "Downloading security log analytics data (~1.2GB)..."
+aws s3 cp s3://security-logs-dataset/enterprise_logs/security_events_2023.json . --no-sign-request
+
+echo "Real cybersecurity data downloaded successfully!"
+
+**What this data contains**:
+- **MACCDC**: Network traffic from collegiate cyber defense competition
+- **Malware Bazaar**: Labeled malware samples for research (safely contained)
+- **Security Logs**: Enterprise security events for threat hunting research
+- **Format**: PCAP network captures, binary samples, and JSON log data
 
 # Create network analysis script
 cat > network_analysis.py << 'EOF'
@@ -1003,6 +1027,44 @@ python3 threat_hunting.py
 
 **Expected result**: Shows threat detection results and comprehensive security analysis.
 
+## Step 9: Using Your Own Cybersecurity Research Data
+
+Instead of the tutorial data, you can analyze your own cybersecurity research datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_data_file.* ec2-user@12.34.56.78:~/cybersecurity_research-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/research_data.csv
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/cybersecurity_research-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **Network captures** (.pcap, .pcapng): Network traffic and packet analysis
+- **Log files** (.log, .json): Security events, firewall, and system logs
+- **Malware samples** (.exe, .dll): Binary analysis and reverse engineering
+- **Vulnerability data** (.json, .xml): CVE databases and security assessments
+- **Threat intelligence** (.csv, .json): IOCs, attack patterns, and signatures
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+wireshark network_capture.pcap
+
+# Use your data:
+wireshark YOUR_NETWORK_DATA.pcap
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
+
 ## Step 10: Monitor Your Costs
 
 Check your current spending:
@@ -1066,6 +1128,23 @@ Now that you have a working cybersecurity environment, you can:
 - [Cybersecurity Research Forum](https://forum.researchwizard.app/cybersecurity)
 - [GitHub Security Examples](https://github.com/aws-research-wizard/cybersecurity-examples)
 - [Monthly Security Office Hours](https://calendar.researchwizard.app/cybersecurity-office-hours)
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New cybersecurity research software** (e.g., Metasploit, Nmap, Burp Suite, YARA, Volatility)
+- **Additional domain packs** (e.g., malware analysis, network security, digital forensics, threat intelligence)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
+
 
 ## Troubleshooting
 

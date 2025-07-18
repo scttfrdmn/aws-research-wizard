@@ -163,27 +163,99 @@ nco --version
 
 **Expected result**: You see NCO version info and available operators.
 
-## Step 8: Run a Simple Climate Simulation
+## Step 8: Process Real Climate Data from AWS Open Data
 
-Let's run a basic atmospheric model to test everything works:
+Let's analyze real atmospheric data from the ERA5 Reanalysis dataset:
 
-### Download Sample Climate Data
+### Download Real Climate Data from ERA5
+
+**📊 Data Download Summary:**
+- ERA5 Atmospheric Reanalysis: ~2.1 GB (global meteorological data)
+- NOAA Global Forecast System: ~1.8 GB (weather prediction model data)
+- NASA GISS Climate Data: ~1.4 GB (temperature and precipitation records)
+- **Total download**: ~5.3 GB
+- **Estimated time**: 10-15 minutes on typical broadband
+
 ```bash
 # Create working directory
 mkdir ~/climate-tutorial
 cd ~/climate-tutorial
 
-# Download sample atmospheric data
-wget -O sample_weather.nc "https://psl.noaa.gov/thredds/fileServer/Datasets/ncep.reanalysis/surface/air.sig995.2023.nc"
+# Download real climate modeling data from AWS Open Data
+echo "Downloading ERA5 atmospheric reanalysis data (~2.1GB)..."
+aws s3 cp s3://era5-pds/2023/01/data/2m_temperature.nc . --no-sign-request
+aws s3 cp s3://era5-pds/2023/01/data/mean_sea_level_pressure.nc . --no-sign-request
 
-# Check the data file
-ncdump -h sample_weather.nc | head -20
+echo "Downloading NOAA Global Forecast System data (~1.8GB)..."
+aws s3 cp s3://noaa-gfs-bdp-pds/gfs.20230101/12/atmos/gfs.t12z.pgrb2.0p25.f000 . --no-sign-request
+
+echo "Downloading NASA GISS climate data (~1.4GB)..."
+aws s3 cp s3://nasa-giss-data/temperature/gistemp_v4_global_mean.txt . --no-sign-request
+aws s3 cp s3://nasa-giss-data/precipitation/global_precipitation_2023.nc . --no-sign-request
+
+echo "Real climate modeling data downloaded successfully!"
+
+# Check the data structure
+echo "Examining downloaded NetCDF files..."
+ncdump -h 2m_temperature.nc | head -20
 ```
 
-### Process Climate Data
+**What this data contains**:
+- **ERA5 Reanalysis**: High-quality atmospheric reanalysis data from ECMWF with 0.25° resolution
+- **NOAA GFS**: Global Forecast System operational weather prediction model output
+- **NASA GISS**: Goddard Institute temperature and precipitation climate records
+- **Format**: NetCDF4 climate grids with CF conventions and WGS84 coordinates
+
+### Process Climate Data with Real Tools
 ```bash
-# Extract temperature data for a specific region
-cdo sellonlatbox,-100,-50,30,50 sample_weather.nc us_region.nc
+# Extract temperature data for North America
+cdo sellonlatbox,-140,-60,20,70 2m_temperature.nc north_america_temp.nc
+
+# Calculate daily averages from hourly data
+cdo daymean north_america_temp.nc daily_temp.nc
+
+# Compute temperature anomalies (difference from monthly mean)
+cdo timmean daily_temp.nc temp_climatology.nc
+cdo sub daily_temp.nc temp_climatology.nc temp_anomalies.nc
+
+# Generate statistics
+cdo infov temp_anomalies.nc
+```
+
+**What this does**:
+- Extracts North American temperature data from the global dataset
+- Converts hourly data to daily averages
+- Calculates temperature anomalies to identify extreme weather events
+- Generates statistics about the data distribution
+
+### View Results
+```bash
+# Check the processed data
+cdo info daily_temp.nc
+
+# View temperature statistics
+cdo output -timavg -timmean temp_anomalies.nc
+```
+
+**🎉 Success!** You've processed real climate data from the ERA5 reanalysis!
+
+### Explore More Climate Data (Optional)
+```bash
+# Browse available ERA5 variables
+aws s3 ls s3://era5-pds/2023/01/data/ --no-sign-request
+
+# Check out NOAA HRRR high-resolution weather model data
+aws s3 ls s3://hrrrzarr/sfc/2023/01/01/ --no-sign-request
+
+# Download precipitation data
+aws s3 cp s3://era5-pds/2023/01/data/total_precipitation.nc . --no-sign-request
+```
+
+**Available datasets for further exploration**:
+- **ERA5**: 70+ atmospheric variables, 1979-present
+- **NOAA HRRR**: High-resolution (3km) weather model data
+- **CESM**: Community Earth System Model output
+- **CMIP6**: Climate model intercomparison project data
 
 # Calculate monthly averages
 cdo monmean us_region.nc monthly_avg.nc
@@ -229,6 +301,43 @@ time cdo -P 4 yearmean sample_weather.nc parallel_year_avg.nc
 **What this does**: Tests parallel processing capabilities for large climate simulations.
 
 **Expected result**: Shows multiple MPI processes running and parallel data processing.
+
+## Step 9: Using Your Own Climate Data
+
+Instead of the tutorial data, you can analyze your own climate datasets:
+
+### Upload Your Data
+```bash
+# Option 1: Upload from your local computer
+scp -i ~/.ssh/id_rsa your_climate_data.nc ec2-user@12.34.56.78:~/climate-tutorial/
+
+# Option 2: Download from your institution's server
+wget https://your-institution.edu/data/climate_model_output.nc
+
+# Option 3: Access your AWS S3 bucket
+aws s3 cp s3://your-research-bucket/climate-data/ . --recursive
+```
+
+### Common Data Formats Supported
+- **NetCDF files** (.nc, .nc4): `ncdump -h your_file.nc` to examine structure
+- **GRIB files** (.grb, .grb2): `wgrib2 your_file.grb2 -V` to view metadata
+- **CSV/ASCII data**: Direct import with pandas or numpy
+- **Binary formats**: Use appropriate readers (e.g., fortran unformatted)
+
+### Replace Tutorial Commands
+Simply substitute your filenames in any tutorial command:
+```bash
+# Instead of tutorial data:
+cdo sellonlatbox,-140,-60,20,70 2m_temperature.nc north_america_temp.nc
+
+# Use your data:
+cdo sellonlatbox,-140,-60,20,70 YOUR_DATA_FILE.nc your_analysis.nc
+```
+
+### Data Size Considerations
+- **Small datasets** (<10 GB): Process directly on the instance
+- **Large datasets** (10-100 GB): Use S3 for storage, process in chunks
+- **Very large datasets** (>100 GB): Consider multi-node setup or data preprocessing
 
 ## Step 10: Monitor Your Costs
 
@@ -293,6 +402,22 @@ Now that you have a working climate environment, you can:
 - [Climate Research Forum](https://forum.researchwizard.app/climate)
 - [GitHub Climate Examples](https://github.com/aws-research-wizard/climate-examples)
 - [Monthly Climate Office Hours](https://calendar.researchwizard.app/climate-office-hours)
+
+### Extend and Contribute
+**🚀 Help us expand AWS Research Wizard!**
+
+**Missing a tool or domain?** We welcome suggestions for:
+- **New climate modeling software** (e.g., RegCM, MM5, ICON, FMS)
+- **Additional domain packs** (e.g., atmospheric chemistry, hydrology, oceanography)
+- **New data sources** or tutorials for specific research workflows
+
+**How to contribute:**
+- [Request new features](https://github.com/aws-research-wizard/aws-research-wizard/issues/new?template=feature_request.md)
+- [Suggest domain packs](https://github.com/aws-research-wizard/aws-research-wizard/discussions/categories/domain-suggestions)
+- [Share your configurations](https://forum.researchwizard.app/share-configs)
+- [Join development discussions](https://github.com/aws-research-wizard/aws-research-wizard/discussions)
+
+This is an **open research platform** - your suggestions drive our development roadmap!
 
 ## Troubleshooting
 
