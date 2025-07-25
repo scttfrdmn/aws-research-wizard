@@ -56,8 +56,36 @@ chown -R ec2-user:ec2-user /home/ec2-user/research
 # Install domain-specific packages (if any)
 if [ ! -z "${spack_packages}" ]; then
     echo "Installing Spack packages: ${spack_packages}"
-    # Note: This will be implemented in the next iteration
-    # su - ec2-user -c "source /opt/spack/share/spack/setup-env.sh && spack install ${spack_packages}"
+    echo "Starting package installation at $(date)"
+
+    # Create installation script with proper error handling
+    cat > /tmp/install_spack_packages.sh << 'SPACKEOF'
+#!/bin/bash
+source /opt/spack/share/spack/setup-env.sh
+
+# Split packages and try each one
+IFS=' ' read -ra PACKAGES <<< "$1"
+successful=0
+failed=0
+
+for package in "$${PACKAGES[@]}"; do
+    echo "Installing package: $package"
+    if spack install "$package"; then
+        echo "[SUCCESS] Successfully installed $package"
+        ((successful++))
+    else
+        echo "[ERROR] Failed to install $package"
+        ((failed++))
+    fi
+done
+
+echo "Installation summary: $successful successful, $failed failed"
+SPACKEOF
+
+    chmod +x /tmp/install_spack_packages.sh
+    su - ec2-user -c "/tmp/install_spack_packages.sh '${spack_packages}'"
+
+    echo "Package installation completed at $(date)"
 fi
 
 # Set up CloudWatch agent (for real AWS)

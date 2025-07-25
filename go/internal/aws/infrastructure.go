@@ -29,7 +29,7 @@ func NewTerraformManager(client *Client, terraformPath string) *TerraformManager
 	return &TerraformManager{
 		client:        client,
 		terraformPath: terraformPath,
-		workingDir:    "../terraform/environments/aws",
+		workingDir:    "terraform/environments/aws",
 	}
 }
 

@@ -1,0 +1,487 @@
+[
+  {
+    "domain": "agricultural_sciences",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 4): deploy create"
+  },
+  {
+    "domain": "agricultural_sciences",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 12): tools install"
+  },
+  {
+    "domain": "agricultural_sciences",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 16): deploy create"
+  },
+  {
+    "domain": "agricultural_sciences",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 3: \"\"\""
+  },
+  {
+    "domain": "agricultural_sciences",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 6: \"\"\""
+  },
+  {
+    "domain": "agricultural_sciences",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 3: \"\"\""
+  },
+  {
+    "domain": "agricultural_sciences",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 6: \"\"\""
+  },
+  {
+    "domain": "astronomy_astrophysics",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "astronomy_astrophysics",
+    "severity": "warning",
+    "issue": "Data download size 7.4GB outside target range 4-7GB"
+  },
+  {
+    "domain": "atmospheric_chemistry",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 4): deploy create"
+  },
+  {
+    "domain": "atmospheric_chemistry",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 12): tools install"
+  },
+  {
+    "domain": "atmospheric_chemistry",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 18): deploy create"
+  },
+  {
+    "domain": "atmospheric_chemistry",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 19): deploy create"
+  },
+  {
+    "domain": "atmospheric_chemistry",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 3: \"\"\""
+  },
+  {
+    "domain": "atmospheric_chemistry",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 6: \"\"\""
+  },
+  {
+    "domain": "atmospheric_chemistry",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 3: \"\"\""
+  },
+  {
+    "domain": "atmospheric_chemistry",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 6: \"\"\""
+  },
+  {
+    "domain": "benchmarking_performance",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 7: .+ Tools"
+  },
+  {
+    "domain": "benchmarking_performance",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "benchmarking_performance",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 4): deploy create"
+  },
+  {
+    "domain": "benchmarking_performance",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 10): results view"
+  },
+  {
+    "domain": "benchmarking_performance",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 11): results download"
+  },
+  {
+    "domain": "benchmarking_performance",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 15): deploy create"
+  },
+  {
+    "domain": "benchmarking_performance",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 16): deploy create"
+  },
+  {
+    "domain": "benchmarking_performance",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 17): deploy create"
+  },
+  {
+    "domain": "chemistry_materials",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 7: .+ Tools"
+  },
+  {
+    "domain": "chemistry_materials",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "chemistry_materials",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 4): deploy create"
+  },
+  {
+    "domain": "chemistry_materials",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 10): results view"
+  },
+  {
+    "domain": "chemistry_materials",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 11): results download"
+  },
+  {
+    "domain": "chemistry_materials",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 15): deploy create"
+  },
+  {
+    "domain": "chemistry_materials",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 16): deploy create"
+  },
+  {
+    "domain": "chemistry_materials",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 17): deploy create"
+  },
+  {
+    "domain": "climate_modeling",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "climate_modeling",
+    "severity": "warning",
+    "issue": "--no-sign-request used outside S3 cp (block 10): aws s3 ls s3://era5-pds/2023/01/data/ --no-sign-request"
+  },
+  {
+    "domain": "climate_modeling",
+    "severity": "warning",
+    "issue": "--no-sign-request used outside S3 cp (block 10): aws s3 ls s3://hrrrzarr/sfc/2023/01/01/ --no-sign-request"
+  },
+  {
+    "domain": "computational_physics",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 4): deploy create"
+  },
+  {
+    "domain": "computational_physics",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 12): tools install"
+  },
+  {
+    "domain": "computational_physics",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 18): deploy create"
+  },
+  {
+    "domain": "computational_physics",
+    "severity": "warning",
+    "issue": "Data download size 7.4GB outside target range 4-7GB"
+  },
+  {
+    "domain": "computational_physics",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 3: \"\"\""
+  },
+  {
+    "domain": "computational_physics",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 6: \"\"\""
+  },
+  {
+    "domain": "computational_physics",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 3: \"\"\""
+  },
+  {
+    "domain": "computational_physics",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 6: \"\"\""
+  },
+  {
+    "domain": "computational_physics",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 32: \"\"\""
+  },
+  {
+    "domain": "computational_physics",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 35: \"\"\""
+  },
+  {
+    "domain": "computational_physics",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 227: \"\"\""
+  },
+  {
+    "domain": "computational_physics",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 230: \"\"\""
+  },
+  {
+    "domain": "cybersecurity_research",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "digital_humanities",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "drug_discovery",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "finops_economics",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "food_science_nutrition",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 4): deploy create"
+  },
+  {
+    "domain": "food_science_nutrition",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 14): tools install"
+  },
+  {
+    "domain": "food_science_nutrition",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 3: \"\"\""
+  },
+  {
+    "domain": "food_science_nutrition",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 6: \"\"\""
+  },
+  {
+    "domain": "food_science_nutrition",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 3: \"\"\""
+  },
+  {
+    "domain": "food_science_nutrition",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 6: \"\"\""
+  },
+  {
+    "domain": "food_science_nutrition",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 12, line 3: \"\"\""
+  },
+  {
+    "domain": "food_science_nutrition",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 12, line 6: \"\"\""
+  },
+  {
+    "domain": "forestry_natural_resources",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 4): deploy create"
+  },
+  {
+    "domain": "forestry_natural_resources",
+    "severity": "error",
+    "issue": "Step numbering inconsistent. Expected: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], Found: [1, 2, 3, 4, 5, 6, 7, 8, 10, 9]"
+  },
+  {
+    "domain": "genomics",
+    "severity": "warning",
+    "issue": "--no-sign-request used outside S3 cp (block 16): aws s3 ls s3://1000genomes/phase3/data/ --no-sign-request | head -20"
+  },
+  {
+    "domain": "genomics",
+    "severity": "warning",
+    "issue": "--no-sign-request used outside S3 cp (block 16): aws s3 ls s3://tcga-2-open/ --no-sign-request | grep -E \"TCGA-(LUAD|COAD|PRAD)\""
+  },
+  {
+    "domain": "genomics",
+    "severity": "warning",
+    "issue": "--no-sign-request used outside S3 cp (block 16): aws s3 ls s3://gnomad-public-us-east-1/release/3.1.2/coverage/ --no-sign-request"
+  },
+  {
+    "domain": "geoscience",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 4): deploy create"
+  },
+  {
+    "domain": "geoscience",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 10): tools install"
+  },
+  {
+    "domain": "geoscience",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 16): deploy create"
+  },
+  {
+    "domain": "geoscience",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 17): deploy create"
+  },
+  {
+    "domain": "geoscience",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 3: \"\"\""
+  },
+  {
+    "domain": "geoscience",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 6: \"\"\""
+  },
+  {
+    "domain": "geospatial_research",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "machine_learning",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "machine_learning",
+    "severity": "warning",
+    "issue": "--no-sign-request used outside S3 cp (block 10): aws s3 ls s3://amazon-reviews-pds/tsv/ --no-sign-request"
+  },
+  {
+    "domain": "machine_learning",
+    "severity": "warning",
+    "issue": "--no-sign-request used outside S3 cp (block 10): aws s3 ls s3://open-images-dataset/ --no-sign-request"
+  },
+  {
+    "domain": "machine_learning",
+    "severity": "warning",
+    "issue": "--no-sign-request used outside S3 cp (block 10): aws s3 ls s3://commoncrawl/crawl-data/ --no-sign-request"
+  },
+  {
+    "domain": "marine_biology_oceanography",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "materials_science",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "mathematical_modeling",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "neuroscience",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "quantum_computing",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "renewable_energy_systems",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 4): deploy create"
+  },
+  {
+    "domain": "renewable_energy_systems",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 10): tools install"
+  },
+  {
+    "domain": "renewable_energy_systems",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 16): deploy create"
+  },
+  {
+    "domain": "renewable_energy_systems",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 17): deploy create"
+  },
+  {
+    "domain": "renewable_energy_systems",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 3: \"\"\""
+  },
+  {
+    "domain": "renewable_energy_systems",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 6: \"\"\""
+  },
+  {
+    "domain": "social_sciences",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "sports_science_biomechanics",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  },
+  {
+    "domain": "structural_biology",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 4): deploy create"
+  },
+  {
+    "domain": "structural_biology",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 12): tools install"
+  },
+  {
+    "domain": "structural_biology",
+    "severity": "warning",
+    "issue": "Unrecognized wizard command (block 19): deploy create"
+  },
+  {
+    "domain": "structural_biology",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 3: \"\"\""
+  },
+  {
+    "domain": "structural_biology",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 8, line 6: \"\"\""
+  },
+  {
+    "domain": "structural_biology",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 3: \"\"\""
+  },
+  {
+    "domain": "structural_biology",
+    "severity": "warning",
+    "issue": "Unmatched quotes in bash block 10, line 6: \"\"\""
+  },
+  {
+    "domain": "visualization_studio",
+    "severity": "error",
+    "issue": "Missing required section: ## Step 9: Using Your Own .+ Data"
+  }
+]
